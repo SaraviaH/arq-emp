@@ -89,18 +89,18 @@ Y-Trace no será responsable de:
 
 ## 5. Sistemas externos con los que se relaciona
 
-Y-Trace se integra dentro del ecosistema existente de Yanbal y respeta la frontera de responsabilidades de cada sistema.
+Y-Trace se integra dentro del ecosistema existente de Yanbal y respeta la frontera de responsabilidades de cada sistema. El despacho **existe antes de ingresar a Y-Trace**: es preparado por los sistemas logísticos upstream, los cuales proporcionan la información operativa disponible.
 
 | Sistema / Componente | Relación con Y-Trace |
 |---|---|
-| **SPY / WMS** | Proporciona el contexto de despachos ya preparados y consolidados en el Centro de Distribución. |
-| **Driving / TMS** | Aporta la información relacionada con zonificación, destino y transporte asignado según el proceso corporativo. |
-| **Bus de Integración / ESB** | Medio corporativo para publicar y recibir eventos relevantes de trazabilidad. |
-| **SAP R/3 / ERP** | Recibe información de hitos de transporte para los procesos corporativos posteriores. |
-| **Salesforce / sistemas de trazabilidad** | Puede recibir información relacionada con arribo y recepción conforme. |
-| **Cloud Storage** | Conserva fotografías de respaldo cuando el conductor decide capturarlas. |
+| **SPY / WMS** | Proporciona el contexto de despachos ya preparados y consolidados físicamente en el andén del Centro de Distribución (CD Lurín). |
+| **Driving / TMS** | Aporta la información operativa relacionada con zonificación regional, destino departamental, transportista y vehículo asignado según el proceso corporativo. |
+| **Bus de Integración / ESB** | Medio corporativo para publicar y recibir eventos canónicos de trazabilidad dentro del SLA $\le$ 30 min. |
+| **SAP R/3 / ERP** | Recibe información de hitos y resumen de trazabilidad para los procesos corporativos posteriores (liquidación de fletes externa). |
+| **Salesforce / CRM** | Recibe la actualización oportuna de entrega para brindar visibilidad a los canales comerciales y de atención al cliente. |
+| **Cloud Storage** | Conserva fotografías de respaldo cifradas (AES-256) cuando el conductor decide capturarlas. |
 
-Y-Trace no asume las responsabilidades funcionales propias de estos sistemas.
+Y-Trace **no crea despachos, no asigna rutas ni asigna vehículos**; su función inicia cuando los sistemas externos reportan un despacho preparado y disponible para seguimiento.
 
 ---
 
@@ -134,11 +134,36 @@ Este rol es responsable de la gobernanza técnica y de seguridad de la plataform
 
 ## 7.1 Concepto general
 
-La plataforma Web será la **Torre de Control Logístico de Y-Trace**. Se utilizará desde computadoras o tabletas mediante un navegador corporativo y centralizará la supervisión y administración del seguimiento.
+La plataforma Web será la **Torre de Control Logístico de Y-Trace**. Es la interfaz utilizada por el personal interno autorizado de Yanbal. Su función principal es **controlar y consultar el seguimiento de los despachos**, no planificar logísticamente el transporte ni crear órdenes.
 
-La Web trabajará con autenticación mediante usuario y contraseña y aplicará control de acceso basado en roles. Cada usuario verá solamente las operaciones y módulos permitidos por su perfil.
+Se utilizará desde computadoras o tabletas mediante un navegador corporativo y centralizará la supervisión operativa, la auditoría y la administración del acceso.
 
-La plataforma deberá mantener una bitácora de auditoría de las operaciones relevantes para permitir seguimiento posterior de las acciones administrativas y operativas.
+```text
+                 PLATAFORMA WEB Y-TRACE
+                          │
+      ┌───────────────────┼────────────────────┐
+      │                   │                    │
+      ▼                   ▼                    ▼
+  OPERACIÓN          TRAZABILIDAD          GESTIÓN
+      │                   │                    │
+      │                   │                    ├─ Usuarios
+      │                   │                    ├─ Roles
+      │                   │                    └─ Seguridad
+      │                   │
+      │                   ├─ Buscador
+      │                   └─ Evidencias
+      │
+      ├─ Despachos
+      ├─ Habilitación
+      ├─ Monitoreo
+      ├─ Incidencias
+      └─ Llegadas / destino
+                          │
+                          ▼
+                  INDICADORES / AUDITORÍA
+```
+
+La Web trabajará con autenticación mediante usuario y contraseña y aplicará control de acceso basado en roles (RBAC). Cada usuario verá solamente las operaciones y módulos permitidos por su perfil.
 
 ## 7.2 Seguridad de acceso Web
 
@@ -146,11 +171,40 @@ El acceso Web tendrá como características principales:
 
 - autenticación mediante usuario y contraseña;
 - autorización mediante RBAC;
-- sesiones protegidas;
-- expiración por inactividad;
+- sesiones protegidas con expiración por inactividad tras 15 minutos (`RF005`);
 - posibilidad de revocar sesiones;
 - comunicaciones cifradas mediante HTTPS/TLS;
-- bitácora de auditoría inmutable para los eventos definidos por el sistema.
+- bitácora de auditoría inmutable bajo modelo *append-only* (`RF006`, `RNF023`).
+
+## 7.3 Estructura Oficial del Menú Web
+
+Para organizar las funciones técnicas por contexto funcional sin saturar la navegación, el menú de la Torre de Control se estructura oficialmente así:
+
+```text
+Inicio
+
+Operación
+ ├── Despachos
+ ├── Monitoreo
+ ├── Incidencias
+ └── Llegadas / Destino
+
+Trazabilidad
+ └── Buscador
+
+Evidencias
+
+Indicadores y Reportes
+
+Auditoría
+
+Integraciones
+
+Administración
+ ├── Usuarios
+ ├── Roles
+ └── Seguridad
+```
 
 ---
 
@@ -158,19 +212,16 @@ El acceso Web tendrá como características principales:
 
 ## 8.1 Inicio / Dashboard operativo
 
-Será la vista principal de la Torre de Control y permitirá obtener una visión resumida de la operación.
+Será la vista principal de la Torre de Control y permitirá obtener una visión resumida de la operación en tiempo real.
 
 Podrá mostrar información como:
 
-- despachos activos;
-- vehículos actualmente en ruta;
-- despachos en destino;
-- incidencias activas;
-- operaciones próximas a superar la ventana de atención en destino;
-- estados generales de los viajes; y
-- accesos rápidos a las principales funciones operativas.
-
-El contenido exacto visible dependerá del rol del usuario.
+- despachos activos en seguimiento;
+- vehículos actualmente en ruta (`EN_RUTA`);
+- despachos arribados a destino (`EN_DESTINO`);
+- incidencias activas en atención (`CON_INCIDENCIA`);
+- operaciones próximas a superar la ventana de control de 60 minutos en destino;
+- accesos directos a la grilla operativa y al buscador de trazabilidad.
 
 ## 8.2 Seguridad y acceso
 
@@ -178,42 +229,107 @@ Apartado orientado a la administración y protección del acceso a la plataforma
 
 Funciones principales:
 
-- inicio de sesión;
-- cierre de sesión;
-- control de sesión;
-- autorización por roles;
-- bloqueo y control de accesos no autorizados;
-- consulta de eventos de seguridad cuando corresponda.
+- inicio de sesión con credenciales corporativas;
+- cierre de sesión y control de inactividad;
+- autorización según roles asignados;
+- bloqueo preventivo tras intentos fallidos y registro en bitácora de auditoría.
 
 ## 8.3 Gestión de usuarios
 
-Apartado utilizado principalmente por el Administrador Principal.
+Apartado utilizado exclusivamente por el Administrador Principal para la gobernanza del sistema.
 
 Funciones:
 
-- crear cuentas Web autorizadas;
-- editar cuentas;
-- suspender o desactivar cuentas;
-- asignar roles;
-- modificar roles;
+- crear, editar, suspender y desactivar cuentas Web autorizadas;
+- asignar y modificar roles (Supervisor, Jefe de Distribución, Operador SAC, Administrador);
 - controlar el ciclo de vida de los usuarios.
 
 El Administrador no utilizará este módulo para crear despachos ni para administrar la logística del viaje.
 
-## 8.4 Consulta y habilitación de despachos
+## 8.4 Contexto de "Despachos": Consulta, Selección y Habilitación de Seguimiento
 
-Es uno de los apartados operativos centrales del Supervisor de Distribución.
+Este apartado es el punto neurálgico donde el Supervisor de Distribución vincula un despacho existente con la operación de seguimiento de Y-Trace.
 
-Permitirá:
+### A. Flujo de Generación del Código
+El Supervisor **no inventa ni escribe manualmente el código**. El flujo operativo y técnico es el siguiente:
 
-- consultar los despachos que llegan desde los sistemas corporativos;
-- filtrar los despachos disponibles para seguimiento;
-- revisar la información necesaria antes de habilitar el seguimiento;
-- generar el Código Único de Activación;
-- registrar el hito interno de control previo;
-- gestionar, cuando proceda, un código de recuperación para un viaje ya iniciado.
+```text
+Supervisor consulta despachos disponibles
+        ↓
+Filtra / busca por destino, fecha o transportista
+        ↓
+Selecciona despacho y revisa datos de transporte
+        ↓
+Solicita "Habilitar seguimiento"
+        ↓
+Backend Y-Trace valida elegibilidad:
+  • Despacho existente y en estado DISPONIBLE
+  • Sin código de activación activo incompatible
+        ↓
+Backend genera automáticamente código criptoseguro:
+  • Cadena alfanumérica de 8 caracteres (ej. TRC-82F4)
+  • Verifica unicidad activa en base de datos
+        ↓
+Backend asocia unívocamente:
+  Código → Despacho → Vehículo → Conductor → Sesión Móvil
+        ↓
+Backend transiciona despacho a HABILITADO
+        ↓
+Web despliega código para que el Supervisor lo entregue al conductor
+```
 
-La generación del código **no crea el despacho** y **no asigna una ruta nueva**. Solamente habilita el seguimiento de un despacho que ya existe.
+El código **no crea el despacho, no asigna una ruta y no asigna el vehículo**. Solamente habilita el seguimiento digital de un despacho que ya existe.
+
+### B. Maqueta Conceptual de la Interfaz Web
+
+**1. Vista Principal: DESPACHOS DISPONIBLES**
+```text
++---------------------------------------------------------------------------------------+
+| TORRE DE CONTROL Y-TRACE  >  OPERACIÓN  >  DESPACHOS DISPONIBLES                      |
++---------------------------------------------------------------------------------------+
+| [Filtros: Destino [Todos    v]  Transportista [Todos    v]  Fecha [Hoy       v]]      |
++---------------------------------------------------------------------------------------+
+| Código Despacho | Destino   | Vehículo | Conductor   | Estado      | Acción           |
+|-----------------|-----------|----------|-------------|-------------|------------------|
+| D-00125         | Arequipa  | ABC-123  | J. Pérez    | Disponible  | [ Ver Detalle ]  |
+| D-00126         | Cusco     | BCD-456  | M. López    | Disponible  | [ Ver Detalle ]  |
+| D-00127         | Trujillo  | CDE-789  | R. Gómez    | Disponible  | [ Ver Detalle ]  |
++---------------------------------------------------------------------------------------+
+```
+
+**2. Vista Detalle del Despacho**
+```text
++---------------------------------------------------------------------------------------+
+| DETALLE DE DESPACHO: D-00125                                                          |
++---------------------------------------------------------------------------------------+
+| Origen:               Centro de Distribución Lurín (Lima)                             |
+| Destino:              Agencia Departamental Arequipa                                  |
+| Transportista:        Transportes Andinos S.A.C.                                      |
+| Vehículo / Placa:     ABC-123                                                         |
+| Conductor Asignado:   Juan Pérez Mendoza                                              |
+| Carga Preparada:      42 bultos consolidados (Guía Remisión: 001-049281)              |
+| Estado Operativo:     DISPONIBLE PARA SEGUIMIENTO                                     |
+|                                                                                       |
+|                       [ HABILITAR SEGUIMIENTO ]      [ Volver ]                       |
++---------------------------------------------------------------------------------------+
+```
+
+**3. Resultado Modal: CÓDIGO DE ACTIVACIÓN EMITIDO**
+```text
++---------------------------------------------------------------------------------------+
+| CÓDIGO DE ACTIVACIÓN GENERADO                                                     [X] |
++---------------------------------------------------------------------------------------+
+|                                                                                       |
+|                                     TRC-82F4                                          |
+|                                                                                       |
+| Despacho Asociado:    D-00125                                                         |
+| Destino:              Agencia Arequipa (ABC-123 / J. Pérez)                           |
+| Estado del Despacho:  HABILITADO                                                      |
+| Vigencia:             Un solo uso para inicio de viaje                                |
+|                                                                                       |
+|                [ Copiar Código ]       [ Imprimir Ticket / Comunicar ]                |
++---------------------------------------------------------------------------------------+
+```
 
 ## 8.5 Monitoreo de flota
 
@@ -270,7 +386,7 @@ El resultado mostrará una línea de tiempo integral, incluyendo los principales
 
 `Disponibilidad → Activación → Salida → Eventos en ruta → Llegada → Entrega/No Entrega → Cierre`
 
-Si el despacho fue cancelado antes de la salida, la trazabilidad deberá reflejar el estado `CANCELADO` junto con la causal y datos de auditoría definidos.
+Si el despacho fue cancelado antes de la salida, la trazabilidad deberá reflejar el estado `DESPACHO_CANCELADO` junto con la causal y datos de auditoría definidos.
 
 ## 8.9 Evidencias de entrega / POD
 
@@ -331,108 +447,136 @@ Y-Trace debe controlar el cumplimiento del SLA definido para la publicación y a
 
 ## 9.1 Concepto general
 
-La aplicación móvil será una **Progressive Web App (PWA)** destinada exclusivamente a **Android**.
+La aplicación móvil será una **Progressive Web App (PWA)** desarrollada exclusivamente para dispositivos con sistema operativo **Android 8.0 o superior** (`RNF010`).
 
-El conductor no utilizará una cuenta permanente con usuario y contraseña para comenzar el viaje. En su lugar, recibirá un **Código Único de Activación de 8 caracteres** generado desde la Web por el Supervisor.
+El conductor **no utilizará cuentas permanentes ni contraseñas** para iniciar el seguimiento. En su lugar, el acceso está gobernado por el **Código Único de Activación de 8 caracteres alfanuméricos** (ej. `TRC-82F4`) generado desde la Web por el Supervisor.
 
-La PWA podrá abrirse mediante un enlace seguro o QR y podrá añadirse a la pantalla de inicio del dispositivo.
+La PWA puede abrirse desde el navegador Chrome en Android o agregarse como acceso directo en la pantalla de inicio con soporte de Service Workers para funcionamiento autónomo.
 
-## 9.2 Acceso mediante código
+```text
+             PWA ANDROID Y-TRACE
+                     │
+                     ▼
+                ACTIVACIÓN
+                     │
+                     ▼
+             DATOS DEL DESPACHO
+                     │
+                     ▼
+                  EN_RUTA
+               ┌─────┼─────┐
+               │     │     │
+               ▼     ▼     ▼
+              GPS  OFFLINE INCIDENCIA
+               │     │     │
+               └─────┼─────┘
+                     ▼
+                EN_DESTINO
+                     │
+                ┌────┴────┐
+                ▼         ▼
+            ENTREGADO  NO_ENTREGADO
+                │         │
+                └────┬────┘
+                     ▼
+              FOTO OPCIONAL
+                     │
+                     ▼
+                 FINALIZAR
+                     │
+                     ▼
+                FINALIZADO
+```
 
-El flujo será:
+## 9.2 Acceso y Activación mediante Código
 
-1. El Supervisor revisa un despacho disponible para seguimiento.
-2. El Supervisor genera un código de activación.
-3. El conductor recibe el código junto con la información operativa correspondiente.
-4. El conductor abre la PWA en su teléfono Android.
-5. Ingresa el código de 8 caracteres.
-6. El backend valida que el código sea válido, vigente, no consumido y corresponda a un despacho elegible.
-7. El sistema establece una sesión operativa móvil vinculada al despacho y al dispositivo.
-8. La PWA descarga los datos necesarios del despacho y destino para operar localmente.
+El flujo de handoff en andén se ejecuta bajo el siguiente protocolo:
 
-El código no crea el viaje; solamente habilita la operación digital sobre un despacho existente.
+1. El Supervisor revisa el despacho existente y presiona *"Habilitar seguimiento"*.
+2. El backend genera el código único de 8 caracteres (`RF008`).
+3. El Supervisor entrega la carga física estibada y comunica el código al conductor.
+4. El conductor abre la PWA en su smartphone Android e ingresa el código (`RF010`).
+5. El backend valida el código (vigente, unívoco, despacho elegible y menos de 5 intentos fallidos acumulados, `RF032`).
+6. El backend emite un token JWT de sesión operativa móvil efímera (`RF011`).
+7. La PWA descarga la hoja de ruta y datos de destino a la base de datos local `IndexedDB` (`RF012`).
 
-## 9.3 Protección contra intentos no autorizados
+El código **no crea el viaje**; únicamente habilita la captura digital de trazabilidad sobre el despacho existente.
 
-El sistema limitará los intentos incorrectos del código. Al alcanzar cinco fallos consecutivos, el código será bloqueado e invalidado y se generará una alerta para el Supervisor.
+## 9.3 Protección Anti Fuerza Bruta y Código de Recuperación
 
-Durante una contingencia de dispositivo en un despacho `EN_RUTA`, el Supervisor podrá generar un código de recuperación autorizado para el mismo viaje. Ese mecanismo reemplazará la sesión anterior sin crear un nuevo despacho ni destruir el histórico.
+- **Control de Intentos (`RF032`):** La PWA y el backend bloquean automáticamente el código tras **5 intentos fallidos consecutivos**, invalidándolo y emitiendo una alerta a la Torre de Control Web para verificación presencial.
+- **Código de Recuperación en Ruta (`RF008`, `RF011`):** Ante rotura, robo o descarga total del smartphone Android durante un despacho `EN_RUTA`, el Supervisor puede emitir excepcionalmente un *Código de Recuperación* de un solo uso. Al ingresarlo en un nuevo terminal Android, se revoca la sesión previa y se restaura el viaje en curso sin pérdida del histórico y sin crear un nuevo despacho.
 
 ---
 
-# 10. Apartados principales de la PWA Android
+# 10. Apartados y Ciclo de Vida de la PWA Android
 
-## 10.1 Pantalla de activación
+La PWA se estructura en **11 apartados operacionales** que guían al conductor paso a paso:
 
-Es la pantalla inicial de la aplicación.
+### 1. Pantalla de Activación
+- Campo de entrada de 8 caracteres alfanuméricos: `[________]`.
+- Botón `[ Activar Despacho ]`.
+- Control y conteo visual de intentos restantes (máximo 5 intentos antes de bloqueo).
 
-Contendrá principalmente:
+### 2. Información del Despacho / Hoja de Ruta (`RF012`)
+Tras la activación, despliega la información operativa requerida para el viaje:
+- Código de despacho (ej. `D-00125`).
+- Punto de destino y dirección de la sede o agencia regional.
+- Indicaciones u observaciones de ruta.
+- Estado operativo actual (`HABILITADO`).
 
-- campo para el Código Único de Activación;
-- acción para activar el despacho;
-- mensajes de validación;
-- información sobre errores de código;
-- estado de bloqueo si se superan los intentos permitidos.
+### 3. Inicio del Despacho (`RF013`)
+- Botón prominente: `[ Iniciar Despacho ]`.
+- Al pulsarlo, el despacho transiciona a `EN_RUTA`, se estampa fecha, hora y coordenada GPS de salida en CD Lurín, y se arranca el servicio de telemetría en segundo plano.
 
-## 10.2 Datos del despacho / Hoja de ruta
+### 4. Operación en Ruta: Telemetría GPS en Segundo Plano (`RF014`)
+- El conductor **no tiene que presionar ningún botón para enviar su ubicación**.
+- El servicio en segundo plano invoca la API de geolocalización de Android y muestrea coordenadas automáticamente **cada 10 minutos** durante todo el trayecto interprovincial (24 horas a 7 días).
+- Los puntos capturados se asocian de forma indivisible a la sesión activa y al identificador del despacho.
 
-Después de activar correctamente el viaje, el conductor podrá consultar:
+### 5. Reporte Formal de Incidencias en Ruta (`RF019`, `RF026`)
+- Botón accesible: `[ Reportar Incidencia ]`.
+- Formulario modal: selección de tipo de contingencia (avería mecánica, siniestro vial, bloqueo carretero, desvío climático), descripción obligatoria y captura automática de coordenadas GPS actuales.
+- Permite adjuntar fotografía complementaria si las condiciones de seguridad lo permiten (`RF018`).
+- Al enviar, dispara una alerta prioritaria con alarma sonora y visual en la Torre de Control Web (`RF026`).
 
-- código del despacho;
-- punto de destino;
-- dirección de llegada;
-- observaciones de ruta;
-- estado actual de la operación.
+### 6. Indicador Visual de Estado de Sincronización Local (`RF023`)
+- Ubicado permanentemente en la cabecera (*header*) de la aplicación:
+  - 🟢 **Sincronizado:** Cola local vacía, datos al día en el servidor central.
+  - 🟡 **12 eventos pendientes:** Indica que existen transacciones almacenadas localmente a la espera de cobertura celular.
+- **Clarificación de Capacidad Offline:** La aplicación debe soportar **como mínimo una cola local de 500 eventos operativos** en `IndexedDB` (`RF021`, `RNF013`) durante ausencias prolongadas de señal celular, sin pérdida ni degradación funcional. Los 500 eventos representan un **criterio mínimo de prueba y aceptación operativa**, no un límite máximo o techo de almacenamiento de la aplicación.
+- Al recuperar conectividad, el servicio ejecuta sincronización automática FIFO en segundo plano (`RF022`).
 
-La información se conservará localmente para soportar el funcionamiento sin conectividad.
+### 7. Llegada a Destino (`RF015`)
+- Protocolo híbrido: detección perimétrica automática al cruzar la geocerca de 500 metros del destino o mediante el botón manual de respaldo `[ Llegué a Destino ]`.
+- Registra atómicamente el evento `EN_DESTINO` con fecha, hora y coordenadas GPS.
+- *Regla de Negocio:* `EN_DESTINO` **no equivale a entrega**. Solo acredita la presencia física en el almacén e inicia la ventana de control de 60 minutos (`RF026`, `RN-PV-01`).
 
-## 10.3 Inicio del despacho
+### 8. Confirmar Entrega Conforme (`RF016`)
+- Tras la descarga física y la conformidad del receptor en destino:
+- Botón de acción consciente obligatoria: `[ Confirmar Entrega ]`.
+- Transiciona formalmente a `ENTREGADO`.
 
-El conductor realizará la acción **“Iniciar Despacho”** después de completar la actividad física de salida.
+### 9. Registrar No Entrega / Rechazo (`RF017`)
+- En caso de rechazo total, daño severo o imposibilidad física de recepción:
+- Selector de causales tipificadas (mercadería dañada, discrepancia de bultos, agencia cerrada, rechazo de receptor) y campo de fundamentación.
+- Transiciona formalmente a `NO_ENTREGADO`.
 
-Al ejecutarla correctamente:
+### 10. Evidencia Fotográfica Complementaria (`RF018`)
+- Captura de foto de la guía sellada o de la causal de rechazo.
+- **Carácter Opcional y No Bloqueante:** La fotografía es una evidencia de respaldo complementaria; su omisión (por falta de cámara, batería o condiciones lumínicas) **no bloquea la confirmación de entrega ni el registro de rechazo**. La evidencia base reside en las estampas atómicas de GPS, fecha y hora.
 
-- el despacho cambia a `EN_RUTA`;
-- se registra fecha y hora;
-- comienza la captura periódica de GPS;
-- inicia formalmente la etapa de traslado monitorizado.
-
-La PWA no decide la ruta ni asigna vehículos.
-
-## 10.4 Monitoreo GPS
-
-Durante `EN_RUTA`, la aplicación captura coordenadas GPS periódicamente.
-
-El diseño actual establece un muestreo de referencia de **cada 10 minutos** durante el traslado, condicionado por el viaje activo y las capacidades del dispositivo Android.
-
-La información asociada al GPS se vincula a la sesión y al despacho para impedir que una posición quede asociada a otro viaje.
-
-## 10.5 Gestión offline
-
-La operación debe continuar aun cuando el conductor atraviese zonas sin cobertura celular.
-
-Para ello la PWA utiliza almacenamiento local mediante IndexedDB.
-
-Cuando no hay conexión:
-
-- los eventos se guardan localmente;
-- las coordenadas se conservan;
-- las incidencias se conservan;
-- las fotografías opcionales se pueden conservar localmente;
-- los registros se acumulan en una cola de sincronización.
-
-Cuando vuelve la conectividad, el sistema sincroniza los registros pendientes en orden cronológico.
-
-La interfaz mostrará un indicador de estado de sincronización y, cuando corresponda, el número de eventos pendientes.
-
-## 10.6 Reportar incidencia
-
-El conductor podrá abrir el módulo de incidencias cuando ocurra una contingencia, por ejemplo:
-
-- avería mecánica;
-- accidente o siniestro;
-- bloqueo de carretera;
-- otra contingencia tipificada por el sistema.
+### 11. Finalizar Despacho y Cese de Telemetría (`RF020`, `RF033`, `RNF001`)
+- Botón `[ Finalizar Despacho ]`, el cual solo se habilita si se cumplen dos condiciones concurrentes:
+  1. El despacho se encuentra en estado `ENTREGADO` o `NO_ENTREGADO`.
+  2. La cola local de sincronización en `IndexedDB` está completamente vacía (indicador en verde).
+- Al ejecutarse:
+  1. Transiciona a `FINALIZADO`.
+  2. El backend revoca inmediatamente el token JWT de sesión móvil.
+  3. El código de activación se extingue y queda invalidado de forma permanente.
+  4. La PWA purga los datos temporales del viaje de la memoria local.
+  5. Cesa mandatoriamente todo muestreo y captura de telemetría GPS (`RNF001`).
+  6. La aplicación regresa a la pantalla inicial de activación.
 
 El flujo será:
 
@@ -501,69 +645,79 @@ Después de `FINALIZADO`, el dispositivo no debe continuar transmitiendo eventos
 
 # 11. Flujo completo de la operación
 
-El flujo integral de Y-Trace puede entenderse de la siguiente forma:
+El flujo integral de Y-Trace responde a la secuencia oficial:
 
 ```text
 1. Preparación externa
-   SPY / sistemas corporativos
+   SPY/WMS prepara carga en andén + Driving/TMS asigna transporte
            ↓
 2. Despacho disponible para seguimiento
-   Supervisor consulta en Web
+   Supervisor consulta en Torre Web, filtra y selecciona despacho
            ↓
-3. Habilitación
-   Supervisor genera Código de Activación
+3. Solicitud de habilitación
+   Supervisor verifica datos y solicita "Habilitar seguimiento"
            ↓
-4. Activación móvil
-   Conductor ingresa código en PWA Android
+4. Generación automática en Backend
+   Backend valida elegibilidad, genera código (ej. TRC-82F4) y pasa a HABILITADO
            ↓
-5. Inicio de despacho
-   Conductor presiona “Iniciar Despacho”
+5. Comunicación del código
+   Supervisor comunica código al conductor en andén de CD Lurín
            ↓
-6. Traslado
-   Estado EN_RUTA + GPS periódico
+6. Activación móvil
+   Conductor ingresa código en PWA Android (< 5 intentos)
            ↓
-7. Incidencia (solo si ocurre)
-   Conductor reporta → Supervisor atiende
+7. Emisión de sesión y descarga local
+   Backend emite token efímero y PWA guarda hoja de ruta en IndexedDB
            ↓
-8. Llegada
-   Geocerca / “Llegué a Destino”
-   Estado EN_DESTINO
+8. Inicio de despacho
+   Conductor presiona “Iniciar Despacho” → pasa a EN_RUTA
            ↓
-9. Recepción
-   Punto de Destino inspecciona la carga
+9. Bucle de traslado y monitoreo continuo
+   PWA captura telemetría GPS cada 10 min en segundo plano (IndexedDB en sombra vial)
            ↓
-10. Resultado
-    ENTREGADO  /  NO_ENTREGADO
+10. Incidencia vial (solo si ocurre contingencia)
+    Conductor reporta con GPS/foto → Supervisor atiende alarma en Torre Web
+    (Mitigable: auxilio vial o código de recuperación | Siniestro total: cierre forzado)
            ↓
-11. Evidencia complementaria
-    Foto opcional + evidencias operativas
+11. Llegada a instalaciones de destino
+    Geocerca o botón “Llegué a Destino” → pasa a EN_DESTINO (ventana de 60 min)
            ↓
-12. Cierre
-    Conductor “Finalizar Despacho”
+12. Inspección y recepción
+    Punto de Destino / Receptor inspecciona precintos y bultos
            ↓
-13. FINALIZADO
-    Revocación de sesión + cese de GPS
+13. Formalización consciente del resultado
+    ENTREGADO (confirmación conforme)  o  NO_ENTREGADO (rechazo con causal tipificada)
            ↓
-14. Explotación de información
-    Trazabilidad + Auditoría + KPIs + Integraciones
+14. Respaldo complementario
+    Fotografía opcional de guía sellada o rechazo (evidencia no bloqueante)
+           ↓
+15. Cierre formal
+    Conductor presiona “Finalizar Despacho” con cola local vacía
+           ↓
+16. FINALIZADO
+    Revocación de sesión, extinción de código, purga local y cese mandatorio de GPS
+           ↓
+17. Propagación corporativa y analítica
+    Resumen al Bus ESB (SLA ≤ 30 min) → SAP/Salesforce → KPIs en Dashboard Web
 ```
 
 ---
 
 # 12. Estados principales del despacho
 
-El seguimiento se apoya en estados que permiten representar la evolución de la operación.
+El seguimiento se apoya en los **estados operacionales oficiales** del sistema:
 
-| Estado | Significado |
-|---|---|
-| **Disponible para seguimiento** | Existe un despacho externo preparado y comunicado a Y-Trace para iniciar su seguimiento. |
-| **EN_RUTA** | El despacho salió formalmente y el seguimiento móvil/GPS está activo. |
-| **CON_INCIDENCIA** | Existe una incidencia operativa crítica activa durante el traslado. |
-| **EN_DESTINO** | El vehículo llegó al punto de destino; este estado no implica que la carga ya haya sido entregada. |
-| **ENTREGADO** | La entrega fue confirmada manualmente. |
-| **NO_ENTREGADO** | La entrega no pudo completarse o fue rechazada bajo una causal tipificada. |
-| **FINALIZADO** | El seguimiento del despacho fue cerrado formalmente y la sesión móvil fue revocada. |
-| **CANCELADO** | El despacho fue cancelado antes de la salida según el evento/proceso externo y reglas de auditoría correspondientes. |
+| Estado Oficial | Evento Detonante | Actor Responsable | Significado Operativo y Efecto Técnico |
+|---|---|:---:|---|
+| **DISPONIBLE PARA SEGUIMIENTO** | Carga preparada comunicada por SPY/Driving. | Sistemas Externos | El despacho existe y está listo para ser consultado en la Torre Web. |
+| **HABILITADO** | Backend genera código de activación exitosamente. | Backend Y-Trace | Código único emitido (ej. `TRC-82F4`) y registrado el hito de control previo. |
+| **EN_RUTA** | Conductor pulsa *"Iniciar Despacho"*. | Conductor PWA | Salida física de CD Lurín; inicia captura periódica de GPS cada 10 min y publicación al Bus. |
+| **CON_INCIDENCIA** | Conductor reporta anomalía o siniestro vial. | Conductor PWA | **Solo durante contingencia activa**; alarma sonora/visual en Torre Web y notificación al Bus. |
+| **EN_DESTINO** | Geocerca perimétrica o botón manual de llegada. | Sistema / Conductor | Llegada física al perímetro de destino; inicia ventana de control de 60 min. **No equivale a entrega.** |
+| **ENTREGADO** | Conductor pulsa conscientemente *"Confirmar Entrega"*. | Conductor PWA | Entrega conforme verificada con coordenadas y hora atómica; foto de respaldo opcional. |
+| **NO_ENTREGADO** | Conductor selecciona causal tipificada de rechazo. | Conductor PWA | Entrega frustrada registrada formalmente con sustento inmutable en bitácora. |
+| **FINALIZADO** | Conductor pulsa *"Finalizar Despacho"* o Supervisor fuerza cierre. | Conductor / Supervisor | Cierre formal del seguimiento; revocación inmediata de sesión móvil, extinción de código y cese mandatorio de telemetría GPS. |
+| **DESPACHO_CANCELADO** | Evento externo cancela el despacho antes de la salida física. | Sistemas Externos | Rama independiente desde `DISPONIBLE PARA SEGUIMIENTO`; revoca código asignado y registra justificación administrativa en auditoría. |
 
 ---
 

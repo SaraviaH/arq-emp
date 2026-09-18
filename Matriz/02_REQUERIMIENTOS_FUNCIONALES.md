@@ -279,12 +279,12 @@ La ausencia de fotografía **no invalida** un evento que ya cuenta con su regist
 * **Objetivo de Negocio:** Asociar de manera unívoca cada coordenada GPS y evento de entrega al despacho correspondiente, impidiendo emisiones no autorizadas tras el cierre.
 * **Actor:** Sistema Backend / PWA Android.
 * **Módulo:** Módulo Móvil de Activación (PWA Android).
-* **Qué debe hacer el sistema:** Tras la validación exitosa del Código de Activación ([[RF010]]), generar un token de sesión operativa efímero firmado criptográficamente; almacenarlo en memoria/IndexedDB del navegador Android; inyectarlo en cada payload de telemetría y evento; y revocarlo al pasar el despacho a `FINALIZADO` o `CANCELADO`. Ante una recuperación autorizada de dispositivo en `EN_RUTA`, revocar el token anterior, emitir el nuevo token para el mismo despacho y conservar todos los eventos históricos.
+* **Qué debe hacer el sistema:** Tras la validación exitosa del Código de Activación ([[RF010]]), generar un token de sesión operativa efímero firmado criptográficamente; almacenarlo en memoria/IndexedDB del navegador Android; inyectarlo en cada payload de telemetría y evento; y revocarlo al pasar el despacho a `FINALIZADO` o `DESPACHO_CANCELADO`. Ante una recuperación autorizada de dispositivo en `EN_RUTA`, revocar el token anterior, emitir el nuevo token para el mismo despacho y conservar todos los eventos históricos.
 * **Entradas:** Validación conforme de activación de despacho.
 * **Resultado Esperado:** Contexto de sesión operativo activo y unívocamente asociado al despacho; en recuperación, nuevo contexto de sesión para el dispositivo sustituto sin reiniciar el viaje.
 * **Reglas de Negocio Relacionadas:** [[Reglas_De_Negocio]] (Condición Mandatoria de Transmisión).
 * **Dependencias:** [[RF010]].
-* **Criterios de Validación:** La PWA no permite operar sin sesión activa; el backend descarta tokens revocados, expirados o pertenecientes a despachos `FINALIZADO`/`CANCELADO` (HTTP 403). En recuperación, solo un token nuevo y vigente puede emitir telemetría después de revocarse el anterior.
+* **Criterios de Validación:** La PWA no permite operar sin sesión activa; el backend descarta tokens revocados, expirados o pertenecientes a despachos en estado `FINALIZADO`/`DESPACHO_CANCELADO` (HTTP 403). En recuperación, solo un token nuevo y vigente puede emitir telemetría después de revocarse el anterior.
 * **Fuente o Evidencia:** [[Acceso_Y_Seguridad]] (Sección 6 y 7) | [[Funciones_Movil]].
 * **Estado:** Confirmado.
 * **Análisis Crítico:** Garantiza la inviolabilidad de las sesiones móviles temporales y asegura que el conductor no transmita datos fuera del horario y ámbito del viaje autorizado.
@@ -486,7 +486,7 @@ La ausencia de fotografía **no invalida** un evento que ya cuenta con su regist
 * **Resultado Esperado:** Registro inmediato en almacenamiento local con estampa temporal de captura (`captured_at`) y asignación de identificador único UUIDv4.
 * **Reglas de Negocio Relacionadas:** [[Reglas_De_Negocio]] (Regla de Consistencia y Persistencia Offline-First).
 * **Dependencias:** [[RF011]].
-* **Criterios de Validación:** La aplicación opera con normalidad con el dispositivo en "Modo Avión", acumulando hasta 500 eventos sin degradación (RNF013).
+* **Criterios de Validación:** La aplicación opera con normalidad con el dispositivo en "Modo Avión", reteniendo al menos 500 eventos sin degradación funcional ni pérdida de datos (umbral mínimo de prueba y aceptación, no límite máximo de almacenamiento) (RNF013).
 * **Fuente o Evidencia:** [[Offline_First]] | [[Restricciones_Tecnicas]].
 * **Estado:** Confirmado.
 * **Análisis Crítico:** Es el requerimiento arquitectónico que permite la viabilidad técnica de Y-Trace en la accidentada geografía de carreteras peruanas.
@@ -604,7 +604,7 @@ La ausencia de fotografía **no invalida** un evento que ya cuenta con su regist
 * **Objetivo de Negocio:** Resolver consultas de seguimiento operacional, auditoría y reclamos de transporte en el primer contacto.
 * **Actor:** Supervisor de Distribución / Operador SAC / Jefe de Distribución.
 * **Módulo:** Módulo Web de Consulta de Trazabilidad.
-* **Qué debe hacer el sistema:** Recibir el código de despacho o placa en una barra de búsqueda indexada; devolver en menos de 2 segundos la línea de tiempo completa del viaje con sus hitos operativos (`DISPONIBLE`, `EN_RUTA`, `EN_DESTINO`, `ENTREGADO`, `NO_ENTREGADO`, `FINALIZADO` y, cuando corresponda, `CANCELADO` informado externamente) y, cuando exista, la causal y actor de cancelación.
+* **Qué debe hacer el sistema:** Recibir el código de despacho o placa en una barra de búsqueda indexada; devolver en menos de 2 segundos la línea de tiempo completa del viaje con sus hitos operativos (`DISPONIBLE`, `EN_RUTA`, `EN_DESTINO`, `ENTREGADO`, `NO_ENTREGADO`, `FINALIZADO` y, cuando corresponda, `DESPACHO_CANCELADO` informado externamente) y, cuando exista, la causal y actor de cancelación.
 * **Entradas:** Código alfanumérico del despacho o placa vehicular.
 * **Resultado Esperado:** Línea de tiempo visual consolidada del traslado con estampas de tiempo y referencias geográficas.
 * **Reglas de Negocio Relacionadas:** [[Reglas_De_Negocio]] (Seguimiento y Trazabilidad).
@@ -724,11 +724,11 @@ La ausencia de fotografía **no invalida** un evento que ya cuenta con su regist
 * **ID:** `RF033`
 * **Caso de Prueba Asociado:** `CP-COD-02`
 * **Nombre:** Unicidad, Vigencia y Caducidad del Código de Activación Móvil.
-* **Descripción:** El sistema debe garantizar unicidad activa simultánea a cada Código de Activación generado en RF008 y revocar automáticamente su validez y la de la sesión operativa cuando el despacho llegue a su finalización (`FINALIZADO`) o sea cancelado (`CANCELADO`) por un sistema externo antes de iniciar el seguimiento.
+* **Descripción:** El sistema debe garantizar unicidad activa simultánea a cada Código de Activación generado en RF008 y revocar automáticamente su validez y la de la sesión operativa cuando el despacho llegue a su finalización (`FINALIZADO`) o sea cancelado (`DESPACHO_CANCELADO`) por un sistema externo antes de iniciar el seguimiento.
 * **Objetivo de Negocio:** Reducir la ventana de exposición temporal y garantizar que ningún código ni sesión móvil permanezca activo indefinidamente tras la entrega.
 * **Actor:** Supervisor de Distribución / Sistema Backend.
 * **Módulo:** Módulo de Códigos y Activación.
-* **Qué debe hacer el sistema:** Al generar el código en RF008, asegurar que no colisione con ningún otro código activo en el sistema; al marcarse el despacho como `FINALIZADO` o `CANCELADO`, invalidar inmediatamente el código en la base de datos, impidiendo cualquier canje posterior.
+* **Qué debe hacer el sistema:** Al generar el código en RF008, asegurar que no colisione con ningún otro código activo en el sistema; al marcarse el despacho como `FINALIZADO` o `DESPACHO_CANCELADO`, invalidar inmediatamente el código en la base de datos, impidiendo cualquier canje posterior.
 * **Entradas:** Petición de generación de código autorizada por el Supervisor; evento de finalización del seguimiento o cancelación informada externamente.
 * **Resultado Esperado:** Código con ciclo de vida estrictamente acotado a la duración del viaje autorizado; rechazo ante cualquier intento de uso tras el cierre.
 * **Reglas de Negocio Relacionadas:** [[Reglas_De_Negocio]] (Acceso Móvil sin Contraseñas, Condición Mandatoria de Transmisión).
@@ -736,7 +736,7 @@ La ausencia de fotografía **no invalida** un evento que ya cuenta con su regist
 * **Criterios de Validación:** Un código de un seguimiento finalizado o un despacho cancelado externamente no puede ser reutilizado; la base de datos impone restricción de unicidad activa y cualquier intento posterior de canje es rechazado.
 * **Fuente o Evidencia:** [[Acceso_Y_Seguridad]] (Sección 3 y 6).
 * **Estado:** Confirmado.
-* **Nota de Regla Pendiente de Validación (RN-PV-01):** Articulado con la regla híbrida de llegada y entrega (RN-PV-01): la geocerca automática solo marca `EN_DESTINO`, la entrega `ENTREGADO` requiere acción manual del conductor y fotografía opcional ([[RF018]]), y ante la ventana operativa de 60 minutos sin confirmación se dispara alerta al Supervisor ([[RF026]]). Al pasar a `FINALIZADO` (vía conductor [[RF020]] o Supervisor [[RF009]]) o a `CANCELADO` antes de iniciar el seguimiento, el código y, cuando corresponda, la sesión se revocan de inmediato ([[RF033]]). El SLA de integración de 30 minutos queda definido para este proyecto; la ventana operativa de 60 minutos en destino es una regla de atención independiente y no modifica el SLA de integración.
+* **Nota de Regla Pendiente de Validación (RN-PV-01):** Articulado con la regla híbrida de llegada y entrega (RN-PV-01): la geocerca automática solo marca `EN_DESTINO`, la entrega `ENTREGADO` requiere acción manual del conductor y fotografía opcional ([[RF018]]), y ante la ventana operativa de 60 minutos sin confirmación se dispara alerta al Supervisor ([[RF026]]). Al pasar a `FINALIZADO` (vía conductor [[RF020]] o Supervisor [[RF009]]) o a `DESPACHO_CANCELADO` antes de iniciar el seguimiento, el código y, cuando corresponda, la sesión se revocan de inmediato ([[RF033]]). El SLA de integración de 30 minutos queda definido para este proyecto; la ventana operativa de 60 minutos en destino es una regla de atención independiente y no modifica el SLA de integración.
 * **Análisis Crítico:** Garantiza que los códigos alfanuméricos sean secretos efímeros y no credenciales permanentes, cumpliendo con la directriz de seguridad de la arquitectura.
 
 ---

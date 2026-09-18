@@ -99,11 +99,11 @@ flowchart TD
 
     %% Cierre posterior del Desfase
     subgraph SISTEMA_TRACKING_POST ["4. Sistema de Tracking y Consulta (Actualización Posterior)"]
-        F5 -->|Después del desfase (~2 horas)| D3["Transcurrido el desfase: El sistema actualiza el estado a ENTREGADO"]:::normal
+        F5 -->|"Después del desfase (aprox 2 horas)"| D3["Transcurrido el desfase: El sistema actualiza el estado a ENTREGADO"]:::normal
         D3 --> D4["El estado actualizado queda disponible cuando la consulta o reclamo ya se produjo"]:::normal
     end
 
-    D4 --> FIN((( ))):::inicioFin
+    D4 --> FIN(( )):::inicioFin
 ```
 
 ---

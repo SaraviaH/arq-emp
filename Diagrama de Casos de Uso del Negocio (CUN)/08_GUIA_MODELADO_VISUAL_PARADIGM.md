@@ -70,7 +70,7 @@ En este nivel macro del negocio, se utilizan exclusivamente líneas de **Asociac
 
 | Actor del Negocio | Conectar con (Asociación Sólida): |
 | :--- | :--- |
-| **Supervisor de Distribución** | $\rightarrow$ `CUN-01`, `CUN-02`, `CUN-03`, `CUN-04`, `CUN-05` |
+| **Supervisor de Distribución** | $\rightarrow$ `CUN-01`, `CUN-02`, `CUN-03`, `CUN-04` |
 | **Socio Logístico / Conductor** | $\rightarrow$ `CUN-01`, `CUN-02`, `CUN-03`, `CUN-04` |
 | **Punto de Destino / Agencia Receptora** | $\rightarrow$ `CUN-04` |
 | **Jefe de Distribución** | $\rightarrow$ `CUN-05` |

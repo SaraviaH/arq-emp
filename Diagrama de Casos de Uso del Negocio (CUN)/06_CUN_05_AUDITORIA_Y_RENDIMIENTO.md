@@ -126,7 +126,7 @@ sequenceDiagram
 ## 6. Reglas de Negocio Vinculadas
 
 * **RN-CUN-05.1 (Aislamiento Multitransportista):** Los supervisores y usuarios vinculados a una empresa transportista tercera específica jamás podrán visualizar datos de flotas o despachos de empresas competidoras.
-* **RN-CUN-05.2 (Tratamiento Riguroso de Cancelados):** Los despachos en estado `CANCELADO` quedan taxativamente excluidos del cálculo de *Lead Time* y puntualidad, computándose en un indicador independiente de cancelación.
+* **RN-CUN-05.2 (Tratamiento Riguroso de Cancelados):** Los despachos en estado `DESPACHO_CANCELADO` quedan taxativamente excluidos del cálculo de *Lead Time* y puntualidad, computándose en un indicador independiente de cancelación.
 * **RN-CUN-05.3 (Formato Único de Exportación):** Toda exportación de reportes analíticos consolidados se realiza estrictamente en formato Excel (.xlsx).
 * **RN-CUN-05.4 (Seguridad de Evidencias en Nube):** Las fotografías de respaldo en Cloud Storage no poseen URLs públicas permanentes; se consultan mediante enlaces firmados temporales con caducidad máxima de 15 minutos.
 

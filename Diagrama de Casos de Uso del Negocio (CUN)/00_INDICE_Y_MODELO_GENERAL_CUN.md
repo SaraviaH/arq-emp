@@ -7,7 +7,7 @@
 > **Estado:** [CONSOLIDADO OFICIAL — ALCANCE B2B PUNTO A PUNTO]  
 >  
 > 🔗 **Documentos de Base del Proyecto:**  
-> - [[01_MATRIZ_DE_REQUERIMIENTOS]] — Matriz maestra unificada (57 requerimientos activos)  
+> - [[01_MATRIZ_DE_REQUERIMIENTOS]] — Matriz maestra unificada (34 RF activos)  
 > - [[02_REQUERIMIENTOS_FUNCIONALES]] — Especificación técnica de RFs (RF001 a RF034)  
 > - [[03_REQUERIMIENTOS_NO_FUNCIONALES]] — Especificación técnica de RNFs (RNF001 a RNF023)  
 > - [[04_RESUMEN_OPERATIVO_Y_TRAZABILIDAD_REQUERIMIENTOS]] — Resumen operativo extremo a extremo  
@@ -117,7 +117,7 @@ flowchart LR
 | **CUN-02** | **Traslado Interprovincial y Monitoreo de Carga en Tránsito** | Garantizar el transporte físico seguro a los 24 departamentos con visibilidad y monitoreo continuo de avance y cumplimiento del *Lead Time*. | Socio Logístico / Conductor, Supervisor de Distribución | [[03_CUN_02_TRASLADO_Y_MONITOREO]] |
 | **CUN-03** | **Gestión de Incidencias y Contingencias Viales en Ruta** | Alertar, mitigar y resolver contingencias en carretera (mecánicas, viales, siniestros) salvaguardando carga, personal y plazos. | Socio Logístico / Conductor, Supervisor de Distribución | [[04_CUN_03_GESTION_DE_INCIDENCIAS]] |
 | **CUN-04** | **Entrega y Recepción de Carga en Punto de Destino** | Certificar el arribo, la inspección física, la recepción conforme o rechazo y la liquidación formal del viaje con evidencias operativas. | Socio Logístico / Conductor, Punto de Destino, Supervisor | [[05_CUN_04_ENTREGA_Y_RECEPCION_DESTINO]] |
-| **CUN-05** | **Auditoría de Trazabilidad y Rendimiento de Distribución** | Evaluar el desempeño de las empresas transportistas, auditar evidencias operativas y proveer información histórica ágil. | Jefe de Distribución, Operador SAC, Supervisor | [[06_CUN_05_AUDITORIA_Y_RENDIMIENTO]] |
+| **CUN-05** | **Auditoría de Trazabilidad y Rendimiento de Distribución** | Evaluar el desempeño de las empresas transportistas, auditar evidencias operativas y proveer información histórica ágil. | Jefe de Distribución, Operador SAC | [[06_CUN_05_AUDITORIA_Y_RENDIMIENTO]] |
 
 ---
 
@@ -132,7 +132,7 @@ La siguiente matriz define el grado de interacción de cada actor con los proces
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Socio Logístico / Conductor** | **P** (Recibe carga y código) | **I** (Conduce y emite datos) | **I** (Reporta percance) | **I** (Entrega bultos) | — |
 | **Punto de Destino / Agencia** | — | — | — | **R** (Inspecciona y recibe) | — |
-| **Supervisor de Distribución** | **I** (Controla andén y habilita) | **P** (Torre de Control) | **P** (Coordina auxilio/cierre) | **P** (Supervisa arribo) | **P** (Audita evidencias) |
+| **Supervisor de Distribución** | **I** (Controla andén y habilita) | **P** (Torre de Control) | **P** (Coordina auxilio/cierre) | **P** (Supervisa arribo) | — |
 | **Jefe de Distribución** | — | — | — | — | **I** (Evalúa KPIs/SLAs) |
 | **Operador SAC / Soporte** | — | — | — | — | **P** (Atiende consultas) |
 

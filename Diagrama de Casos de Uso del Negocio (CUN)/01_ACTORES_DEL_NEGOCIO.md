@@ -16,6 +16,8 @@
 
 En el marco de **Rational Unified Process (RUP)** y la práctica docente de la **Universidad Tecnológica del Perú (Sesión 4)**, los **Actores del Negocio (`<<business actor>>`)** representan roles externos a la organización (clientes, contratistas o destinatarios) o roles/áreas funcionales de la empresa que intervienen en los procesos del negocio ejecutando tareas o recibiendo sus resultados de valor.
 
+> **Nota Aclaratoria:** El **Administrador Principal** es un rol estrictamente informático y del sistema (gestión de usuarios web y permisos), por lo que **no constituye un Actor del Negocio logístico** (`<<business actor>>`) ni participa operativamente en los Casos de Uso del Negocio (CUN).
+
 ```mermaid
 graph TD
     subgraph CLASIFICACION_ACTORES ["Gobernanza de Actores del Negocio"]

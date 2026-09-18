@@ -4,26 +4,6 @@
     "type": "split",
     "children": [
       {
-        "id": "d4aab2ee0847a158",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "6fc65d426864d8e3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "diagram de actividades/02_DIAGRAMA_ACTIVIDADES_AS_IS_GENERAL.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "02_DIAGRAMA_ACTIVIDADES_AS_IS_GENERAL"
-            }
-          }
-        ]
-      },
-      {
         "id": "0cba3e38f547d9bd",
         "type": "tabs",
         "children": [
@@ -33,12 +13,32 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "diagram de actividades/01_DIAGRAMA_ACTIVIDADES_AS_IS_PROBLEMA_CRITICO.md",
+                "file": "Diagrama de Objeto/Diagrama_Objetos_Y_Trace_Documentado.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01_DIAGRAMA_ACTIVIDADES_AS_IS_PROBLEMA_CRITICO"
+              "title": "Diagrama_Objetos_Y_Trace_Documentado"
+            }
+          }
+        ]
+      },
+      {
+        "id": "90e609c0af89a9b0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1ddc78d1c76c9137",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "06_MODELO_DE_DOMINIO_Y_DICCIONARIO_DE_DATOS.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "06_MODELO_DE_DOMINIO_Y_DICCIONARIO_DE_DATOS"
             }
           }
         ]
@@ -103,7 +103,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 428.5
+    "width": 386.5
   },
   "right": {
     "id": "b091d98dde90908e",
@@ -208,45 +208,52 @@
       "bases:Crear nueva base": false
     }
   },
-  "active": "6fc65d426864d8e3",
+  "active": "ed076e8359139269",
   "lastOpenFiles": [
+    "Diagrama de Objeto/Diagrama-objeto.md",
+    "Diagrama de Objeto/Diagrama_Objetos_Y_Trace_Documentado.md",
+    "curso/pdf/Propuesta de Proyecto.pdf",
+    "diagrama nivel dominio/Diagrama_Objetos_Y_Trace_Documentado.md",
+    "diagrama nivel dominio/Sin confirmar 829312.crdownload",
+    "Diagrama de Objeto/Diagrama-objeto",
+    "Diagrama de Objeto/Diagrama",
+    "Diagrama de Objeto",
+    "curso/pdf/Proyectos_UML.pdf",
+    "diagram de actividades/02_DIAGRAMA_ACTIVIDADES_AS_IS_GENERAL.md",
+    "diagrama nivel dominio/02_5_Diagrama_de_Clases_Nivel_Dominio.md",
+    "06_MODELO_DE_DOMINIO_Y_DICCIONARIO_DE_DATOS.md",
+    "informacion/buscar mas informacion.md",
+    "curso/trascirto pdf/03 - Sesión 2 - Laboratorio de Proyectos de Software y Herramientas CASE.md",
+    "curso/trascirto pdf/04 - Sesión 8 - Ingeniería de Requerimientos y Casos de Uso.md",
+    "diagrama nivel dominio/Modelo_Dominio_Diccionario_Datos_Y_Trace.md",
+    "diagrama nivel dominio/Sin confirmar 554472.crdownload",
+    "diagrama nivel dominio",
     "diagram de actividades/01_DIAGRAMA_ACTIVIDADES_AS_IS_PROBLEMA_CRITICO.md",
+    "diagram de actividades/problema critico.png",
+    "diagram de actividades/Sin confirmar 785302.crdownload",
+    "diagram de actividades/actividad general.png",
+    "diagram de actividades/Sin confirmar 980880.crdownload",
+    "diagram de actividades to-be/diagrama critico tobe/diagrama critico tobe.md",
+    "diagram de actividades to-be/diagrama critico tobe/fiagrama critico.png",
+    "diagram de actividades to-be/01_DIAGRAMA_ACTIVIDADES_TO_BE_PROBLEMA_CRITICO.md",
+    "diagram de actividades to-be/diagrama critico tobe.md",
+    "diagram de actividades to-be/diagrmas general/diagrmas.md",
+    "diagram de actividades to-be/diagrmas general/Preparacion-habilitacion -activacion.png",
+    "diagram de actividades to-be/diagrmas general/llegada - recepcion - entrga.png",
+    "diagram de actividades to-be/diagrmas general/Cierre _ integracion y control.png",
+    "diagram de actividades to-be/diagrmas general/Salida - traslado - monitoreo e incidencia.png",
+    "diagram de actividades to-be/02_DIAGRAMA_ACTIVIDADES_TO_BE_GENERAL.md",
+    "diagram de actividades to-be/03_MATRIZ_BRECHAS_AS_IS_VS_TO_BE.md",
+    "diagram de actividades to-be/00_INDICE_Y_GUIA_DIAGRAMAS_TO_BE.md",
+    "diagram de actividades to-be/Sin título.md",
+    "diagram de actividades to-be/04_DIAGRAMAS_TO_BE_PLANTUML.md",
+    "diagram de actividades to-be/diagrama.md",
     "diagram de actividades/00_INDICE_Y_GUIA_DIAGRAMAS_ACTIVIDADES.md",
     "diagram de actividades/a1.png",
     "diagram de actividades/a2.png",
     "diagram de actividades/c1.png",
-    "diagram de actividades/02_DIAGRAMA_ACTIVIDADES_AS_IS_GENERAL.md",
-    "curso/pdf/Propuesta de Proyecto.pdf",
     "Diagrama de Casos de Uso del Negocio (CUN)/03_CUN_02_TRASLADO_Y_MONITOREO.md",
     "Matriz/03_REQUERIMIENTOS_NO_FUNCIONALES.md",
-    "curso/trascirto pdf/06 - Sesión 1 - Fundamentos de Metodología RUP y Gestión de Proyectos.md",
-    "curso/trascirto pdf/04 - Sesión 8 - Ingeniería de Requerimientos y Casos de Uso.md",
-    "curso/trascirto pdf/03 - Sesión 2 - Laboratorio de Proyectos de Software y Herramientas CASE.md",
-    "diagram de actividades/Sin confirmar 859607.crdownload",
-    "diagram de actividades/Sin confirmar 820820.crdownload",
-    "diagram de actividades/Sin confirmar 798174.crdownload",
-    "respuesta/INFORME_JUSTIFICACION_Y_ANALISIS_DIAGRAMAS_ACTIVIDADES_AS_IS.md",
-    "curso/trascirto pdf/02 - Guía Oficial de Propuesta de Proyecto Final.md",
-    "05_DESCRIPCION_GENERAL_SOLUCION_YTRACE_YANBAL.md",
-    "respuesta/INFORME_JUSTIFICACION_ACTORES_CUN_Y_GUIA_SUSTENTACION.md",
-    "respuesta/INFORME_REVISION_Y_ANALISIS_CASOS_DE_USO.md",
-    "diagram de actividades/Sin confirmar 269225.crdownload",
-    "diagram de actividades/Sin confirmar 459761.crdownload",
-    "curso/pdf/Proyectos_UML.pdf",
-    "diagram de actividades",
-    "curso/pdf/PPT_Sesión 8_Ingeniería_Requerimientos_completo.pdf",
-    "curso/trascirto pdf/05 - Manual de Proyectos UML - Diagramas y Modelado Orientado a Objetos.md",
-    "Diagrama de Casos de Uso del Negocio (CUN)/diagrama.md",
-    "Matriz/01_MATRIZ_DE_REQUERIMIENTOS.md",
-    "curso/trascirto pdf/01 - Sílabo - Diseño e Implementación de Arquitectura Empresarial.md",
-    "curso/trascirto pdf/00 - Índice del Material del Curso.md",
-    "curso/trascirto pdf",
-    "curso/06 - Sesión 1 - Fundamentos de Metodología RUP y Gestión de Proyectos.md",
-    "curso/05 - Manual de Proyectos UML - Diagramas y Modelado Orientado a Objetos.md",
-    "curso/04 - Sesión 8 - Ingeniería de Requerimientos y Casos de Uso.md",
-    "curso/03 - Sesión 2 - Laboratorio de Proyectos de Software y Herramientas CASE.md",
-    "curso/02 - Guía Oficial de Propuesta de Proyecto Final.md",
-    "curso/01 - Sílabo - Diseño e Implementación de Arquitectura Empresarial.md",
-    "curso/00 - Índice del Material del Curso.md"
+    "curso/trascirto pdf/06 - Sesión 1 - Fundamentos de Metodología RUP y Gestión de Proyectos.md"
   ]
 }

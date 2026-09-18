@@ -63,7 +63,7 @@ A continuación se presenta el mapeo exhaustivo de los 34 Requerimientos Funcion
 | **RF022** | Sincronización automática FIFO al recuperar red | Sincronización Móvil | **CUN-02** | Transmite eventos retenidos en orden cronológico estricto al reconectar. |
 | **RF023** | Semáforo visual del estado de sincronización | Sincronización Móvil | **CUN-02** | Brinda retroalimentación visual al conductor sobre datos retenidos en cola. |
 | **RF024** | Consulta de avance y detalle de despachos | Monitoreo de Despachos | **CUN-02** | Habilita la grilla operativa con semaforización de tiempos de traslado, origen, destino y avance. |
-| **RF025** | Visualización de evidencias y enlace seguro | Auditoría de Entregas | **CUN-05** | Permite auditar coordenadas de entrega y fotos seguras en Cloud Storage. |
+| **RF025** | Visualización de evidencias y enlace seguro | Auditoría de Entregas | **CUN-04 / CUN-05** | Permite auditar coordenadas de entrega y fotos seguras en Cloud Storage. |
 | **RF026** | Alerta visual y sonora por incidencias y ventana | Gestión de Incidencias | **CUN-03 / CUN-04** | Notifica siniestros en ruta o demoras de 60 min en andén de destino. |
 | **RF027** | Búsqueda por despacho y timeline histórico | Consulta de Trazabilidad | **CUN-05** | Despliega en menos de 2 seg la cronología completa de hitos para SAC. |
 | **RF028** | Tablero ejecutivo de KPIs y exportación Excel | Indicadores (Dashboard) | **CUN-05** | Calcula Lead Time, puntualidad y latencia, con reportes en Excel. |
@@ -85,7 +85,7 @@ A continuación se presenta el mapeo exhaustivo de los 34 Requerimientos Funcion
 │ CUN-01: Despacho y Salida de Carga en Centro de Distribución       │ 7 RFs        │
 │ CUN-02: Traslado Interprovincial y Monitoreo de Carga en Tránsito │ 6 RFs        │
 │ CUN-03: Gestión de Incidencias y Contingencias Viales en Ruta     │ 7 RFs        │
-│ CUN-04: Entrega y Recepción de Carga en Punto de Destino          │ 9 RFs        │
+│ CUN-04: Entrega y Recepción de Carga en Punto de Destino          │ 10 RFs       │
 │ CUN-05: Auditoría de Trazabilidad y Rendimiento de Distribución   │ 4 RFs        │
 │ Transversales (Seguridad Perimetral, RBAC y Auditoría Web)        │ 6 RFs        │
 ├───────────────────────────────────────────────────────────────────┼──────────────┤
@@ -94,4 +94,4 @@ A continuación se presenta el mapeo exhaustivo de los 34 Requerimientos Funcion
 ```
 
 > [!NOTE]
-> La suma analítica presenta algunos RFs compartidos de forma complementaria (ej. `RF008` en CUN-01 y CUN-03; `RF011` en CUN-01 y CUN-03; `RF018` en CUN-03 y CUN-04; `RF026` en CUN-03 y CUN-04; `RF029` en CUN-02 y CUN-04), garantizando que el **100% de los 34 Requerimientos Funcionales activos del proyecto Y-Trace** cuentan con trazabilidad directa y justificación de negocio.
+> La suma total de RFs por rubro en el cuadro es de 40 debido a que incluye requerimientos compartidos de forma complementaria (ej. `RF008` en CUN-01 y CUN-03; `RF011` en CUN-01 y CUN-03; `RF018` en CUN-03 y CUN-04; `RF025` en CUN-04 y CUN-05; `RF026` en CUN-03 y CUN-04; `RF029` en CUN-02 y CUN-04). Esto aclara por qué la suma aritmética (40) es mayor a los 34 únicos, garantizando que el **100% de los 34 Requerimientos Funcionales activos del proyecto Y-Trace** cuentan con trazabilidad directa y justificación de negocio.

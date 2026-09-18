@@ -1,5 +1,8 @@
 # Diagrama General de Casos de Uso del Negocio (CUN) — Y-Trace Yanbal
 
+> [!WARNING]
+> **Nota de Control de Versiones (H-14):** Este archivo `diagrama.md` actúa como una copia de referencia visual del modelo. Cualquier modificación en los requerimientos, actores o casos de uso debe realizarse prioritariamente en los documentos consolidados (`00_INDICE_Y_MODELO_GENERAL_CUN.md`, `01_ACTORES_DEL_NEGOCIO.md`, etc.) para evitar desincronizaciones.
+
 > **Archivo:** `diagrama.md`  
 > **Proyecto:** Sistema Web y Móvil para la Gestión y Trazabilidad de Despachos y Entregas de Yanbal Perú (Y-Trace)  
 > **Metodología:** RUP (Sesión 4 UTP / Arquitectura Empresarial)  
@@ -127,7 +130,6 @@ SUP -- CUN01
 SUP -- CUN02
 SUP -- CUN03
 SUP -- CUN04
-SUP -- CUN05
 
 ' Conexiones del Conductor / Socio Logístico
 SL -- CUN01

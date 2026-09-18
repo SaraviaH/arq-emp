@@ -24,7 +24,7 @@ graph LR
 
 > [!NOTE]
 > **Rigor Metodológico del Proceso General:**  
-> Este diagrama representa **las actividades del negocio que ocurren actualmente en la realidad operativa**. Las actividades como la emisión de documentación de despacho, la entrega formal de custodia, la verificación física y el cierre administrativo forman parte del proceso del negocio y se expresan de forma afirmativa, sin incorporar requerimientos futuros de Y-Trace.
+> Este diagrama representa **las actividades del negocio que ocurren actualmente en la realidad operativa**. Las actividades como la emisión de documentación de despacho, la entrega formal de custodia, la verificación física y el cierre administrativo forman parte del proceso del negocio y se expresan de forma afirmativa, sin incorporar requerimientos futuros de Y-Trace. Adicionalmente, cabe aclarar que **las actividades de preparación (picking/consolidación) previas a la puesta en andén en CD Lurín se encuentran fuera de la frontera tecnológica de Y-Trace** y son responsabilidad exclusiva del WMS/TMS corporativo.
 
 ---
 

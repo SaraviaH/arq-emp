@@ -77,7 +77,7 @@ A diferencia de la aplicación del conductor, la plataforma Web **requiere oblig
 * **Responsabilidad:** Atención y resolución de consultas operativas sobre el estado y ubicación de las cargas en tránsito.
 * **Funciones Clave:**
   - **Buscador de Trazabilidad Rápida:** Consulta instantánea por código alfanumérico de despacho o placa vehicular ([[RF027]]).
-  - **Línea de Tiempo del Traslado:** Visualización del historial cronológico completo (disponibilidad para seguimiento, activación, salida del CD, hitos de paso en ruta, llegada a destino, resultado de entrega y cierre); si fue cancelado antes de la salida, muestra `CANCELADO`, causal, actor y fecha/hora.
+  - **Línea de Tiempo del Traslado:** Visualización del historial cronológico completo (disponibilidad para seguimiento, activación, salida del CD, hitos de paso en ruta, llegada a destino, resultado de entrega y cierre); si fue cancelado antes de la salida, muestra `DESPACHO_CANCELADO`, causal, actor y fecha/hora.
   - **Consulta de Evidencias:** Acceso a la evidencia geoespacial certificada (coordenadas GPS de arribo) y enlace seguro temporal a fotografías de respaldo en Cloud Storage si fueron capturadas ([[RF025]], [[RNF005]]).
   - Cierra consultas y valida recepciones sin fricciones ni llamadas a ciegas a los conductores.
 
@@ -121,7 +121,7 @@ En una incidencia grave, como un choque o una avería que inutilice el dispositi
 ```mermaid
 graph TD
     A[Despacho existente y disponible] --> B{¿Se recibe cancelación externa antes de iniciar el seguimiento?}
-    B -- SÍ --> C[CANCELADO: evento externo + auditoría + invalidación de código]
+    B -- SÍ --> C[DESPACHO_CANCELADO: evento externo + auditoría + invalidación de código]
     B -- NO --> D[Conductor abre PWA en CD Lurín]
     D --> E[Ingresa Código Único de 8 Caracteres]
     E --> F[Sistema valida y emite Sesión Operativa Móvil]
@@ -205,7 +205,7 @@ El valor de **30 minutos** gobierna únicamente la integración con el Bus una v
 Cuando el teléfono esté sin cobertura, los eventos permanecen en la cola local; la ausencia de red no se transforma artificialmente en registros repetitivos. Al recuperar conectividad, el backend recibe los eventos y aplica el SLA de 30 minutos para su propagación al Bus.
 
 ### Etapa 6: Sincronización y Propagación al Ecosistema Yanbal
-* El backend recibe los eventos operativos y administrativos y emite mensajes JSON canónicos estandarizados hacia el **Bus de Integración de Yanbal** ([[RF029]], [[RNF018]]). Los despachos `CANCELADO` generan el evento administrativo de cancelación para integración y no continúan al flujo de recorrido. RF031 se utiliza para despachos que alcanzan `FINALIZADO` mediante RF020 o RF009.
+* El backend recibe los eventos operativos y administrativos y emite mensajes JSON canónicos estandarizados hacia el **Bus de Integración de Yanbal** ([[RF029]], [[RNF018]]). Los despachos en estado `DESPACHO_CANCELADO` generan el evento administrativo de cancelación para integración y no continúan al flujo de recorrido. RF031 se utiliza para despachos que alcanzan `FINALIZADO` mediante RF020 o RF009.
 * El Bus recibe y acepta cada evento elegible dentro del SLA único de máximo 30 minutos desde la recepción del evento en el backend; la indisponibilidad de red del dispositivo se gestiona mediante almacenamiento offline y no genera registros repetitivos ([[RNF007]]):
   - En **SAP R/3 / ERP**: Se actualiza el hito de transporte para conciliación logística.
   - En **Salesforce / Sistemas de Trazabilidad**: Se registra el arribo conforme y la recepción en el punto de destino.
@@ -217,7 +217,7 @@ Cuando el teléfono esté sin cobertura, los eventos permanecen en la cola local
 
 ### Etapa 8: Explotación Post-Entrega en Trazabilidad y Gerencia
 * Ante cualquier consulta operativa o auditoría, el **Operador o Supervisor** ingresa el código de despacho en el buscador web de Y-Trace ([[RF027]]).
-* En menos de 2 segundos ([[RNF016]]) visualiza la cronología completa: disponibilidad para seguimiento, activación, salida del CD, traza satelital en carretera, llegada a destino, resultado de entrega y cierre; si el despacho fue cancelado antes de la salida, muestra `CANCELADO`, causal, actor y fecha/hora de la cancelación, además de la invalidación del código.
+* En menos de 2 segundos ([[RNF016]]) visualiza la cronología completa: disponibilidad para seguimiento, activación, salida del CD, traza satelital en carretera, llegada a destino, resultado de entrega y cierre; si el despacho fue cancelado antes de la salida, muestra `DESPACHO_CANCELADO`, causal, actor y fecha/hora de la cancelación, además de la invalidación del código.
 * Al cierre del período, el **Jefe de Distribución** analiza en su tablero web ([[RF028]]) los indicadores logísticos de tiempos de traslado (*Lead Time*), entregas conformes y latencia por empresa transportista y período, pudiendo consultar, filtrar y exportar los reportes exclusivamente en formato Excel.
 
 ---
@@ -254,7 +254,7 @@ A continuación se compara y mapea cada funcionalidad y componente del flujo ope
 | **Monitoreo y Control**| Consulta y Seguimiento de Despachos | **RF024** | Grilla operativa web con tiempos de traslado, avance y estado general de despachos entre sedes con semaforización visual. |
 | **Monitoreo y Control**| Consulta y Auditoría de Evidencias POD | **RF025** | Visualización en la web de evidencia GPS de entrega y enlace seguro temporal a foto en Cloud Storage. |
 | **Monitoreo y Control**| Gestión y Atención de Alertas de Incidencias en Ruta y Timeout en Destino | **RF026** | Alertas visuales y sonoras en plataforma Web ante incidencias en ruta y ventana de 60 min en destino (condición de implementación sujeta a RN-PV-01). |
-| **Trazabilidad** | Búsqueda Rápida de Trazabilidad | **RF027** | Buscador por código de despacho o placa para visualizar la cronología completa, incluidos despachos `CANCELADO`, con causal, actor y fecha/hora de cancelación. |
+| **Trazabilidad** | Búsqueda Rápida de Trazabilidad | **RF027** | Buscador por código de despacho o placa para visualizar la cronología completa, incluidos despachos en estado `DESPACHO_CANCELADO`, con causal, actor y fecha/hora de cancelación. |
 | **Indicadores y KPIs** | Indicadores y Reportes de Gestión | **RF028** | Tablero ejecutivo de indicadores logísticos (Lead Time, entregas conformes y latencia) con filtros operativos y exportación a Excel; cancelados excluidos de Lead Time. |
 | **Integración ESB** | Publicación de Eventos de Despacho al Bus| **RF029** | Publicación JSON de `EN_RUTA`, `EN_DESTINO`, `ENTREGADO`, `NO_ENTREGADO` y `DESPACHO_CANCELADO`; hito interno de control previo permanece como hito interno de auditoría y no se publica por RF029. |
 | **Integración ESB** | Notificación de Incidencias Graves al Bus | **RF030** | Publicación de eventos de avería o siniestro hacia el Bus para conocimiento de áreas operativas. |
@@ -307,7 +307,7 @@ Conforme a la metodología arquitectónica del proyecto, aquellos parámetros y 
 >   1. **Detección Automática por Geocerca (`EN_DESTINO`):** El ingreso del vehículo al perímetro geográfico del punto de destino cambia automáticamente el estado del despacho a `EN_DESTINO` (con fallback manual mediante botón en PWA), registrando fecha, hora y coordenadas GPS como evidencia directa de llegada física. **Este evento NO confirma la entrega de la carga.**
 >   2. **Confirmación Manual de Entrega (`ENTREGADO`):** La entrega formal requiere la acción manual del conductor en la PWA pulsando "Confirmar Entrega" ([[RF016]]). El sistema registra la evidencia operativa del evento y permite adjuntar una evidencia fotográfica complementaria opcional ([[RF018]]).
 >   3. **Ventana de 60 Minutos sin Confirmación:** Si transcurren 60 minutos desde que el despacho pasó a `EN_DESTINO` sin que el conductor confirme la entrega (`ENTREGADO` o `NO_ENTREGADO`), el sistema dispara una alerta automática visual y sonora al Supervisor en la Torre de Control Web (mismo mecanismo de notificación inmediata de [[RF026]]). El Supervisor contacta al conductor o, en casos de contingencia o fuerza mayor comprobada, ejecuta el cierre administrativo forzado con registro de motivo tipificado en bitácora inmutable ([[RF009]]).
->   4. **Revocación de Código y Sesión:** Al culminar formalmente el despacho (`FINALIZADO` vía conductor [[RF020]] o Supervisor [[RF009]]) o recibirse una cancelación externa (`CANCELADO`), se revoca de inmediato la vigencia del Código de Activación; si existe sesión operativa, también se revoca el token ([[RF033]]).
+>   4. **Revocación de Código y Sesión:** Al culminar formalmente el despacho (`FINALIZADO` vía conductor [[RF020]] o Supervisor [[RF009]]) o recibirse una cancelación externa (`DESPACHO_CANCELADO`), se revoca de inmediato la vigencia del Código de Activación; si existe sesión operativa, también se revoca el token ([[RF033]]).
 > * **Estado:** **Pendiente de Validación con Operaciones de Yanbal.**  
 > * **Aspectos por Definir / Ratificar:** El SLA de integración de 30 minutos queda definido como criterio del proyecto. La ventana operativa de 60 minutos para permanencia en destino se mantiene separada del SLA de integración y su ratificación institucional continúa bajo RN-PV-01.  
 > * **Impacto Técnico y Articulación:** La lógica técnica queda articulada con [[RF009]], [[RF015]], [[RF016]], [[RF018]], [[RF020]], [[RF026]] y [[RF033]]; la pendiente de validación no invalida esos RF, sino que afecta el parámetro operativo de 60 minutos.

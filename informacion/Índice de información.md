@@ -4,6 +4,8 @@
 > Esta base de conocimiento organiza y estructura toda la información obtenida a partir de la entrevista al **Ing. Joao Condorpusa Mendoza**, encargado del área de distribución de **Yanbal (Perú)**, para el desarrollo del proyecto de **Arquitectura Empresarial (Sistema web de logística, inventario y trazabilidad)**.
 >
 > 🔒 **Garantía de Fidelidad:** El archivo fuente original `trascrito.text` y la grabación audiovisual `ENTREVISTA.mp4` se mantienen intactos. Toda la información documentada está estrictamente respaldada por las declaraciones del entrevistado.
+>
+> ⚠️ **Nota de Alcance (H-16):** Todo el levantamiento de información y diseño funcional del sistema **Y-Trace** abarca exclusiva y estrictamente la **distribución troncal B2B** (Centro de Distribución → Puntos/Agencias Departamentales). **Se excluye** todo proceso B2C, última milla o reparto domiciliario a consultoras finales.
 
 ---
 

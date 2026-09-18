@@ -63,7 +63,7 @@ sequenceDiagram
 
     EXT->>SIS: Reporta despacho consolidado disponible en andén
     SUP->>SIS: Consulta despachos disponibles y valida elegibilidad
-    SUP->>SIS: Solicita habilitación de seguimiento (genera Código de Activación)
+    SUP->>SIS: Solicita habilitación de seguimiento (Backend genera Código de Activación)
     SIS-->>SUP: Emite Código Único de 8 caracteres y registra Hito de Control Previo
     SUP->>COND: Entrega física de la carga y comunica el Código de Activación
     COND->>SIS: Abre PWA en Android e ingresa Código de Activación
