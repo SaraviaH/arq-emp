@@ -23,7 +23,7 @@ Antes de entrar al análisis detallado, respondemos puntualmente a tus tres duda
 ### 2. ¿Son estos 5 casos de uso los más importantes para el sistema?
 > [!TIP]
 > **Para el alcance de Distribución y Trazabilidad (Y-Trace): SÍ, son los 5 procesos capitales e indispensables.**
-> Cubren el ciclo de vida completo de un despacho desde su salida hasta su liquidación:
+> Cubren el ciclo de vida completo de un despacho desde su salida hasta su cierre formal:
 > 1. **CUN-01 (Despacho y Salida CD):** Control previo y traspaso de custodia en andén.
 > 2. **CUN-02 (Traslado y Monitoreo en Tránsito):** Telemetría GPS en ruta interprovincial a los 24 departamentos.
 > 3. **CUN-03 (Gestión de Incidencias en Ruta):** Contingencias viales, mecánicas o siniestros en carretera.
@@ -31,7 +31,7 @@ Antes de entrar al análisis detallado, respondemos puntualmente a tus tres duda
 > 5. **CUN-05 (Auditoría y Rendimiento):** Medición de *Lead Times*, KPIs contractuales y atención ágil de consultas.
 >
 > **Sin embargo, para el software como aplicación informática:**  
-> Estos 5 CUN no son "botones" ni "pantallas"; son los **macro-procesos que el software soporta**. El sistema Y-Trace traduce estos 5 macro-procesos en **34 Requerimientos Funcionales (RF)** específicos (Autenticación RBAC, Códigos efímeros de activación, GPS background, Offline IndexedDB, Reporte con cámara, Grilla operativa con semaforización, Publicación al Bus corporativo $\le$ 30 min, etc.).
+> Estos 5 CUN no son "botones" ni "pantallas"; son los **macro-procesos que el software soporta**. El sistema Y-Trace traduce estos 5 macro-procesos en **29 Requerimientos Funcionales (RF)** específicos (Autenticación RBAC, Códigos efímeros de activación, GPS background, Offline SQLite (Room), Grilla operativa con semaforización, Cancelación Forzada ante contingencias externas, Publicación al Bus corporativo $\le$ 30 min, etc.).
 
 ### 3. ¿Por qué deben estar ahí y cómo se relacionan con el negocio de Yanbal?
 > En la entrevista, el Ing. Joao Condorpusa declaró que el **principal reto y dolor de Yanbal es abatir el desfase de seguimiento (tracking) que actualmente tarda hasta 2 horas**, provocando una ventana de desconocimiento, saturación de reclamos en Salesforce y falta de certeza de entrega.
@@ -102,8 +102,8 @@ En la entrevista se revelan **tres problemas operacionales severos**. Comprender
 
 | Problema Declarado en Entrevista | Causa Raíz en Yanbal | Impacto en el Negocio | ¿Cómo lo Atiende el Modelo CUN de Y-Trace? |
 | :--- | :--- | :--- | :--- |
-| **1. Desfase de hasta 2 horas en el tracking de pedidos** *(Problema Principal declarado por Joao Condorpusa)* | Los socios logísticos usan herramientas que sincronizan datos por lotes tardíos al Bus corporativo. | - Ventana ciega de 2 horas.<br>- Clientes reclaman a Salesforce.<br>- Desconocimiento de si el pedido fue recibido o si está demorado. | **Atendido por CUN-02 y CUN-04:** Telemetría periódica cada 10 min en ruta y publicación inmediata de eventos al Bus en $\le$ 30 min ([[RF014]], [[RF029]]). |
-| **2. Incertidumbre ante contingencias y siniestros en carretera** | Los accidentes, averías o bloqueos viales en las carreteras de los 24 departamentos se reportan tarde por teléfono o WhatsApp informal. | - Pérdida de control de la carga.<br>- Retraso en activar auxilio vial o reposición.<br>- Incumplimiento del Lead Time prometido. | **Atendido por CUN-03:** Canal formal móvil de alerta inmediata de incidencias con georreferenciación, fotos y publicación de alertas de siniestro al Bus corporativo ([[RF019]], [[RF030]]). |
+| **1. Desfase de hasta 2 horas en el tracking de pedidos** *(Problema Principal declarado por Joao Condorpusa)* | Los socios logísticos usan herramientas que sincronizan datos por lotes tardíos al Bus corporativo. | - Ventana ciega de 2 horas.<br>- Clientes reclaman a Salesforce.<br>- Desconocimiento de si el pedido fue recibido o si está demorado. | **Atendido por CUN-02 y CUN-04:** Telemetría periódica cada 10 min en ruta y publicación inmediata de eventos al Bus en $\le$ 30 min ([[RF014]], [[RF027]]). |
+| **2. Incertidumbre ante contingencias y siniestros en carretera** | Los accidentes, averías o bloqueos viales en las carreteras de los 24 departamentos se reportan tarde por teléfono o WhatsApp informal. | - Pérdida de control de la carga.<br>- Retraso en activar auxilio vial o reposición.<br>- Incumplimiento del Lead Time prometido. | **Atendido por CUN-03:** Canal formal móvil de alerta inmediata de incidencias con georreferenciación, logs y publicación de alertas de siniestro al Bus corporativo ([[RF019]], [[RF028]]). |
 | **3. Desfase de hasta 6 horas en merma operativa en almacén/picking** | El operario rompe un frasco durante el picking, pero lo registra al final del turno laboral. | - *Phantom inventory* (inventario fantasma).<br>- Maya vende productos rotos.<br>- Quiebre de stock y ventas perdidas. | **Delimitación de Alcance:** Pertenece al proceso interno de almacén/picking (SPY/SAP R3). Se dejó fuera deliberadamente de Y-Trace para no duplicar un WMS, enfocándose en la distribución y transporte. |
 
 ---
@@ -116,7 +116,7 @@ A continuación se detalla por qué cada uno de los 5 CUN es estrictamente neces
 graph LR
     C1["<b>CUN-01</b><br/>Despacho y Salida CD"] -->|Habilita viaje| C2["<b>CUN-02</b><br/>Traslado y Monitoreo"]
     C2 -->|En caso de siniestro| C3["<b>CUN-03</b><br/>Gestión de Incidencias"]
-    C3 -->|Reanuda o liquida| C2
+    C3 -->|Reanuda o cancela| C2
     C2 -->|Llegada a destino| C4["<b>CUN-04</b><br/>Entrega y Recepción"]
     C4 -->|Cierra ciclo y alimenta datos| C5["<b>CUN-05</b><br/>Auditoría y Rendimiento"]
 ```
@@ -132,7 +132,7 @@ graph LR
 * **¿Qué es?** Es el proceso de transporte físico de la carga a lo largo de las carreteras del Perú (hacia los 24 departamentos), durante el cual el sistema transmite telemetría GPS periódica y la Torre de Control supervisa el avance en la grilla operativa en vivo.
 * **¿Por qué debe estar ahí?**
   - **Es el núcleo del negocio de distribución**. Si no existiera este CUN, el sistema no tendría razón de llamarse "Y-Trace" (Yanbal Trace).
-  - Resuelve directamente el dolor principal del Ing. Joao Condorpusa: **la ventana de desconocimiento de 2 horas**. Con el muestreo continuo y el soporte offline (IndexedDB para carreteras sin cobertura celular), Yanbal nunca pierde de vista la carga.
+  - Resuelve directamente el dolor principal del Ing. Joao Condorpusa: **la ventana de desconocimiento de 2 horas**. Con el muestreo continuo y el soporte offline (SQLite (Room) para carreteras sin cobertura celular), Yanbal nunca pierde de vista la carga.
 
 ### CUN-03: Gestión de Incidencias y Contingencias Viales en Ruta
 * **¿Qué es?** Es el protocolo operacional ante cualquier evento adverso en carretera: avería mecánica del camión, bloqueo por protestas sociales, derrumbe/huayco, asalto o fallo del celular del chofer.
@@ -142,7 +142,7 @@ graph LR
   - Permite sustituir dispositivos con un código de recuperación ([[RF011]]) o realizar un cierre forzado justificado en bitácora inmutable ([[RF009]]).
 
 ### CUN-04: Entrega y Recepción de Carga en Punto de Destino
-* **¿Qué es?** Es la formalización de la llegada de la carga a la agencia o punto de distribución regional, donde el encargado local inspecciona los bultos/pallets, valida precintos y emite la conformidad de recepción o el rechazo tipificado, capturando evidencias (coordenadas GPS y fotos).
+* **¿Qué es?** Es la formalización de la llegada de la carga a la agencia o punto de distribución regional, donde el encargado local inspecciona los bultos/pallets, valida precintos y emite la conformidad de recepción o el rechazo tipificado, capturando evidencias (coordenadas GPS y logs).
 * **¿Por qué debe estar ahí?**
   - Todo proceso logístico debe terminar con una **certificación de entrega**.
   - Evita el problema común de "arribo fantasma" (el camión se estaciona afuera pero nadie descarga mercadería).
@@ -170,52 +170,54 @@ Esta es la distinción conceptual que tu evaluador revisará con mayor rigor met
 │ • Nivel: Proceso Organizacional│ • Nivel: Interacción Usuario-Software                           │
 │ • Foco: ¿Qué hace la empresa?  │ • Foco: ¿Qué funciones computacionales ejecuta el sistema?      │
 │ • Independiente de la UI.      │ • Pantallas, clics, formularios, tokens, base de datos.         │
-│ • 5 CUN en el proyecto.        │ • Múltiples CUS derivados de los 34 Requerimientos Funcionales. │
+│ • 5 CUN en el proyecto.        │ • Múltiples CUS derivados de los 29 Requerimientos Funcionales. │
 │ • Notación RUP: Barra diagonal │ • Notación UML Clásica: Óvalos simples sin barra diagonal.      │
 │   en actores y óvalos.         │                                                                 │
 │ • Estereotipos:                │ • Estereotipos:                                                 │
-│   <<business actor>>           │   Actor estándar (Usuario Web, Conductor PWA, ESB)              │
+│   <<business actor>>           │   Actor estándar (Usuario Web, Conductor App Nativa, ESB)              │
 │   <<business use case>>        │   Relaciones: <<include>>, <<extend>>                           │
 └────────────────────────────────┴─────────────────────────────────────────────────────────────────┘
 ```
 
 ### 4.1 ¿Cómo se Mapean los 5 CUN a los Casos de Uso del Sistema (CUS)?
 
-Si en tu siguiente entrega te piden el **Diagrama de Casos de Uso del Sistema (CUS)**, no tienes que inventar nada nuevo: se derivan directamente de los 5 CUN y los 34 Requerimientos Funcionales de la siguiente manera:
+Si en tu siguiente entrega te piden el **Diagrama de Casos de Uso del Sistema (CUS)**, no tienes que inventar nada nuevo: se derivan directamente de los 5 CUN y los 29 Requerimientos Funcionales de la siguiente manera:
 
 ```mermaid
 graph TB
     subgraph CUN_NEGOCIO ["Casos de Uso del Negocio (CUN)"]
         CUN1["CUN-01: Despacho y Salida CD"]
         CUN2["CUN-02: Traslado y Monitoreo"]
-        CUN3["CUN-03: Gestión de Incidencias"]
+        CUN3["CUN-03: Gestión de Contingencias Viales"]
         CUN4["CUN-04: Entrega y Recepción"]
         CUN5["CUN-05: Auditoría y Rendimiento"]
     end
 
     subgraph CUS_SISTEMA ["Casos de Uso del Sistema (CUS de Software)"]
-        CUS_AUTH["CUS-01: Autenticarse en Plataforma Web (RF001-RF006)"]
-        CUS_ACT["CUS-02: Generar y Validar Código de Activación (RF008, RF010)"]
-        CUS_CONS["CUS-03: Consultar Despachos en Andén (RF007)"]
-        CUS_GPS["CUS-04: Transmitir Telemetría GPS en Segundo Plano (RF014)"]
-        CUS_OFF["CUS-05: Almacenar y Sincronizar Datos Offline FIFO (RF021, RF022)"]
-        CUS_GRID["CUS-06: Monitorear Flota en Grilla Operativa con Semaforización (RF024)"]
-        CUS_INC["CUS-07: Reportar y Atender Incidencias Viales y Timeout (RF018, RF019, RF026)"]
-        CUS_FORZ["CUS-08: Ejecutar Cierre Forzado Administrativo (RF009)"]
+        CUS_AUTH["CUS-01: Autenticarse y Gestionar Accesos Web (RF001-RF006)"]
+        CUS_CONS["CUS-02: Consultar Despachos Disponibles para Seguimiento (RF007)"]
+        CUS_ACT["CUS-03: Habilitar y Activar Operación Móvil (RF008, RF010, RF027)"]
+        CUS_HRUTA["CUS-04: Consultar Hoja de Ruta y Destino (RF011, RF012)"]
+        CUS_GPS["CUS-05: Transmitir Telemetría GPS en Segundo Plano (RF013, RF014)"]
+        CUS_OFF["CUS-06: Almacenar y Sincronizar Datos Offline FIFO (RF019, RF020, RF021)"]
+        CUS_GRID["CUS-07: Monitorear Flota en Grilla Operativa con Semaforización (RF022)"]
+        CUS_CANCEL["CUS-08: Ejecutar Cancelación Forzada de Seguimiento (RF009, RF028)"]
         CUS_ENT["CUS-09: Confirmar Entrega / Rechazo de Carga (RF015-RF017)"]
-        CUS_TIMELINE["CUS-10: Consultar Timeline y Evidencias de Viaje (RF025, RF027)"]
-        CUS_KPI["CUS-11: Consultar Dashboard de KPIs y Aislamiento Multitransportista (RF028, RF034)"]
-        CUS_ESB["CUS-12: Publicar Eventos al Bus Corporativo (RF029-RF031)"]
+        CUS_CIERRE["CUS-10: Finalizar Despacho y Cerrar Sesión Móvil (RF018, RF028)"]
+        CUS_TIMELINE["CUS-11: Consultar Trazabilidad y Resumen del Despacho (RF023)"]
+        CUS_KPI["CUS-12: Consultar Dashboard de KPIs y Análisis por Transportista (RF024)"]
+        CUS_ESB["CUS-13: Publicar Eventos y Resumen al Bus Corporativo (RF025, RF026)"]
     end
 
     CUN1 -.-> CUS_CONS
     CUN1 -.-> CUS_ACT
+    CUN1 -.-> CUS_HRUTA
     CUN2 -.-> CUS_GPS
     CUN2 -.-> CUS_OFF
     CUN2 -.-> CUS_GRID
-    CUN3 -.-> CUS_INC
-    CUN3 -.-> CUS_FORZ
+    CUN3 -.-> CUS_CANCEL
     CUN4 -.-> CUS_ENT
+    CUN4 -.-> CUS_CIERRE
     CUN5 -.-> CUS_TIMELINE
     CUN5 -.-> CUS_KPI
     CUN2 -.-> CUS_ESB
@@ -259,9 +261,9 @@ La delimitación adoptada en el proyecto es impecable por las siguientes razones
 
 A continuación, las preguntas más frecuentes de los evaluadores y la respuesta exacta que debes dar:
 
-### Pregunta 1: "¿Por qué en tu diagrama de casos de uso solo hay 5 casos de uso si tu sistema tiene más de 30 requerimientos?"
+### Pregunta 1: "¿Por qué en tu diagrama de casos de uso solo hay 5 casos de uso si tu sistema tiene casi 30 requerimientos?"
 > **Respuesta:**  
-> *"Profesor(a), este diagrama representa el **Modelo de Casos de Uso del Negocio (CUN)** bajo la metodología RUP (Sesión 4). Los CUN representan macro-procesos operacionales de principio a fin de la empresa, no funciones de software individuales. Convertir cada requerimiento funcional en un caso de uso del negocio sería un error metodológico conocido como 'CUN botón' o 'CUN pantalla'. Los 34 requerimientos funcionales del sistema dan soporte técnico directo a estos 5 CUN y se agrupan en Casos de Uso del Sistema (CUS) para la capa de software."*
+> *"Profesor(a), este diagrama representa el **Modelo de Casos de Uso del Negocio (CUN)** bajo la metodología RUP (Sesión 4). Los CUN representan macro-procesos operacionales de principio a fin de la empresa, no funciones de software individuales. Convertir cada requerimiento funcional en un caso de uso del negocio sería un error metodológico conocido como 'CUN botón' o 'CUN pantalla'. Los 29 requerimientos funcionales del sistema dan soporte técnico directo a estos 5 CUN y se agrupan en Casos de Uso del Sistema (CUS) para la capa de software."*
 
 ### Pregunta 2: "¿Qué significan los muñequitos con la barra inclinada y los óvalos tachados?"
 > **Respuesta:**  
@@ -277,7 +279,7 @@ A continuación, las preguntas más frecuentes de los evaluadores y la respuesta
 
 1. **Tu diagrama en `detalles/Diagrama de Casos de Uso del Negocio (CUN)` está metodológicamente perfecto y completo para la Sesión 4 / Modelo del Negocio.**
 2. **Los 5 Casos de Uso del Negocio definidos son exactamente los más importantes y suficientes** para el alcance de distribución de Yanbal:
-   - Cubren el 100% del ciclo de vida del despacho: Salida $\rightarrow$ Tránsito $\rightarrow$ Incidencia $\rightarrow$ Llegada $\rightarrow$ Auditoría.
-   - Dan cobertura y trazabilidad completa a los 34 Requerimientos Funcionales activos del sistema (RF001 a RF034).
+   - Cubren el 100% del ciclo de vida del despacho: Salida $\rightarrow$ Tránsito $\rightarrow$ Contingencia Vial $\rightarrow$ Llegada $\rightarrow$ Auditoría.
+   - Dan cobertura y trazabilidad completa a los 28 Requerimientos Funcionales activos del sistema (RF001 a RF028).
    - Atacan el reto operacional número 1 de Yanbal: reducir la latencia de seguimiento de 2 horas a $\le$ 30 minutos.
 3. **No debes añadir más óvalos al CUN ni mezclar pantallas de software en él.** En las siguientes semanas, lo que desarrollarás a partir de esto es el **Diagrama de Casos de Uso del Sistema (CUS)**, para el cual ya tienes todo el mapeo estructurado en la sección 4 de este informe.

@@ -14,7 +14,7 @@
 
 ## 1. Configuración del Proyecto y Diagrama en Visual Paradigm
 
-Para reproducir fielmente el modelo de Casos de Uso del Negocio estructurado para **Y-Trace** en **Visual Paradigm** (tal como se ilustra en las diapositivas 5, 7 y 8 de la clase), sigue los siguientes pasos:
+Para reproducir fielmente el modelo de Casos de Uso del Negocio estructurado para **Y-Trace** en **Visual Paradigm** (conforme a los lineamientos metodológicos de la Sesión 4), sigue los siguientes pasos:
 
 ### Paso 1: Creación del Diagrama
 1. Abre **Visual Paradigm Community Edition**.
@@ -22,7 +22,7 @@ Para reproducir fielmente el modelo de Casos de Uso del Negocio estructurado par
 3. En el buscador de diagramas, escribe `Use Case Diagram` y haz clic en **Next**.
 4. Nombra el diagrama formalmente como:  
    `CUN_Distribucion_B2B_Yanbal_YTrace`
-5. (Opcional) En el panel izquierdo (*Diagram Navigator* / *Model Explorer*), crea un paquete organizador llamado `Modelo del Negocio (CUN)` y arrastra el diagrama dentro.
+5. (Opcional) En el panel izquierdo (*Diagram Navigator* / *Model Explorer*), crea un paquete organizador llamado `Modelo del Negocio (CUN)` y ubica el diagrama dentro.
 
 ---
 
@@ -48,29 +48,29 @@ En la metodología RUP, el actor del negocio se distingue del actor de software 
 ## 3. Modelado de los Casos de Uso del Negocio (`<<business use case>>`)
 
 1. Selecciona la herramienta **Use Case** (óvalo) en la barra de herramientas.
-2. Dibuja y nombra los **5 procesos del negocio**:
+2. Dibuja y nombra los **5 procesos del negocio oficiales**:
    - `CUN-01: Despacho y Salida de Carga en Centro de Distribución`
-   - `CUN-02: Traslado Interprovincial y Monitoreo de Carga en Tránsito`
-   - `CUN-03: Gestión de Incidencias y Contingencias Viales en Ruta`
+   - `CUN-02: Traslado y Monitoreo de Carga en Tránsito`
+   - `CUN-03: Cancelación Forzada del Seguimiento`
    - `CUN-04: Entrega y Recepción de Carga en Punto de Destino`
-   - `CUN-05: Auditoría de Trazabilidad y Rendimiento de Distribución`
+   - `CUN-05: Consulta de Trazabilidad y Análisis de Rendimiento`
 3. **Aplicación del Estereotipo RUP de Negocio:**
    - Haz clic derecho sobre el óvalo $\rightarrow$ selecciona **Stereotypes** $\rightarrow$ **Edit Stereotypes...**
    - Escribe o selecciona: `business use case`.
-   - En Visual Paradigm, esto colocará el estereotipo `<<business use case>>` sobre el óvalo y trazará una **línea diagonal interior** que cruza el óvalo (notación oficial RUP mostrada en la diapositiva 5).
+   - En Visual Paradigm, esto colocará el estereotipo `<<business use case>>` sobre el óvalo y trazará una **línea diagonal interior** que cruza el óvalo (notación oficial RUP).
 
 ---
 
 ## 4. Trazado de Relaciones de Asociación
 
-En este nivel macro del negocio, se utilizan exclusivamente líneas de **Asociación** (`Association` sólida sin flechas direccionales ni saturación de includes/extends, siguiendo exactamente el ejemplo de la diapositiva 7):
+En este nivel macro del negocio, se utilizan exclusivamente líneas de **Asociación** (`Association` sólida sin flechas direccionales ni inclusiones/extensiones de software):
 
 1. Selecciona la herramienta **Association** en el *Toolbar*.
-2. Une cada Actor con sus Casos de Uso del Negocio según la siguiente matriz:
+2. Une cada Actor con sus Casos de Uso del Negocio según la siguiente matriz oficial:
 
 | Actor del Negocio | Conectar con (Asociación Sólida): |
 | :--- | :--- |
-| **Supervisor de Distribución** | $\rightarrow$ `CUN-01`, `CUN-02`, `CUN-03`, `CUN-04` |
+| **Supervisor de Distribución** | $\rightarrow$ `CUN-01`, `CUN-02`, `CUN-03` |
 | **Socio Logístico / Conductor** | $\rightarrow$ `CUN-01`, `CUN-02`, `CUN-03`, `CUN-04` |
 | **Punto de Destino / Agencia Receptora** | $\rightarrow$ `CUN-04` |
 | **Jefe de Distribución** | $\rightarrow$ `CUN-05` |
@@ -93,7 +93,7 @@ Para una presentación formal de Arquitectura Empresarial:
 
 ## 6. Verificación de Árbol en *Diagram Navigator*
 
-En el panel lateral izquierdo (*Diagram Navigator* / *Model Explorer*), la jerarquía debe lucir organizada idéntica a la diapositiva 7 de la clase:
+En el panel lateral izquierdo (*Diagram Navigator* / *Model Explorer*), la jerarquía debe lucir organizada de la siguiente forma:
 
 ```
 📁 CUN_Distribucion_B2B_Yanbal_YTrace
@@ -103,16 +103,16 @@ En el panel lateral izquierdo (*Diagram Navigator* / *Model Explorer*), la jerar
 ├── 👤 Jefe de Distribución
 ├── 👤 Operador SAC / Soporte Logístico
 ├── 🔵 CUN-01: Despacho y Salida de Carga en Centro de Distribución
-├── 🔵 CUN-02: Traslado Interprovincial y Monitoreo de Carga en Tránsito
-├── 🔵 CUN-03: Gestión de Incidencias y Contingencias Viales en Ruta
+├── 🔵 CUN-02: Traslado y Monitoreo de Carga en Tránsito
+├── 🔵 CUN-03: Cancelación Forzada del Seguimiento
 ├── 🔵 CUN-04: Entrega y Recepción de Carga en Punto de Destino
-└── 🔵 CUN-05: Auditoría de Trazabilidad y Rendimiento de Distribución
+└── 🔵 CUN-05: Consulta de Trazabilidad y Análisis de Rendimiento
 ```
 
 ---
 
-## 7. Exportación para Entrega de Laboratorio
+## 7. Exportación para Entrega
 
 1. Menú **Project** $\rightarrow$ **Export** $\rightarrow$ **Active Diagram as Image...**
-2. Formato recomendado: **PNG** o **SVG** con resolución de 300 DPI para máxima nitidez en el informe académico.
-3. Copia la imagen exportada a la carpeta de tu entrega o insértala directamente en tu reporte de Arquitectura Empresarial.
+2. Formato recomendado: **PNG** o **SVG** con resolución de 300 DPI para máxima nitidez en el informe de Arquitectura Empresarial.
+3. Copia la imagen exportada a la carpeta correspondiente de tu informe.

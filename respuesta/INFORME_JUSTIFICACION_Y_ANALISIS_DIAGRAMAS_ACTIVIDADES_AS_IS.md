@@ -29,7 +29,7 @@ Por ende, **se conservan ambos diagramas**, cumpliendo propósitos complementari
    - **Diagrama 01 (Problema Crítico):** Realiza un *zoom* sobre el **desfase promedio de aproximadamente 2 horas en la actualización del tracking actual**, modelando cómo esa brecha temporal genera un margen de desconocimiento que dificulta responder consultas y reclamos en Servicio al Cliente (SAC).
    - **Diagrama 02 (Flujo General):** Modela el proceso de negocio de distribución que **realmente ocurre hoy en la empresa**, abarcando la preparación en almacén, despacho, transporte (24 departamentos, modalidades terrestre, bimodal y aérea), entrega y el **subflujo formal de logística inversa y reposición** ante siniestros o entregas fallidas.
 2. **Frontera Metodológica Estricta (AS-IS vs. TO-BE):**
-   - Los diagramas AS-IS representan **lo que ocurre hoy en el negocio**. No contienen funcionalidades nuevas de la solución de software futura Y-Trace (tales como código de activación, PWA, GPS de la solución ni sincronización offline en `IndexedDB`). Dichos elementos corresponden exclusivamente al modelo **TO-BE** del sistema.
+   - Los diagramas AS-IS representan **lo que ocurre hoy en el negocio**. No contienen funcionalidades nuevas de la solución de software futura Y-Trace (tales como código de activación, App Nativa, GPS de la solución ni sincronización offline en `SQLite (Room)`). Dichos elementos corresponden exclusivamente al modelo **TO-BE** del sistema.
    - **No se elimina una actividad del AS-IS solo porque no exista como requerimiento funcional.** Los 34 Requerimientos Funcionales (RF) describen lo que construirá el equipo de software; el AS-IS describe el proceso operativo actual tal como funciona en la empresa.
 3. **El Problema Central del Negocio:**
    - Yanbal **sí tiene tracking** (opera con plataformas como Drivin y ENSDY); el problema radica en que la información **presenta un desfase promedio de 2 horas en actualizarse hacia los canales de consulta**.
@@ -180,9 +180,9 @@ Para no confundir etapas ni tratarlos como equivalentes en un mismo nodo, los si
 
 Los diagramas AS-IS justifican la necesidad del software sin mezclar ambos niveles:
 - Las **demoras en conocer el avance y contingencias en ruta** justifican que el TO-BE capture telemetría periódica con soporte offline.
-- El **desfase promedio de 2 horas en el tracking actual** justifica que el TO-BE publique eventos al Bus corporativo en un tiempo $\le$ 30 minutos (**RF029**).
+- El **desfase promedio de 2 horas en el tracking actual** justifica que el TO-BE publique eventos al Bus corporativo en un tiempo $\le$ 30 minutos (**RF027**).
 - El **proceso de incidencias y logística inversa** demuestra la importancia de contar con un canal estandarizado de reportes tipificados.
-- La **falta de confirmación inmediata en destino** justifica incorporar confirmación consciente con evidencias fotográficas.
+- La **falta de confirmación inmediata en destino** justifica incorporar confirmación consciente con evidencias de estado.
 - La **dificultad para responder con certeza en SAC** justifica un buscador indexado de timeline histórico que recupere la traza en $<$ 2 segundos.
 
 ---
@@ -201,11 +201,11 @@ A continuación se presentan las respuestas maestras para el comité evaluador:
 ### Pregunta 3: "¿Por qué el diagrama general incluye una rama hacia el almacén?"
 > *"Porque en la entrevista oficial (minutos 20:18 a 21:35), el Ing. Joao Condorpusa explicó detalladamente el procedimiento formal ante siniestros, averías o entregas fallidas: el socio logístico registra la incidencia, activa el proceso de logística inversa retornando el pedido al almacén de CD Lurín, donde se evalúa por calidad y seguridad patrimonial para activar un seguro o retornar productos, procediendo de inmediato a una nueva preparación y reposición para no perjudicar la atención del destino"*.
 
-### Pregunta 4: "¿Por qué no incluyeron la aplicación PWA, el código de activación ni el GPS en los diagramas de actividades?"
-> *"Porque este entregable corresponde al modelado **AS-IS (el proceso actual del negocio)**. La PWA, el código efímero de 8 caracteres y el muestreo GPS forman parte de los requerimientos funcionales de la solución de software que vamos a construir (**TO-BE**). Mezclar funcionalidades de la solución futura dentro del proceso de negocio actual violaría las buenas prácticas de la arquitectura empresarial y de UML 2.5"*.
+### Pregunta 4: "¿Por qué no incluyeron la aplicación App Nativa, el código de activación ni el GPS en los diagramas de actividades?"
+> *"Porque este entregable corresponde al modelado **AS-IS (el proceso actual del negocio)**. La App Nativa, el código efímero de 8 caracteres y el muestreo GPS forman parte de los requerimientos funcionales de la solución de software que vamos a construir (**TO-BE**). Mezclar funcionalidades de la solución futura dentro del proceso de negocio actual violaría las buenas prácticas de la arquitectura empresarial y de UML 2.5"*.
 
 ### Pregunta 5: "¿De dónde obtuvieron el dato del desfase de 2 horas y la meta de 30 minutos?"
-> *"Proviene de forma literal y textual de los minutos 23:41 y 29:50 de la entrevista al **Ing. Joao Condorpusa Mendoza**, quien declaró que el sistema actual de tracking tarda en promedio 2 horas en reflejar el estatus de un pedido despachado o entregado, y fijó como meta de negocio conseguir una comunicación con un desfase máximo permisible de 30 minutos, el cual formalizamos en nuestro requerimiento **RF029**"*.
+> *"Proviene de forma literal y textual de los minutos 23:41 y 29:50 de la entrevista al **Ing. Joao Condorpusa Mendoza**, quien declaró que el sistema actual de tracking tarda en promedio 2 horas en reflejar el estatus de un pedido despachado o entregado, y fijó como meta de negocio conseguir una comunicación con un desfase máximo permisible de 30 minutos, el cual formalizamos en nuestro requerimiento **RF027**"*.
 
 ---
 

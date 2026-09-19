@@ -24,7 +24,7 @@ En la entrevista en profundidad, el **Ing. Joao Condorpusa Mendoza** explicó co
 
 > [!IMPORTANT]
 > **Rigor Metodológico del Modelo AS-IS:**  
-> Este diagrama representa **exclusivamente el proceso actual del negocio relacionado con el problema de trazabilidad**. No incluye funcionalidades futuras de la solución Y-Trace (como código de activación, PWA, GPS de la solución ni sincronización offline), las cuales corresponden estrictamente a la arquitectura **TO-BE** del sistema.
+> Este diagrama representa **exclusivamente el proceso actual del negocio relacionado con el problema de trazabilidad**. No incluye funcionalidades futuras de la solución Y-Trace (como código de activación, App Nativa, GPS de la solución ni sincronización offline), las cuales corresponden estrictamente a la arquitectura **TO-BE** del sistema.
 
 ---
 
@@ -34,12 +34,12 @@ Para reflejar con nitidez cada responsabilidad operativa y no confundir la recep
 
 | Carril (*Swimlane*) | Actor / Entidad Responsable | Rol en el Proceso AS-IS Actual |
 | :--- | :--- | :--- |
-| **1. Supervisor CD (Lurín)** | Responsable de Despacho (Yanbal) | Prepara y consolida la carga física, emite la documentación de despacho y entrega la custodia al transportista. |
-| **2. Conductor / Socio Logístico** | Transportista Asociado en Ruta | Conduce hacia el destino (lead times de 24h a 7 días); realiza la entrega física y gestiona incidencias con su base. |
-| **3. Punto de Destino / Receptor Autorizado** | Agencia o Receptor en Destino | Recepciona bultos, verifica contenido físico y registra la conformidad de recepción. |
+| **1. Supervisor de Distribución** | Responsable de Despacho (Yanbal) | Prepara y consolida la carga física, emite la documentación de despacho y entrega la custodia al transportista. |
+| **2. Socio Logístico / Conductor** | Transportista Asociado en Ruta | Conduce hacia el destino (lead times de 24h a 7 días); realiza la entrega física y gestiona incidencias con su base. |
+| **3. Punto de Destino / Agencia Receptora** | Agencia o Receptor en Destino | Recepciona bultos, verifica contenido físico y registra la conformidad de recepción. |
 | **4. Sistema de Tracking y Consulta** | Plataforma de Tracking Actual | Registra los eventos logísticos pero presenta un desfase promedio de 2 horas en propagar la actualización de estados. |
 | **5. Solicitante / Destinatario** | Encargado o Consultora Solicitante | Espera la confirmación; ante la falta de actualización en el sistema en la ventana prevista, consulta a SAC. |
-| **6. Servicio al Cliente (SAC)** | Operador de Atención al Cliente | Atiende la consulta o reclamo; al consultar el sistema, observa que el estado aún no refleja la entrega debido al desfase. |
+| **6. Operador SAC / Soporte Logístico** | Personal de Atención y Soporte | Atiende la consulta o reclamo; al consultar el sistema, observa que el estado aún no refleja la entrega debido al desfase. |
 
 ---
 
@@ -57,12 +57,12 @@ flowchart TD
     %% Nodos Iniciales
     INI(( )):::inicioFin --> A1["Consolidar carga física en andén de CD Lurín"]:::normal
     
-    subgraph CD_LURIN ["1. Supervisor CD (Lurín)"]
+    subgraph CD_LURIN ["1. Supervisor de Distribución"]
         A1 --> A2["Emitir documentación de despacho"]:::normal
         A2 --> A3["Entregar custodia de la carga al conductor"]:::normal
     end
 
-    subgraph CONDUCTOR ["2. Conductor / Socio Logístico en Tránsito"]
+    subgraph CONDUCTOR ["2. Socio Logístico / Conductor"]
         A3 --> B1["Iniciar traslado hacia el punto de destino"]:::normal
         B1 --> B2["Traslado en carretera durante 24h a 7 días según destino"]:::normal
         B2 --> DEC_INC{"¿Ocurre avería mecánica<br/>o siniestro vial en ruta?"}:::decision
@@ -73,7 +73,7 @@ flowchart TD
         B4 --> B5["Descargar paquetes y hacer entrega física de la carga"]:::normal
     end
 
-    subgraph DESTINO ["3. Punto de Destino / Receptor Autorizado"]
+    subgraph DESTINO ["3. Punto de Destino / Agencia Receptora"]
         B5 --> C1["Recibir bultos y verificar contenido"]:::normal
         C1 --> C2["Registrar conformidad de recepción"]:::normal
     end
@@ -89,7 +89,7 @@ flowchart TD
         E1 --> E2["Incertidumbre: Solicitante consulta o reclama a SAC"]:::cuelloBotella
     end
 
-    subgraph SAC ["6. Servicio al Cliente (SAC)"]
+    subgraph SAC ["6. Operador SAC / Soporte Logístico"]
         E2 --> F1["Recibir consulta o reclamo por falta de información actualizada"]:::normal
         F1 --> F2["Consultar estado del pedido en el sistema de tracking"]:::normal
         F2 --> F3["El sistema todavía muestra información desactualizada (EN RUTA)"]:::cuelloBotella
@@ -132,13 +132,13 @@ skinparam partition {
     FontSize 12
 }
 
-|#EFF6FF|Supervisor CD (Lurín)|
+|#EFF6FF|Supervisor de Distribución|
 start
 :Consolidar carga física en andén de CD Lurín;
 :Emitir documentación de despacho;
 :Entregar custodia de la carga al conductor;
 
-|#F1F5F9|Conductor / Socio Logístico|
+|#F1F5F9|Socio Logístico / Conductor|
 :Iniciar traslado hacia el destino;
 :Traslado en carretera durante 24h a 7 días;
 note right
@@ -156,7 +156,7 @@ endif
 :Arribar al punto de destino departamental;
 :Descargar paquetes y hacer entrega física de la carga;
 
-|#ECFDF5|Punto de Destino / Receptor Autorizado|
+|#ECFDF5|Punto de Destino / Agencia Receptora|
 :Recibir bultos y verificar contenido;
 :Registrar conformidad de recepción;
 
@@ -173,7 +173,7 @@ end note
 :Transcurre el tiempo estimado de entrega sin confirmación actualizada;
 :Incertidumbre: Consulta o reclamo a Servicio al Cliente (SAC); <<#FEE2E2>>
 
-|#F5F3FF|Servicio al Cliente (SAC)|
+|#F5F3FF|Operador SAC / Soporte Logístico|
 :Recibir consulta o reclamo por falta de información actualizada;
 :Consultar estado del pedido en sistema de tracking;
 :El sistema de tracking todavía muestra información desactualizada; <<#FEE2E2>>
@@ -208,5 +208,5 @@ Este análisis examina de forma objetiva las ineficiencias operativas del negoci
 ## 6. Conclusión Metodológica
 
 1. **Enfoque Fáctico:** Modela estrictamente la secuencia de despacho $\rightarrow$ traslado $\rightarrow$ entrega $\rightarrow$ registro $\rightarrow$ desfase de 2 horas $\rightarrow$ consulta a SAC $\rightarrow$ dificultad de respuesta $\rightarrow$ actualización posterior.
-2. **Separación de Responsabilidades:** Mantiene claramente diferenciados los carriles de `Punto de Destino / Receptor Autorizado` (recepción física) y `Solicitante / Destinatario` (consulta por falta de actualización).
+2. **Separación de Responsabilidades:** Mantiene claramente diferenciados los carriles de `Punto de Destino / Agencia Receptora` (recepción física) y `Solicitante / Destinatario` (consulta por falta de actualización), junto con `Operador SAC / Soporte Logístico` (atención de reclamos).
 3. **Pureza del AS-IS:** No incorpora componentes ni requerimientos de la solución futura Y-Trace, conservando el valor descriptivo del proceso empresarial actual.

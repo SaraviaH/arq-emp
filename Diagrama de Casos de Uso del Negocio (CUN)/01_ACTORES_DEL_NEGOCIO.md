@@ -7,21 +7,20 @@
 >  
 > 🔗 **Documentos Relacionados:**  
 > - [[00_INDICE_Y_MODELO_GENERAL_CUN]] — Modelo general y diagrama macro  
-> - [[informacion/08 - Actores/Actores y responsabilidades]] — Fichas corporativas de actores Yanbal  
-> - [[04_RESUMEN_OPERATIVO_Y_TRAZABILIDAD_REQUERIMIENTOS]] — Resumen operativo extremo a extremo  
+> - [[07_MATRIZ_TRAZABILIDAD_CUN_VS_RF]] — Matriz de trazabilidad con requerimientos de software  
 
 ---
 
 ## 1. Definición y Clasificación de Actores del Negocio en RUP
 
-En el marco de **Rational Unified Process (RUP)** y la práctica docente de la **Universidad Tecnológica del Perú (Sesión 4)**, los **Actores del Negocio (`<<business actor>>`)** representan roles externos a la organización (clientes, contratistas o destinatarios) o roles/áreas funcionales de la empresa que intervienen en los procesos del negocio ejecutando tareas o recibiendo sus resultados de valor.
+En el marco de **Rational Unified Process (RUP)** y la práctica docente de **Arquitectura Empresarial (Sesión 4 UTP)**, los **Actores del Negocio (`<<business actor>>`)** representan roles externos a la organización (socios transportistas o agencias destinatarias) o roles operativos internos de la empresa que intervienen en los procesos del negocio ejecutando tareas o recibiendo sus resultados de valor.
 
-> **Nota Aclaratoria:** El **Administrador Principal** es un rol estrictamente informático y del sistema (gestión de usuarios web y permisos), por lo que **no constituye un Actor del Negocio logístico** (`<<business actor>>`) ni participa operativamente en los Casos de Uso del Negocio (CUN).
+> **Nota Aclaratoria:** El **Administrador Principal** es un rol estrictamente informático y de administración del sistema (gestión de cuentas web y perfiles RBAC), por lo que **no constituye un Actor del Negocio logístico** (`<<business actor>>`) ni participa directamente en los flujos de los Casos de Uso del Negocio (CUN).
 
 ```mermaid
 graph TD
     subgraph CLASIFICACION_ACTORES ["Gobernanza de Actores del Negocio"]
-        EXT["<b>1. Actores Externos del Negocio</b><br/>(Interactúan fuera de las fronteras jerárquicas directas de Yanbal)"]
+        EXT["<b>1. Actores Externos del Negocio</b><br/>(Interactúan con el proceso desde fuera de la jerarquía directa de Yanbal)"]
         INT["<b>2. Actores Internos del Negocio</b><br/>(Roles operativos y tácticos de la organización Yanbal)"]
     end
 
@@ -46,40 +45,41 @@ graph TD
 * **Objetivo de Negocio:**
   Recibir la carga en andén, trasladarla cumpliendo los estándares de seguridad vial y los tiempos de entrega pactados (*Lead Time*), y formalizar la entrega en el punto de distribución.
 * **Responsabilidades en el Proceso:**
-  1. Recibir físicamente los pallets o bultos precintados en el CD Lurín y validar su correspondencia con la guía de remisión.
-  2. Activar la unidad en la aplicación PWA Android mediante el Código de Activación efímero entregado por el Supervisor.
-  3. Ejecutar el traslado interprovincial portando el dispositivo móvil que emite telemetría satelital periódica en ruta.
-  4. Reportar de inmediato siniestros viales, desperfectos mecánicos o bloqueos de carreteras mediante el canal operativo móvil.
-  5. Entregar la carga completa en el punto de destino, recabar la conformidad del receptor y capturar la evidencia geoespacial y fotográfica complementaria.
+  1. Recibir físicamente los pallets o bultos precintados en el CD Lurín y validar su correspondencia con la guía de remisión física.
+  2. Activar la unidad en la App Nativa Android mediante el Código de Activación efímero de 8 caracteres entregado por el Supervisor.
+  3. Ejecutar el traslado interprovincial portando el dispositivo móvil que emite telemetría satelital periódica en segundo plano.
+  4. Comunicar de inmediato contingencias viales, desperfectos mecánicos o bloqueos en carretera a la Torre de Control mediante telefonía o canales operativos externos (fuera de Y-Trace).
+  5. Presentar la unidad en el punto de destino para la descarga e inspección física, y registrar la confirmación manual consciente (`ENTREGADO` o `NO_ENTREGADO` con causal tipificada) y el cierre formal (`FINALIZADO`) en la App Nativa Android mediante datos estructurados (GPS y timestamp), sin capturar fotografías ni POD multimedia.
 * **Información que Recibe:**
   - Código Único de Activación (8 caracteres).
-  - Datos operativos del despacho: código de viaje, punto de destino, dirección y observaciones de ruta.
+  - Datos operativos del despacho: código de viaje, punto de destino y observaciones de ruta.
 * **Información que Genera:**
   - Confirmación de inicio de despacho (`EN_RUTA`).
-  - Muestreo periódico de telemetría GPS en ruta.
-  - Reportes de siniestros viales y contingencias en carretera con evidencias.
-  - Registro de llegada (`EN_DESTINO`) y confirmación formal de entrega (`ENTREGADO` o `NO_ENTREGADO` con motivo).
+  - Muestreo periódico de telemetría GPS en segundo plano durante el traslado.
+  - Registro de llegada acreditado por geocerca (`EN_DESTINO`).
+  - Confirmación manual de entrega (`ENTREGADO` o `NO_ENTREGADO` con motivo tipificado) y solicitud de cierre (`FINALIZADO`).
 
 ---
 
 #### ACT-NEG-02: Punto de Destino / Agencia Receptora
 * **Estereotipo RUP:** `<<business actor>>`
-* **Tipo:** Externo / Destinatario B2B (Agencia comercial, almacén intermedio o centro de distribución secundario).
+* **Tipo:** Externo / Destinatario B2B (Agencia comercial, almacén intermedio o centro secundario departamental).
 * **Descripción Institucional:**
-  Representa al encargado de recepción de mercadería en las sedes regionales o puntos de distribución departamentales de Yanbal ubicados a lo largo de los 24 departamentos del Perú.
+  Representa al encargado de recepción de mercadería en las sedes regionales o puntos de distribución de Yanbal ubicados a lo largo del territorio nacional.
 * **Objetivo de Negocio:**
-  Recepcionar formalmente la carga consolidada, verificar su integridad física exterior y dar conformidad de recepción para permitir el abastecimiento regional.
+  Recepcionar formalmente la carga consolidada, verificar su integridad física exterior y otorgar la conformidad física de recepción para permitir el abastecimiento regional.
 * **Responsabilidades en el Proceso:**
-  1. Recibir al conductor del socio logístico a su arribo a las instalaciones de la agencia o almacén.
+  1. Recibir físicamente al conductor del socio logístico a su arribo a las instalaciones de la agencia o almacén.
   2. Realizar la inspección visual exterior de bultos, precintos de seguridad y pallets.
-  3. Validar las cantidades declaradas en los manifiestos de transporte.
-  4. Otorgar la conformidad de recepción al conductor o emitir las observaciones y causales formales de rechazo en caso de anomalías severas o arribo fuera de horario.
+  3. Validar las cantidades declaradas en los manifiestos físicos de transporte.
+  4. Otorgar la conformidad física de recepción suscribiendo con firma y sello la guía de remisión física, o emitir las observaciones y causales formales de rechazo físico en caso de anomalías severas o arribo fuera de horario.
+  > [!NOTE]
+  > El Punto de Destino participa exclusivamente en la recepción física e inspección de la carga; no interactúa directamente con el software Y-Trace ni registra la entrega en el sistema. El registro en la aplicación móvil es efectuado por el Conductor conforme al requerimiento oficial RF016.
 * **Información que Recibe:**
-  - Carga consolidada y bultos rotulados.
-  - Manifiesto físico / electrónico de entrega.
+  - Carga física consolidada y bultos rotulados.
+  - Manifiesto físico / guía de remisión física de transporte.
 * **Información que Genera:**
-  - Dictamen de conformidad de entrega física (o rechazo tipificado).
-  - Firma/sello en comprobante de recepción.
+  - Dictamen de conformidad física (o rechazo tipificado) suscrito con sello y firma física en comprobante de recepción.
 
 ---
 
@@ -91,22 +91,20 @@ graph TD
 * **Descripción Institucional:**
   Colaborador interno de Yanbal Perú encargado del control diario de las operaciones de salida y monitoreo de la flota desde la Torre de Control Logístico.
 * **Objetivo de Negocio:**
-  Garantizar el despacho fluido de la carga desde el andén de Lurín, mantener visibilidad permanente del convoy en carretera y brindar soporte inmediato ante incidencias.
+  Garantizar el despacho fluido de la carga desde el andén de Lurín, mantener visibilidad permanente de los vehículos en carretera y ejecutar la cancelación forzada del seguimiento cuando una contingencia insalvable lo amerite.
 * **Responsabilidades en el Proceso:**
-  1. Inspeccionar en andén los despachos consolidados y puestos a disposición por el WMS SPY y TMS Driving.
-  2. Generar el Código Único de Activación efímero y realizar el traspaso formal de custodia al conductor del transportista.
-  3. Supervisar en tiempo real la traza satelital y el estado de la flota sobre el mapa cartográfico interactivo.
-  4. Recibir y gestionar alertas sonoras y visuales por contingencias viales o demoras excesivas en destino (ventana de 60 min).
-  5. Coordinar el auxilio vial o desvío de ruta con los socios logísticos y activar la contingencia de recuperación de dispositivo si un móvil se avería.
-  6. Autorizar cierres forzados administrativos en bitácora inmutable en casos de siniestro total o fuerza mayor comprobada.
+  1. Inspeccionar en andén los despachos consolidados puestos a disposición para seguimiento por los sistemas corporativos (SPY/Driving).
+  2. Generar el Código Único de Activación efímero de 8 caracteres (registrando el hito interno de control previo) y transferir formalmente la custodia física de la carga al conductor.
+  3. Supervisar en tiempo real el avance geográfico, estado y tiempos de ciclo de la flota en la grilla operativa interactiva de la Torre de Control interna de Yanbal.
+  4. Recibir comunicaciones telefónicas externas del conductor o base de transporte ante contingencias viales ocurridas en carretera.
+  5. Evaluar la viabilidad del viaje y, si la contingencia imposibilita de forma definitiva continuar el traslado, ejecutar la Cancelación Forzada del Seguimiento en la plataforma Web (`RF009`), seleccionando obligatoriamente la causal tipificada y registrando la justificación en la bitácora inmutable (`RF006`).
 * **Información que Recibe:**
-  - Despachos preparados listos para seguimiento (vía Bus / SPY / Driving).
-  - Telemetría GPS en tiempo real de los vehículos en ruta.
-  - Alertas inmediatas de incidencias viales y notificaciones de ventana vencida en destino.
+  - Despachos preparados disponibles para seguimiento puestos a disposición en andén.
+  - Telemetría GPS periódica transmitida por los vehículos en ruta.
+  - Comunicaciones telefónicas externas sobre contingencias viales en carretera.
 * **Información que Genera:**
-  - Código Único de Activación de 8 caracteres y registro del hito de control previo.
-  - Códigos de recuperación para sustitución controlada de dispositivos en ruta.
-  - Resoluciones de contingencias y cierres forzados justificados en bitácora.
+  - Código Único de Activación de 8 caracteres y registro del hito interno de control previo.
+  - Ejecución de Cancelación Forzada del Seguimiento con causal tipificada y justificación auditada en bitácora inmutable.
 
 ---
 
@@ -114,20 +112,20 @@ graph TD
 * **Estereotipo RUP:** `<<business actor>>`
 * **Tipo:** Interno (Nivel Táctico / Estratégico de Supply Chain).
 * **Descripción Institucional:**
-  Máximo responsable del área de Distribución y Transporte de Yanbal Perú (encarnado en el caso de estudio por el Ing. Joao Condorpusa Mendoza).
+  Máximo responsable del área de Distribución y Transporte de Yanbal Perú.
 * **Objetivo de Negocio:**
-  Evaluar estratégicamente el nivel de servicio de la red de transporte intercentros, asegurar el cumplimiento contractual de los transportistas terceros y abatir las brechas de latencia y siniestralidad.
+  Evaluar estratégicamente el nivel de servicio de la red de transporte nacional, supervisar el cumplimiento de compromisos operativos y analizar comparativamente el desempeño entre empresas transportistas.
 * **Responsabilidades en el Proceso:**
-  1. Evaluar periódicamente los indicadores de rendimiento logístico (*Lead Time*, cumplimiento de entrega conforme, tasa de puntualidad).
-  2. Monitorear la latencia de integración con el Bus corporativo (SLA $\le$ 30 minutos).
-  3. Fiscalizar el desempeño comparativo entre las empresas de transporte asociadas para la asignación estratégica de contratos y rutas.
-  4. Exportar reportes analíticos consolidados exclusivamente en formato Excel para conciliación logística y penalidades.
+  1. Evaluar periódicamente los indicadores de rendimiento logístico (*Lead Time*, cumplimiento de entregas conformes, tasa de puntualidad y latencia de integración con el Bus corporativo) a través del Dashboard ejecutivo (`RF024`).
+  2. Monitorear la métrica analítica separada de despachos cancelados administrativamente.
+  3. Filtrar y comparar objetivamente el desempeño operativo entre las distintas empresas de transporte asociadas para la supervisión y control de la flota.
+  4. Exportar reportes analíticos consolidados exclusivamente en formato Excel (.xlsx) para el análisis operativo y soporte de decisiones del área.
 * **Información que Recibe:**
-  - Tablero ejecutivo de indicadores (Dashboard) con métricas consolidadas.
-  - Historial consolidado de trazabilidad y siniestralidad por transportista.
+  - Tablero ejecutivo de indicadores (Dashboard) con métricas consolidadas, filtros por período, ruta y transportista.
+  - Historial consolidado de trazabilidad y tiempos de ciclo.
 * **Información que Genera:**
-  - Calificación de desempeño de contratistas de transporte.
-  - Reportes gerenciales consolidados para la Dirección de Operaciones.
+  - Reportes analíticos consolidados oficiales en formato Excel (.xlsx).
+  - Evaluaciones de desempeño de servicio para la Dirección de Operaciones.
 
 ---
 
@@ -135,20 +133,18 @@ graph TD
 * **Estereotipo RUP:** `<<business actor>>`
 * **Tipo:** Interno (Servicio al Cliente y Trazabilidad Operacional).
 * **Descripción Institucional:**
-  Agente de atención y soporte interno/externo encargado de responder requerimientos de trazabilidad sobre despachos en tránsito o entregados.
+  Agente de soporte interno encargado de responder requerimientos y consultas de trazabilidad sobre despachos en tránsito o culminados.
 * **Objetivo de Negocio:**
-  Resolver consultas e inquietudes de clientes internos (agencias comerciales, fuerza de ventas) en el primer contacto, contando con datos de trazabilidad fidedignos y actualizados.
+  Resolver consultas e inquietudes de clientes internos (agencias comerciales, fuerza de ventas) en el primer contacto, disponiendo de información histórica de trazabilidad fidedigna e inmediata.
 * **Responsabilidades en el Proceso:**
-  1. Realizar búsquedas ágiles de despachos mediante código de viaje o placa de la unidad vehicular.
-  2. Examinar la línea de tiempo completa del despacho (cronología de hitos desde la salida hasta la entrega).
-  3. Validar evidencias operativas (estampa de tiempo, coordenadas GPS certificadas de arribo y enlaces a fotos de respaldo en Cloud Storage).
-  4. Responder tickets de consulta y resolver discrepancias de entrega sin recurrir a llamadas ciegas a los conductores en ruta.
+  1. Realizar búsquedas ágiles de despachos mediante código de viaje o placa vehicular en el buscador web de Y-Trace (`RF023`).
+  2. Examinar la línea de tiempo completa (*Timeline*) del despacho (cronología de hitos, estados, marcas de tiempo y coordenadas GPS) en menos de 2 segundos.
+  3. Resolver tickets de consulta, corroborar arribos y desvirtuar discrepancias de entrega con base en datos estructurados y certificados de auditoría interna.
 * **Información que Recibe:**
   - Solicitudes de consulta o reclamos por estado de despachos.
-  - Cronología histórica completa y evidencias certificadas de entrega.
+  - Cronología histórica completa, marcas de tiempo y coordenadas GPS atómicas en plataforma Web.
 * **Información que Genera:**
-  - Respuestas fundadas a consultas operativas de trazabilidad.
-  - Validación de entrega conforme ante auditorías internas.
+  - Respuestas fundamentadas a consultas operativas de trazabilidad para clientes internos.
 
 ---
 
@@ -156,17 +152,17 @@ graph TD
 
 | Actor del Negocio | Rol Institucional | Entradas de Información | Salidas / Entregables | Herramienta Operativa |
 | :--- | :--- | :--- | :--- | :--- |
-| **Socio Logístico / Conductor** | Transportista tercero de carga pesada | Manifiesto de carga, Código de Activación de 8 caracteres | Telemetría GPS en ruta, alertas de incidencias, evidencia de entrega | PWA Android (Y-Trace Móvil) |
-| **Punto de Destino / Agencia** | Receptor físico B2B en destino | Carga consolidada, guía de remisión física | Dictamen de conformidad, sello/firma de recepción | Manifiesto físico / Verificación visual |
-| **Supervisor de Distribución** | Control operativo de andén y flota | Cargas preparadas en SPY/Driving, telemetría de vehículos, alertas | Código de activación, asignación de contingencias, cierre forzado | Plataforma Web (Torre de Control) |
-| **Jefe de Distribución** | Dirección táctica y control de SLAs | Métricas consolidadas de tiempos, entregas conformes y latencia | Evaluaciones contractuales de flota, reportes en Excel | Plataforma Web (Dashboard Ejecutivo) |
-| **Operador SAC / Soporte** | Atención de consultas de trazabilidad | Requerimientos de seguimiento de agencias / áreas comerciales | Información certificada de entrega, resolución de discrepancias | Plataforma Web (Buscador de Trazabilidad) |
+| **Socio Logístico / Conductor** | Transportista tercero de carga pesada | Manifiesto de carga, Código de Activación de 8 caracteres | Telemetría GPS en ruta, registro de llegada, confirmación de entrega o causal de rechazo | App Nativa Android (Y-Trace Móvil) |
+| **Punto de Destino / Agencia** | Receptor físico B2B en destino | Carga consolidada física, guía de remisión física | Dictamen de conformidad física, sello/firma física de recepción | Manifiesto físico / Inspección visual exterior |
+| **Supervisor de Distribución** | Control operativo de andén y flota | Despachos disponibles en andén, telemetría de vehículos, llamadas de contingencia | Código de activación, hito de control previo, Cancelación Forzada justificada | Plataforma Web (Torre de Control) |
+| **Jefe de Distribución** | Dirección táctica y control de SLAs | Métricas consolidadas de tiempos, entregas conformes y latencia | Reportes analíticos consolidados en Excel (.xlsx), análisis comparativo | Plataforma Web (Dashboard Ejecutivo) |
+| **Operador SAC / Soporte** | Atención de consultas de trazabilidad | Requerimientos de seguimiento de agencias / áreas comerciales | Información fidedigna de trazabilidad, resolución de consultas | Plataforma Web (Buscador de Trazabilidad) |
 
 ---
 
 ## 4. Gobernanza y Segregación de Responsabilidades
 
-Para asegurar la integridad del negocio y prevenir colusión o fraudes:
-1. **Segregación Operativa en Andén:** El Supervisor de Distribución solo puede habilitar el seguimiento de despachos ya preparados y validados externamente por el WMS SPY; no puede crear despachos ficticios.
-2. **Segregación en Ruta:** El Conductor no puede modificar los datos del despacho, ni reprogramar rutas, ni alterar el kilometraje ni las coordenadas GPS capturadas de forma nativa por el dispositivo Android.
-3. **Segregación en Destino:** El arribo a la geocerca (`EN_DESTINO`) es una evidencia geoespacial que no sustituye la confirmación manual de entrega (`ENTREGADO`), garantizando que la presencia del vehículo no acredite automáticamente la descarga conforme.
+Para asegurar la integridad del negocio y prevenir colusión o distorsiones operativas:
+1. **Segregación Operativa en Andén:** El Supervisor de Distribución solo puede habilitar el seguimiento de despachos ya preparados y validados externamente por el WMS SPY; no puede crear despachos ficticios ni realizar asignaciones logísticas de flota dentro de Y-Trace.
+2. **Segregación en Ruta:** El Conductor no puede modificar los datos del despacho, ni reprogramar rutas, ni alterar las coordenadas GPS capturadas de forma nativa por el dispositivo Android. Las contingencias se reportan por vía telefónica externa.
+3. **Segregación en Destino:** El arribo a la geocerca (`EN_DESTINO`) es una evidencia geoespacial que no sustituye la confirmación manual consciente de entrega (`ENTREGADO`), garantizando que la presencia del vehículo no acredite automáticamente la descarga conforme. La certificación se realiza mediante datos estructurados sin captura de fotos ni POD multimedia.

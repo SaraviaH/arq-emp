@@ -20,8 +20,8 @@
 | **Nombre del Proceso:**  | **Entrega y Recepción de Carga en Punto de Destino**                                                                                                                                                                                                       |
 | **Estereotipo RUP:**     | `<<business use case>>`                                                                                                                                                                                                                                    |
 | **Área Responsable:**    | Gerencia de Supply Chain — Puntos de Distribución Regionales / Socios de Transporte Asociados                                                                                                                                                              |
-| **Alcance Operativo:**   | Recepción formal B2B en destino (Agencia Comercial / Centro Secundario Departamental)                                                                                                                                                                      |
-| **Objetivo de Negocio:** | Certificar el arribo físico de la unidad, realizar la inspección técnica de la carga consolidada, formalizar la entrega conforme o el rechazo tipificado mediante evidencias operativas, y cerrar el ciclo de viaje revocando las credenciales temporales. |
+| **Alcance Operativo:**   | Recepción física B2B en destino (Agencia Comercial / Centro Secundario Departamental) y formalización de cierre de seguimiento                                                                                                                             |
+| **Objetivo de Negocio:** | Certificar el arribo físico de la unidad mediante geocerca, realizar la inspección física de la carga consolidada, formalizar la entrega conforme o el rechazo tipificado mediante datos operativos estructurados (coordenadas GPS y sellos de tiempo en la App Móvil), y cerrar el ciclo de viaje revocando las credenciales temporales. |
 
 ---
 
@@ -29,27 +29,24 @@
 
 ```mermaid
 flowchart LR
-    SL["fa:fa-truck Socio Logístico / Conductor<br/>(Iniciador / Entrega y Evidencias)"]
-    PD["fa:fa-warehouse Punto de Destino / Agencia<br/>(Receptor / Inspección y Conformidad)"]
-    SUP["fa:fa-user-tie Supervisor de Distribución<br/>(Participante / Control de Ventana)"]
+    SL["fa:fa-truck Socio Logístico / Conductor<br/>(Iniciador / Descarga y Registro en App)"]
+    PD["fa:fa-warehouse Punto de Destino / Agencia<br/>(Receptor / Inspección Física)"]
     CUN04(["((CUN-04))<br/><b>Entrega y Recepción de Carga<br/>en Punto de Destino</b>"])
 
-    SL ---|Registra arribo, entrega bultos y liquida| CUN04
-    PD ---|Inspecciona carga y valida conformidad| CUN04
-    SUP ---|Supervisa ventana de 60 min y cierre| CUN04
+    SL ---|Registra arribo, entrega bultos y formaliza cierre| CUN04
+    PD ---|Inspecciona carga y emite conformidad física| CUN04
 ```
 
-* **Actor Iniciador:** **Socio Logístico / Conductor (Externo)**. Conduce la unidad a la agencia de destino, registra la llegada física, entrega los pallets/bultos y captura la evidencia operativa de cierre.
-* **Actor Receptor / Participante:** **Punto de Destino / Agencia Receptora (Externo)**. Encargado de recepción que inspecciona la integridad exterior de los precintos y emite la conformidad o rechazo formal de la carga.
-* **Actor de Supervisión:** **Supervisor de Distribución (Interno)**. Monitorea desde la Torre de Control que la entrega se formalice dentro de la ventana operativa de 60 minutos tras el arribo.
+* **Actor Iniciador:** **Socio Logístico / Conductor (Externo)**. Conduce la unidad a la agencia de destino, acredita la llegada física por geocerca, entrega los pallets/bultos, registra la confirmación (`ENTREGADO` o `NO_ENTREGADO`) en la App Nativa Android y ejecuta la finalización del seguimiento.
+* **Actor Receptor / Participante:** **Punto de Destino / Agencia Receptora (Externo)**. Encargado de recepción que recibe físicamente al conductor, inspecciona la integridad exterior de los precintos y bultos, y suscribe la conformidad en el comprobante físico de recepción. **No interactúa directamente con el sistema Y-Trace.**
 
 ---
 
 ## 3. Precondiciones del Negocio
 
-1. El despacho se encuentra en estado `EN_RUTA` habiendo completado el trayecto nacional bajo [[03_CUN_02_TRASLADO_Y_MONITOREO]].
+1. El despacho se encuentra en estado `EN_RUTA` habiendo completado el trayecto interprovincial bajo [[03_CUN_02_TRASLADO_Y_MONITOREO]].
 2. La unidad de transporte se encuentra físicamente posicionada dentro del radio geográfico de la agencia o almacén de destino.
-3. El personal de recepción del punto de destino se encuentra habilitado para recibir y descargar la mercadería.
+3. El personal de recepción del punto de destino se encuentra disponible en las instalaciones para la descarga e inspección de mercadería.
 
 ---
 
@@ -60,79 +57,67 @@ sequenceDiagram
     autonumber
     actor COND as Conductor (Socio Logístico)
     actor REC as Receptor (Punto de Destino)
-    participant APP as PWA Android (Conductor)
-    participant TORRE as Torre de Control Web (Supervisor)
+    participant APP as App Nativa Android (Conductor)
+    participant TORRE as Plataforma Central Y-Trace
     participant BUS as Bus de Integración (ESB Corporativo)
 
-    COND->>APP: Ingresa a radio de destino (geocerca o botón "Llegué a Destino")
+    COND->>APP: Ingresa al radio de destino (Detección automática por geocerca)
     APP->>TORRE: Registra arribo atómico EN_DESTINO (GPS + timestamp)
-    TORRE-->>TORRE: Estado pasa a Amarillo EN_DESTINO (Inicia ventana de 60 min)
+    TORRE-->>TORRE: Estado pasa a EN_DESTINO (Acredita presencia física)
     COND->>REC: Presenta unidad, retira precinto y realiza descarga física
-    REC->>REC: Inspecciona bultos/pallets y firma guía de remisión física
+    REC->>REC: Inspecciona bultos/pallets y suscribe guía de remisión física
     COND->>APP: Presiona conscientemente botón "Confirmar Entrega"
     APP->>APP: Transiciona estado a ENTREGADO con GPS y timestamp
-    opt Cuando las condiciones operativas lo permiten
-        COND->>APP: Captura fotografía complementaria opcional de la guía/carga
-    end
     COND->>APP: Presiona botón "Finalizar Despacho"
-    APP->>TORRE: Vacía cola local y transiciona a FINALIZADO
-    TORRE-->>TORRE: Revoca token de sesión móvil y caduca código de activación
+    APP->>TORRE: Transmite cola local y solicita cierre (FINALIZADO)
+    TORRE-->>TORRE: Revoca sesión móvil, caduca código efímero y apaga telemetría
     TORRE->>BUS: Envía resumen consolidado de trazabilidad al Bus (SLA <= 30 min)
     BUS-->>BUS: Actualiza hito en SAP R/3 y cierra trazabilidad en Salesforce
 ```
 
-1. **Acreditación de Arribo Físico (`EN_DESTINO`):** Al aproximarse a las instalaciones, la PWA detecta automáticamente la geocerca de la agencia (o el Conductor presiona *"Llegué a Destino"*). El sistema registra de manera atómica la fecha, hora y coordenadas GPS exactas, transicionando a `EN_DESTINO`. **Este evento acredita presencia física pero NO convalida la entrega de mercadería.**
-2. **Descarga e Inspección Técnica:** El Conductor y el personal de la Agencia Receptora proceden con la apertura del furgón, verificación de precintos numerados y descarga física de los bultos consolidados.
-3. **Conformidad de Recepción:** El personal del Punto de Destino coteja las cantidades declaradas en la guía física de remisión y suscribe el comprobante de recepción con sello y firma de conformidad.
-4. **Confirmación Manual de Entrega (`ENTREGADO`):** Para evitar entregas ficticias o automatizadas por simple proximidad, el Conductor debe presionar manualmente *"Confirmar Entrega"*. El sistema genera el evento inmutable `ENTREGADO` con estampa temporal y geolocalización certificada.
-5. **Evidencia Fotográfica Complementaria:** Si las condiciones de iluminación y operativas lo permiten, el Conductor toma una fotografía de la guía sellada o de la carga estibada. La foto es comprimida y respaldada en Cloud Storage de manera asíncrona.
-6. **Liquidación y Cierre de Viaje (`FINALIZADO`):** El Conductor verifica que no existan eventos pendientes en la cola local de sincronización y presiona *"Finalizar Despacho"*. El sistema transiciona el viaje a `FINALIZADO`.
-7. **Revocación de Accesos y Propagación Corporativa:**
-   - El servidor central invalida y revoca inmediatamente el token de sesión móvil y el Código de Activación.
-   - La PWA purga los datos temporales del viaje de la base de datos local y apaga los sensores GPS (**Condición Mandatoria de Cese de Transmisión**).
-   - El sistema transmite el resumen consolidado de trazabilidad al Bus corporativo de Yanbal (SLA $\le$ 30 min), notificando a SAP R/3 (conciliación logística de transporte) y a Salesforce (cierre formal de trazabilidad).
+1. **Acreditación de Arribo Físico (`EN_DESTINO`):** Al aproximarse e ingresar al radio perimétrico configurado de la agencia receptora, la App Nativa detecta automáticamente la geocerca. El sistema registra de manera atómica la fecha, hora y coordenadas GPS exactas, transicionando a `EN_DESTINO`. **Este evento acredita presencia física mediante geocerca pero NO convalida la entrega de mercadería.**
+2. **Descarga e Inspección Física:** El Conductor y el personal del Punto de Destino proceden con la apertura del furgón, verificación de precintos numerados y descarga física de los bultos consolidados.
+3. **Conformidad de Recepción Física:** El personal del Punto de Destino coteja las cantidades declaradas en la guía física de remisión y suscribe el comprobante de recepción con sello y firma física.
+4. **Confirmación Manual de Entrega en Sistema (`ENTREGADO`):** Para evitar entregas ficticias o automatizadas por simple proximidad geográfica, el Conductor debe presionar conscientemente *"Confirmar Entrega"* en la App Nativa Android (`RF016`). El sistema genera el evento inmutable `ENTREGADO` con estampa de tiempo y geolocalización satelital certificada, sin capturar fotografías ni POD multimedia.
+5. **Finalización y Cierre de Seguimiento (`FINALIZADO`):** El Conductor verifica que no existan eventos pendientes en la cola local de sincronización y presiona *"Finalizar Despacho"* (`RF018`). El sistema transiciona el viaje a `FINALIZADO`, concluyendo formalmente el seguimiento operativo en Y-Trace.
+6. **Revocación de Accesos y Propagación Corporativa:**
+   - El servidor central invalida y revoca inmediatamente el token de sesión móvil y el Código de Activación efímero (`RF028`).
+   - La App Nativa purga los datos de sesión local y apaga de forma inmediata los sensores GPS (**Condición Mandatoria de Cese de Transmisión**).
+   - El sistema transmite el resumen consolidado de trazabilidad al Bus corporativo de Yanbal dentro del SLA $\le$ 30 min (`RF025`, `RF026`), notificando a SAP R/3 y Salesforce.
 
 ---
 
 ## 5. Flujos Alternativos y Excepciones del Negocio
 
-### A1: Rechazo de Carga o Local Cerrado (`NO_ENTREGADO`)
-* **Condición:** La agencia de destino se encuentra cerrada fuera de horario, el acceso vial está bloqueado o el receptor rechaza formalmente la carga por discrepancias graves en precintos.
+### A1: Rechazo de Carga o Destino Cerrado (`NO_ENTREGADO`)
+* **Condición:** La agencia de destino se encuentra cerrada fuera de horario, el acceso vial está bloqueado o el receptor rechaza formalmente la carga por discrepancias en precintos o daños visibles exteriores.
 * **Acción de Negocio:**
-  - El Conductor accede al módulo de entrega en la PWA y presiona *"Registrar No Entrega"*.
+  - El Conductor accede a la App Nativa Android y selecciona *"Registrar No Entrega"* (`RF017`).
   - Selecciona la causal tipificada correspondiente: *Destino cerrado, Rechazo formal de carga o Acceso bloqueado*.
-  - El sistema registra atómicamente el estado `NO_ENTREGADO` con coordenadas GPS y estampa de tiempo.
-  - El Conductor puede adjuntar fotografía complementaria opcional del local cerrado o documento de rechazo.
-  - El Conductor presiona *"Finalizar Despacho"*, cerrando el viaje en `FINALIZADO` y revocando la sesión.
-  - **Directriz de Retorno (Frontera B2B):** Y-Trace concluye el seguimiento de ese despacho. Si la Gerencia de Operaciones determina que la carga debe regresar a Lima, el retorno se coordina y gestiona como un nuevo despacho corporativo independiente. Y-Trace no muta el viaje original en un circuito de logística inversa.
-
-### A2: Alerta por Vencimiento de Ventana Operativa de 60 Minutos en Destino
-* **Condición:** El vehículo arriba a destino (`EN_DESTINO`), pero transcurren más de 60 minutos sin que el Conductor confirme la entrega (`ENTREGADO`) ni reporte el rechazo (`NO_ENTREGADO`).
-* **Acción de Negocio:**
-  - El sistema emite automáticamente una alerta sonora y visual en la Torre de Control Web para advertir una retención excesiva de la unidad en el andén de descarga.
-  - El Supervisor de Distribución se comunica telefónicamente con la agencia o el transportista para averiguar la causa de la demora.
-  - En caso de contingencia comprobada o abandono de la aplicación por el conductor, el Supervisor puede ejecutar el cierre forzado justificado en bitácora inmutable (`RF009`).
+  - El sistema registra atómicamente el estado `NO_ENTREGADO` con coordenadas GPS y estampa de tiempo, sin captura de fotografías.
+  - El Conductor presiona *"Finalizar Despacho"*, cerrando el seguimiento en `FINALIZADO` y revocando la sesión móvil (`RF018`, `RF028`).
+  - **Directriz de Retorno (Frontera B2B):** Y-Trace concluye formalmente el seguimiento de ese despacho. Si la Gerencia de Operaciones determina que la carga debe regresar a Lima o ser redirigida, el traslado posterior se gestiona como un nuevo despacho independiente. Y-Trace no muta el viaje original en un circuito de logística inversa.
 
 ---
 
 ## 6. Postcondiciones del Negocio
 
 * **Estado de Entrega Exitosa:**
-  - La carga queda bajo custodia formal del Punto de Destino (Agencia regional).
-  - El despacho pasa a `FINALIZADO` con evidencias geoespaciales y fotográficas certificadas.
+  - La carga queda bajo custodia física formal del Punto de Destino.
+  - El despacho pasa a `FINALIZADO` en Y-Trace con datos geoespaciales y marcas de tiempo certificadas.
   - El transportista queda desvinculado del viaje y su aplicación móvil inhabilitada para transmitir.
 * **Estado de Rechazo:**
-  - El despacho concluye como `NO_ENTREGADO`, con causal tipificada auditada en bitácora.
-  - La carga queda retenida en custodia del transportista a la espera de la orden de un nuevo despacho de retorno.
+  - El despacho concluye como `NO_ENTREGADO`, con causal tipificada auditada en el sistema.
+  - La carga queda bajo custodia del transportista a la espera de instrucciones corporativas externas.
 
 ---
 
 ## 7. Reglas de Negocio Vinculadas
 
-* **RN-CUN-04.1 (Regla Híbrida de Entrega):** La geocerca (`EN_DESTINO`) solo prueba presencia física geoespacial; la entrega (`ENTREGADO`) exige imperativamente la confirmación manual consciente del Conductor.
-* **RN-CUN-04.2 (Evidencia Fotográfica Opcional):** La fotografía complementaria nunca condiciona ni bloquea la finalización formal del despacho.
-* **RN-CUN-04.3 (Cese Mandatorio de Transmisión):** Una vez que el despacho pasa a `FINALIZADO`, la aplicación móvil queda terminantemente bloqueada para emitir coordenadas o eventos posteriores.
-* **RN-CUN-04.4 (No Conciliación Económica):** Y-Trace entrega la trazabilidad operativa consolidada; la liquidación monetaria y facturación de fletes corresponde exclusivamente a SAP ERP.
+* **RN-CUN-04.1 (Regla Híbrida de Entrega):** La geocerca (`EN_DESTINO`) solo acredita presencia física geoespacial; la entrega (`ENTREGADO`) exige imperativamente la confirmación manual consciente del Conductor en la aplicación móvil.
+* **RN-CUN-04.2 (Trazabilidad Estructurada Sin Fotografías):** La trazabilidad operativa se certifica exclusivamente mediante coordenadas GPS satelitales, marcas de tiempo y causales tipificadas, sin capturar ni almacenar fotografías ni POD multimedia.
+* **RN-CUN-04.3 (Cese Mandatorio de Transmisión):** Una vez que el despacho transiciona a `FINALIZADO`, la aplicación móvil apaga inmediatamente los sensores de ubicación y queda terminantemente bloqueada para emitir coordenadas o eventos posteriores.
+* **RN-CUN-04.4 (No Conciliación Económica):** Y-Trace entrega la trazabilidad operativa consolidada; la liquidación monetaria de fletes y penalidades corresponde a los sistemas ERP corporativos.
 
 ---
 
@@ -140,11 +125,10 @@ sequenceDiagram
 
 | ID Requerimiento | Nombre del Requerimiento Funcional | Rol en el Soporte de CUN-04 |
 | :---: | :--- | :--- |
-| **RF015** | Registro de llegada por geocerca o manual | Registra el arribo a destino pasando a `EN_DESTINO` con coordenadas GPS atómicas. |
-| **RF016** | Confirmación manual de entrega en destino | Acción manual obligatoria del conductor que formaliza el estado `ENTREGADO`. |
-| **RF017** | Registro de despacho no entregado o rechazado | Formaliza el estado `NO_ENTREGADO` bajo causales operativas tipificadas. |
-| **RF018** | Gestión de evidencias y fotografía complementaria | Asocia coordenadas, timestamp y fotografías seguras opcionales en Cloud Storage. |
-| **RF020** | Cierre de despacho y finalización de sesión | Valida el vaciado de cola local, pasa a `FINALIZADO` y revoca credenciales móviles. |
-| **RF029** | Publicación de eventos de estado al Bus (ESB) | Comunica los estados finales de entrega hacia el ecosistema central de Yanbal. |
-| **RF031** | Envío de resumen de trazabilidad del despacho | Transmite al Bus la síntesis consolidada de hitos y tiempos del viaje liquidado. |
-| **RF033** | Revocación inmediata de código y sesión al cierre | Elimina el token de sesión y extingue la validez del código efímero de activación. |
+| **RF015** | Registro de Llegada al Punto de Destino por Geocerca | Registra el arribo a destino pasando a `EN_DESTINO` con coordenadas GPS atómicas. |
+| **RF016** | Confirmación de Recepción / Entrega del Despacho Completo | Acción manual obligatoria del conductor que formaliza el estado `ENTREGADO` sin fotos. |
+| **RF017** | Registro de No Entrega o Rechazo de Despacho en Destino | Formaliza el estado `NO_ENTREGADO` bajo causales operativas tipificadas sin fotos. |
+| **RF018** | Finalización y Cierre del Seguimiento del Despacho | Valida el vaciado de cola local, transiciona a `FINALIZADO` y cesa telemetría GPS. |
+| **RF025** | Publicación de Eventos de Despacho al Bus de Integración | Comunica los estados finales de entrega (`ENTREGADO` / `NO_ENTREGADO`) hacia el Bus (SLA $\le$ 30 min). |
+| **RF026** | Envío de Resumen de Trazabilidad del Despacho al Bus | Transmite al Bus la síntesis consolidada de hitos y tiempos del viaje finalizado. |
+| **RF028** | Unicidad, Vigencia y Caducidad del Código de Activación | Elimina el token de sesión y extingue la validez del código efímero de activación. |

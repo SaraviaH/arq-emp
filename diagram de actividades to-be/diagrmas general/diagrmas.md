@@ -1,4 +1,6 @@
-# 1. TO-BE — Preparación, habilitación y activación
+# 1. TO-BE 01 — Preparación, Habilitación y Activación
+
+Este diagrama modela el proceso de control previo en andén, emisión del Código Único de Activación efímero y vinculación de la sesión operativa móvil en la App Nativa Android (soporte a **CUN-01**).
 
 ```plantuml
 @startuml TO_BE_01_Preparacion_Habilitacion_Activacion
@@ -26,22 +28,21 @@ skinparam partition {
 
 |#DBEAFE|Sistemas Corporativos (SPY / Driving)|
 start
-:Sistemas externos reportan despacho preparado y disponible
+:Sistemas corporativos ponen a disposición
+despacho preparado en andén
 [DISPONIBLE PARA SEGUIMIENTO];
 
-|#EFF6FF|Supervisor CD Lurín (Web)|
-:Consultar despachos disponibles, filtrar y seleccionar despacho [RF007];
-:Revisar destino, vehículo y transportista;
-:Solicitar "Habilitar seguimiento" [RF007, RF008];
+|#EFF6FF|Supervisor de Distribución (Web)|
+:Consultar despachos preparados en andén [RF007];
+:Verificar destino, bultos y transportista asignado;
+:Solicitar habilitación de seguimiento en Web [RF007, RF008];
 
-if (¿Despacho cancelado externamente antes\nde activar el seguimiento?) then (sí)
+if (¿Despacho detenido por cancelación externa previa a salida?) then (sí)
 
     |#FEF3F7|Plataforma Y-Trace (Backend)|
-    :Registrar evento DESPACHO_CANCELADO [RF029];
-    :Invalidar código o sesión pendiente [RF033];
-
-    |#DBEAFE|Sistemas Corporativos (Bus ESB)|
-    :Publicar evento DESPACHO_CANCELADO al Bus [RF029];
+    :Procesar procedimiento corporativo externo de cancelación;
+    :Invalidar código efímero o sesión pendiente [RF028];
+    :Registrar estado correspondiente en el sistema;
 
     stop
 
@@ -49,57 +50,73 @@ else (no)
 
     |#FEF3F7|Plataforma Y-Trace (Backend)|
     :Validar elegibilidad del despacho [RF008];
-    :Generar Código Único de Activación de 8 caracteres [RF008];
+    :Registrar hito interno de control previo;
+    :Generar Código Único de Activación (8 caracteres) [RF008];
     :Asociar código al despacho;
     :Transicionar despacho a HABILITADO [RF008];
 
-    |#EFF6FF|Supervisor CD Lurín (Web)|
-    :Recibir código y comunicarlo al conductor en andén;
+    |#EFF6FF|Supervisor de Distribución (Web)|
+    :Visualizar código en pantalla y comunicarlo
+    al conductor junto con la guía física;
 
 endif
 
-
-|#F1F5F9|Conductor (PWA Android)|
+|#F1F5F9|Conductor (App Nativa Android)|
 
 repeat
 
-    :Abrir PWA e ingresar Código de Activación [RF010];
+    :Abrir App Nativa Android e ingresar
+    Código Único de Activación recibido [RF010];
 
     |#FEF3F7|Plataforma Y-Trace (Backend)|
 
     if (¿Código válido y vigente?) then (sí)
 
-        :Validar código y emitir sesión operativa [RF011];
+        :Validar código y emitir sesión operativa temporal [RF010];
 
-        |#F1F5F9|Conductor (PWA Android)|
-        :Recibir sesión operativa y descargar hoja de ruta [RF011, RF012];
+        |#F1F5F9|Conductor (App Nativa Android)|
+        :Recibir sesión operativa y descargar
+        información del despacho y destino [RF010, RF011, RF012];
 
     else (no)
 
-        :Recibir rechazo de activación;
+        :Rechazar activación e incrementar
+        contador de intentos fallidos [RF027];
 
         if (¿Alcanza 5 intentos fallidos consecutivos?) then (sí)
 
-            :Invalidar y bloquear código [RF032];
+            :Invalidar y bloquear definitivamente el código [RF027];
 
-            |#EFF6FF|Supervisor CD Lurín (Web)|
-            :Recibir alerta de bloqueo;
-            :Verificar presencialmente al conductor;
-            :Solicitar generación de nuevo código [RF008];
+            |#EFF6FF|Supervisor de Distribución (Web)|
+            :Verificar presencialmente la identidad
+            del conductor en andén;
 
-            |#FEF3F7|Plataforma Y-Trace (Backend)|
-            :Generar nuevo Código Único de Activación [RF008];
+            if (¿Corresponde generar nueva habilitación?) then (sí)
 
-            |#EFF6FF|Supervisor CD Lurín (Web)|
-            :Comunicar nuevo código al conductor;
+                :Solicitar nueva habilitación mediante
+                el procedimiento operativo establecido [RF008];
 
-            |#F1F5F9|Conductor (PWA Android)|
-            :Reintentar activación con nuevo código;
+                |#FEF3F7|Plataforma Y-Trace (Backend)|
+                :Generar nuevo Código Único de Activación [RF008];
+
+                |#EFF6FF|Supervisor de Distribución (Web)|
+                :Comunicar nuevo código al conductor;
+
+                |#F1F5F9|Conductor (App Nativa Android)|
+                :Reintentar activación con nuevo código;
+
+            else (no)
+
+                :Resolver situación mediante proceso
+                operativo externo del CD o transportista;
+                stop
+
+            endif
 
         else (no)
 
-            |#F1F5F9|Conductor (PWA Android)|
-            :Mostrar error de código;
+            |#F1F5F9|Conductor (App Nativa Android)|
+            :Mostrar error de código en pantalla;
             :Permitir nuevo intento;
 
         endif
@@ -108,21 +125,24 @@ repeat
 
 repeat while (¿Sesión operativa establecida?) is (no) not (sí)
 
-:Mostrar sesión operativa establecida;
+:Mostrar sesión operativa establecida
+y datos operativos de ruta [RF012];
 
 stop
 
 @enduml
 ```
 
-# 2. TO-BE — Salida, traslado, monitoreo e incidencias
+---
 
-Este recoge el bloque más grande del diagrama original: EN_RUTA, GPS, offline, monitoreo e incidencias.
+# 2. TO-BE 02 — Salida, Traslado, Monitoreo y Contingencias
+
+Este diagrama modela el inicio de viaje (`EN_RUTA`), la telemetría periódica GPS en segundo plano, la persistencia offline (SQLite Room), la supervisión en grilla web y la resolución de contingencias viales comunicadas por telefonía externa, incluyendo la Cancelación Forzada del Seguimiento (`RF009`) cuando el viaje no puede continuar (soporte a **CUN-02** y **CUN-03**).
 
 ```plantuml
-@startuml TO_BE_02_Traslado_Monitoreo_Incidencias
+@startuml TO_BE_02_Traslado_Monitoreo_Contingencias
 
-title TO-BE 02 — Salida, Traslado, Monitoreo e Incidencias (Y-Trace)
+title TO-BE 02 — Salida, Traslado, Monitoreo y Contingencias (Y-Trace)
 
 skinparam shadowing false
 skinparam defaultFontName Arial
@@ -143,133 +163,110 @@ skinparam partition {
     FontSize 12
 }
 
-|#F1F5F9|Conductor (PWA Android)|
+|#F1F5F9|Conductor (App Nativa Android)|
 start
-:Verificar precintos de seguridad;
-:Presionar "Iniciar Despacho" [RF013];
+:Verificar precintos de seguridad y estiba;
+:Presionar "Iniciar Despacho" en App Móvil [RF013];
 
 |#FEF3F7|Plataforma Y-Trace (Backend)|
-:Transicionar estado a EN_RUTA [RF013];
-:Iniciar telemetría GPS periódica [RF014];
-:Publicar evento EN_RUTA al Bus\n(SLA de integración <= 30 min) [RF029];
+:Registrar hito formal de salida física con GPS y hora [RF013];
+:Transicionar estado del despacho a EN_RUTA [RF013];
+:Activar captura periódica de telemetría GPS [RF014];
+:Publicar evento EN_RUTA al Bus corporativo
+(SLA de integración <= 30 min) [RF025, RNF006];
 
-|#F1F5F9|Conductor (PWA Android)|
+|#F1F5F9|Conductor (App Nativa Android)|
 
 repeat
 
-    :Avanzar en recorrido hacia destino;
+    :Avanzar en recorrido por la red vial nacional;
 
-    :Capturar muestreo GPS en segundo plano cada 10 min [RF014];
+    :Capturar muestreo GPS en segundo plano
+    a intervalos de 10 minutos [RF014, RNF008];
 
     if (¿Dispone de cobertura celular?) then (no)
 
-        :Guardar coordenadas y eventos en IndexedDB [RF021];
-        :Mostrar contador de cola pendiente [RF023];
+        :Almacenar coordenadas y eventos localmente
+        en SQLite (Room) [RF019];
+        :Mostrar indicador de conectividad y contador
+        de cola pendiente en pantalla [RF021];
 
     else (sí)
 
-        :Transmitir lote de telemetría al servidor central [RF022];
+        :Transmitir lote de telemetría retenida
+        en orden cronológico estricto (FIFO) [RF020];
 
     endif
 
-    |#EFF6FF|Supervisor CD Lurín (Web)|
-    :Visualizar último avance disponible\nen grilla operativa [RF024];
+    |#EFF6FF|Supervisor de Distribución (Web)|
+    :Visualizar último avance y estado de la unidad
+    en grilla operativa interactiva [RF022];
 
     note right
         Verde = EN_RUTA
-        La grilla muestra el último dato
-        recibido por la plataforma.
+        La grilla interna muestra última
+        posición, tiempo y placa.
     end note
 
-    |#F1F5F9|Conductor (PWA Android)|
+    |#F1F5F9|Conductor (App Nativa Android)|
 
-    if (¿Ocurre anomalía vial o siniestro en ruta?) then (sí)
+    if (¿Ocurre contingencia vial o siniestro en ruta?) then (sí)
 
-        :Detener unidad en zona segura;
-        :Registrar incidencia con GPS [RF019];
+        :Detener unidad en zona segura de la berma;
+        :Comunicar contingencia vía telefónica
+        a la Torre de Control (fuera de Y-Trace);
 
-        if (¿Condiciones permiten fotografía?) then (sí)
-            :Adjuntar fotografía complementaria opcional [RF018];
-        else (no)
-            :Continuar sin fotografía;
-        endif
+        |#EFF6FF|Supervisor de Distribución (Web)|
+        :Recibir llamada telefónica y evaluar
+        la gravedad de la situación en carretera;
 
-        :Enviar alerta prioritaria de incidencia [RF019];
+        if (¿Contingencia insalvable o imposibilidad de continuar viaje?) then (sí)
 
-        |#FEF3F7|Plataforma Y-Trace (Backend)|
-        :Transicionar despacho a CON_INCIDENCIA [RF019];
-
-        |#EFF6FF|Supervisor CD Lurín (Web)|
-        :Mostrar alarma sonora y visual\n(Rojo: CON_INCIDENCIA) [RF026];
-
-        |#FEF3F7|Plataforma Y-Trace (Backend)|
-        :Publicar notificación de contingencia al Bus\n[RF030];
-
-        |#EFF6FF|Supervisor CD Lurín (Web)|
-
-        if (¿Contingencia impide continuar el viaje?) then (sí)
-
-            :Ejecutar Cierre Forzado con justificación [RF009];
+            :Ejecutar Cancelación Forzada del Seguimiento [RF009];
+            :Seleccionar causal tipificada y registrar
+            justificación en bitácora inmutable [RF006];
 
             |#FEF3F7|Plataforma Y-Trace (Backend)|
-            :Transicionar despacho a FINALIZADO [RF009];
-            :Revocar sesión móvil activa y código [RF033];
-            :Transmitir resumen consolidado del despacho [RF031];
+            :Registrar evento y causal en bitácora [RF006];
+            :Transicionar despacho a DESPACHO_CANCELADO [RF009];
+            :Revocar token de sesión móvil e invalidar
+            definitivamente el Código de Activación [RF028];
+            :Cesar inmediatamente captura y transmisión GPS [RF009];
+            :Publicar evento DESPACHO_CANCELADO y resumen
+            consolidado al Bus corporativo [RF025, RF026];
+
+            |#EFF6FF|Supervisor de Distribución (Web)|
+            :Visualizar despacho cancelado en la grilla web [RF022];
 
             |#DBEAFE|Sistemas Corporativos (Bus ESB)|
-            :Derivar caso al proceso corporativo externo\nde logística inversa y reposición;
+            :Sincronizar cancelación con SAP / Salesforce;
+            :Derivar caso a procesos corporativos externos
+            de reposición, reclamos o retorno físico;
 
             stop
 
-        else (no)
+        else (contingencia vial mitigable externamente)
 
-            if (¿Falla de smartphone Android?) then (sí)
+            |#EFF6FF|Supervisor de Distribución (Web)|
+            :Coordinar auxilio vial, asistencia mecánica
+            o despeje de ruta fuera de Y-Trace;
 
-                |#F1F5F9|Conductor (PWA Android)|
-                :Contactar al Supervisor por canal de auxilio;
-
-                |#EFF6FF|Supervisor CD Lurín (Web)|
-                :Validar identidad;
-                :Solicitar código de recuperación [RF008];
-
-                |#FEF3F7|Plataforma Y-Trace (Backend)|
-                :Generar Código de Recuperación\nde un solo uso [RF008];
-
-                |#F1F5F9|Conductor (PWA Android)|
-                :Ingresar código en nuevo smartphone Android [RF011];
-
-                |#FEF3F7|Plataforma Y-Trace (Backend)|
-                :Revocar token anterior;
-                :Asociar nuevo dispositivo al mismo despacho;
-                :Conservar histórico del viaje [RF011];
-
-            else (otra contingencia mitigable)
-
-                |#EFF6FF|Supervisor CD Lurín (Web)|
-                :Coordinar auxilio vial o atención\nde la contingencia;
-
-                |#F1F5F9|Conductor (PWA Android)|
-                :Continuar operación una vez resuelta\nla contingencia;
-
-            endif
-
-            |#FEF3F7|Plataforma Y-Trace (Backend)|
-            :Restablecer estado a EN_RUTA;
-
-            |#F1F5F9|Conductor (PWA Android)|
-            :Reanudar ciclo de traslado y monitoreo;
+            |#F1F5F9|Conductor (App Nativa Android)|
+            :Superar contingencia física externa;
+            :Reanudar marcha en carretera;
+            :Mantener transmisión periódica de telemetría GPS [RF014];
 
         endif
 
     else (no)
 
-        :Continuar recorrido normal;
+        :Continuar recorrido normal hacia destino;
 
     endif
 
-repeat while (¿Ha arribado al perímetro del punto de destino?) is (no) not (sí)
+repeat while (¿Ha arribado al radio del punto de destino?) is (no) not (sí)
 
-:Fin de etapa de traslado;
+:Fin de etapa de traslado en carretera;
 :Continuar con proceso de llegada a destino;
 
 stop
@@ -277,9 +274,11 @@ stop
 @enduml
 ```
 
-# 3. TO-BE — Llegada y entrega
+---
 
-Aquí se concentra EN_DESTINO, inspección, entrega conforme/no conforme y evidencia. El EN_DESTINO no implica entrega.
+# 3. TO-BE 03 — Llegada, Recepción y Entrega
+
+Este diagrama modela la acreditación de arribo por geocerca (`EN_DESTINO`), la inspección física en destino y la confirmación manual consciente de `ENTREGADO` o `NO_ENTREGADO` por el conductor (soporte a **CUN-04**).
 
 ```plantuml
 @startuml TO_BE_03_Llegada_Entrega
@@ -305,110 +304,79 @@ skinparam partition {
     FontSize 12
 }
 
-|#F1F5F9|Conductor (PWA Android)|
+|#F1F5F9|Conductor (App Nativa Android)|
 start
-:Detectar llegada por geocerca o presionar\n"Llegué a Destino" [RF015];
+:Ingresar al radio del punto de destino;
+:Detectar llegada automáticamente por geocerca [RF015];
 
 |#FEF3F7|Plataforma Y-Trace (Backend)|
-:Registrar EN_DESTINO con GPS y timestamp [RF015];
-:Publicar evento EN_DESTINO al Bus [RF029];
-:Iniciar cómputo de ventana operativa de 60 minutos [RF026];
+:Registrar estado EN_DESTINO con coordenadas GPS
+y timestamp atómico [RF015];
+:Publicar evento EN_DESTINO al Bus corporativo [RF025];
 
 note right
-La geocerca acredita únicamente
-la llegada física.
-
-No confirma la entrega.
+    La geocerca acredita únicamente
+    la llegada física del móvil.
+    NO confirma la entrega de mercadería.
 end note
 
-|#ECFDF5|Punto de Destino / Receptor|
-:Inspeccionar bultos, precintos y guía física;
+|#ECFDF5|Punto de Destino / Agencia Receptora|
+:Recibir físicamente al conductor e inspeccionar
+exterior de bultos, precintos numerados y guía;
 
 if (¿Carga recibida conforme?) then (sí)
 
-    :Sellar y firmar comprobante de recepción;
+    :Sellar y firmar comprobante físico de recepción;
 
-    |#F1F5F9|Conductor (PWA Android)|
-    :Presionar "Confirmar Entrega" [RF016];
-    :Registrar ENTREGADO con GPS y timestamp [RF016];
-
-else (no)
-
-    |#ECFDF5|Punto de Destino / Receptor|
-    :Emitir dictamen formal de rechazo con causal;
-
-    |#F1F5F9|Conductor (PWA Android)|
-    :Seleccionar causal;
-    :Registrar NO_ENTREGADO [RF017];
-
-endif
-
-
-|#FEF3F7|Plataforma Y-Trace (Backend)|
-
-if (¿Se alcanza la ventana de 60 minutos\nsin ENTREGADO ni NO_ENTREGADO?) then (sí)
-
-    |#EFF6FF|Supervisor CD Lurín (Web)|
-    :Recibir y atender alerta de timeout [RF026];
-
-    |#FEF3F7|Plataforma Y-Trace (Backend)|
-    :Mantener seguimiento hasta registrar\nla resolución operativa;
+    |#F1F5F9|Conductor (App Nativa Android)|
+    :Presionar conscientemente botón "Confirmar Entrega" [RF016];
+    :Registrar estado ENTREGADO con GPS y timestamp [RF016];
 
 else (no)
 
-    :Continuar procesamiento normal;
+    |#ECFDF5|Punto de Destino / Agencia Receptora|
+    :Emitir dictamen formal de rechazo con causal tipificada;
 
-endif
-
-
-|#F1F5F9|Conductor (PWA Android)|
-
-if (¿Condiciones permiten capturar fotografía?) then (sí)
-
-    :Capturar fotografía complementaria opcional [RF018];
-
-else (no)
-
-    :Continuar sin fotografía;
+    |#F1F5F9|Conductor (App Nativa Android)|
+    :Presionar "Registrar No Entrega" en la App [RF017];
+    :Seleccionar causal tipificada de no entrega [RF017];
+    :Registrar estado NO_ENTREGADO con GPS y timestamp [RF017];
 
 endif
 
 |#FEF3F7|Plataforma Y-Trace (Backend)|
-:Persistir evento operativo de forma inmutable [RNF006];
-
-if (¿Existe fotografía?) then (sí)
-
-    :Alojar fotografía en Cloud Storage [RNF005];
-
-else (no)
-
-endif
+:Persistir evento operativo de forma inmutable [RNF005];
 
 if (¿Resolución ENTREGADO?) then (sí)
 
-    :Publicar evento ENTREGADO al Bus [RF029];
+    :Publicar evento ENTREGADO al Bus
+    (SLA de integración <= 30 min) [RF025, RNF006];
 
 else (NO_ENTREGADO)
 
-    :Publicar evento NO_ENTREGADO al Bus [RF029];
+    :Publicar evento NO_ENTREGADO al Bus
+    (SLA de integración <= 30 min) [RF025, RNF006];
 
 endif
 
-:Fin de etapa de entrega;
+:Fin de etapa de recepción y entrega física;
+:Continuar con proceso de cierre y finalización;
 
 stop
 
 @enduml
 ```
 
-# 4. TO-BE — Cierre, integración y control
+---
 
-Esta parte contiene FINALIZADO, revocación, sincronización corporativa y KPIs. RF028 es el que contiene la exportación Excel; RF034 corresponde al aislamiento por empresa transportista.
+# 4. TO-BE 04 — Cierre, Integración Corporativa y Trazabilidad
+
+Este diagrama modela la finalización formal (`FINALIZADO`), la revocación de credenciales móviles, la transmisión del resumen consolidado al Bus corporativo y la explotación de trazabilidad por el **Jefe de Distribución** (KPIs/Excel) y el **Operador SAC** (consulta histórica) (soporte a **CUN-05**).
 
 ```plantuml
 @startuml TO_BE_04_Cierre_Integracion_KPIs
 
-title TO-BE 04 — Cierre, Integración Corporativa y Control Gerencial (Y-Trace)
+title TO-BE 04 — Cierre, Integración Corporativa y Trazabilidad (Y-Trace)
 
 skinparam shadowing false
 skinparam defaultFontName Arial
@@ -429,81 +397,122 @@ skinparam partition {
     FontSize 12
 }
 
-|#F1F5F9|Conductor (PWA Android)|
+|#F1F5F9|Conductor (App Nativa Android)|
 start
-:Recibir resolución ENTREGADO o NO_ENTREGADO;
-:Verificar que la cola local esté vacía [RF020];
-:Presionar "Finalizar Despacho" [RF020];
+:Verificar resolución registrada (ENTREGADO o NO_ENTREGADO);
+:Verificar que la cola local esté vacía y sincronizada [RF020];
+:Presionar conscientemente botón "Finalizar Despacho" [RF018];
 
 |#FEF3F7|Plataforma Y-Trace (Backend)|
-:Validar resolución final del despacho [RF020];
-:Transicionar a FINALIZADO [RF020];
-:Revocar inmediatamente token de sesión [RF033];
-:Extinguir código de activación [RF033];
+:Validar resolución final registrada [RF018];
+:Transicionar estado del despacho a FINALIZADO [RF018];
+:Revocar inmediatamente token de sesión móvil [RF028];
+:Extinguir Código Único de Activación efímero [RF028];
 
-|#F1F5F9|Conductor (PWA Android)|
-:Purgar datos temporales locales;
-:Cesar captura y transmisión de GPS [RNF001];
+|#F1F5F9|Conductor (App Nativa Android)|
+:Purgar datos temporales del viaje de la memoria local [RF018];
+:Cesar definitivamente captura y transmisión de GPS [RF018, RNF001];
 
 |#FEF3F7|Plataforma Y-Trace (Backend)|
-:Transmitir resumen consolidado de trazabilidad\nal Bus [RF031];
+:Transmitir resumen consolidado de trazabilidad al Bus [RF026];
 
-|#DBEAFE|Sistemas Corporativos\n(Bus ESB / SAP / Salesforce)|
-:Sincronizar hitos y resumen de trazabilidad\ncon los sistemas corporativos;
+|#DBEAFE|Sistemas Corporativos (Bus ESB / SAP / Salesforce)|
+:Sincronizar hitos finales y resumen consolidado con SAP y Salesforce;
 
-if (¿Entrega NO_ENTREGADO?) then (sí)
+if (¿Despacho concluido como NO_ENTREGADO?) then (sí)
 
-    :Derivar el caso al proceso corporativo externo\nde logística inversa si requiere retorno;
+    :Derivar caso al proceso corporativo externo
+    de logística inversa si se dispone retorno;
 
 else (ENTREGADO)
 
-    :Mantener trazabilidad de entrega conforme;
+    :Mantener registro de entrega conforme
+    para conciliación de fletes en SAP;
 
 endif
 
+' ============================================================
+' EXPLOTACIÓN DE TRAZABILIDAD Y RENDIMIENTO (CUN-05)
+' ============================================================
 
-|#F5F3FF|Jefe de Distribución\n(Dashboard Web / KPIs)|
+fork
 
-:Aplicar aislamiento de información según\nempresa transportista [RF034];
+    |#F5F3FF|Jefe de Distribución (Dashboard Web / KPIs)|
 
-:Consultar indicadores de Lead Time,\npuntualidad y latencia [RF028];
+    :Acceder a Dashboard Ejecutivo en plataforma Web;
 
-:Evaluar desempeño de transporte;
+    :Filtrar indicadores según empresa transportista,
+    departamento y rango de fechas [RF024];
 
-:Exportar reporte oficial en Excel [RF028];
+    :Consultar métricas de Lead Time, tasa de puntualidad,
+    entregas conformes y latencia del Bus [RF024];
+
+    :Analizar métrica separada de despachos cancelados [RF024];
+
+    :Exportar reporte consolidado oficial
+    exclusivamente en formato Excel (.xlsx) [RF024];
+
+fork again
+
+    |#FFF1F2|Operador SAC / Soporte Logístico (Web Y-Trace)|
+
+    :Recibir requerimiento o consulta operativa de agencia;
+
+    :Acceder al buscador de trazabilidad en plataforma Web [RF023];
+
+    :Ingresar código de despacho o placa vehicular;
+
+    :Consultar cronología histórica completa (*Timeline*)
+    en menos de 2.0 segundos [RF023, RNF015];
+
+    :Verificar estados, marcas de tiempo y coordenadas GPS
+    para brindar respuesta inmediata y fidedigna [RF023];
+
+end fork
 
 stop
 
 @enduml
 ```
 
-La relación entre los cuatro queda así:
+---
+
+## 5. Articulación Secuencial y de Control entre Procesos TO-BE
+
+El siguiente esquema ilustra la relación operativa entre los cuatro diagramas, reflejando fielmente la bifurcación hacia `DESPACHO_CANCELADO` ante contingencias insalvables en ruta sin pasar obligatoriamente por entrega:
 
 ```text
-TO-BE 01
-Preparación / Habilitación / Activación
-        │
-        ▼
-SESIÓN OPERATIVA ESTABLECIDA
-        │
-        ▼
-TO-BE 02
-Salida / Traslado / Monitoreo / Incidencias
-        │
-        ▼
-EN_DESTINO
-        │
-        ▼
-TO-BE 03
-Llegada / Recepción / Entrega
-        │
-        ▼
+                    TO-BE 01
+      Preparación / Habilitación / Activación
+                        │
+                        ▼
+           SESIÓN OPERATIVA ESTABLECIDA
+                        │
+                        ▼
+                    TO-BE 02
+  Salida / Traslado / Monitoreo / Contingencias
+                        │
+       ┌────────────────┴────────────────────────┐
+       │ (Traslado exitoso)                      │ (Contingencia insalvable)
+       ▼                                         ▼
+   EN_DESTINO                           Cancelación Forzada (RF009)
+       │                                         │
+       ▼                                         ▼
+   TO-BE 03                             DESPACHO_CANCELADO
+Llegada / Recepción / Entrega             (Revocación de sesión,
+       │                                  cese GPS y resumen al Bus)
+       ▼
 ENTREGADO o NO_ENTREGADO
-        │
-        ▼
-TO-BE 04
-Cierre / Integración / KPIs
-        │
-        ▼
-FINALIZADO
+       │
+       ▼
+   TO-BE 04
+Cierre / Integración Corporativa
+       │
+       ├─────────────────────────────────────────┐
+       ▼                                         ▼
+Jefe de Distribución                       Operador SAC
+(Dashboard KPIs / Excel)            (Consulta Histórica < 2 s)
+       │
+       ▼
+   FINALIZADO
 ```

@@ -1,64 +1,103 @@
 # Diagrama General de Casos de Uso del Negocio (CUN) — Y-Trace Yanbal
 
-> [!WARNING]
-> **Nota de Control de Versiones (H-14):** Este archivo `diagrama.md` actúa como una copia de referencia visual del modelo. Cualquier modificación en los requerimientos, actores o casos de uso debe realizarse prioritariamente en los documentos consolidados (`00_INDICE_Y_MODELO_GENERAL_CUN.md`, `01_ACTORES_DEL_NEGOCIO.md`, etc.) para evitar desincronizaciones.
-
 > **Archivo:** `diagrama.md`  
+> **Carpeta:** `detalles/Diagrama de Casos de Uso del Negocio (CUN)`  
 > **Proyecto:** Sistema Web y Móvil para la Gestión y Trazabilidad de Despachos y Entregas de Yanbal Perú (Y-Trace)  
-> **Metodología:** RUP (Sesión 4 UTP / Arquitectura Empresarial)  
-> **Contenido:** Código PlantUML optimizado para Visual Paradigm + Diagrama interactivo nativo para Obsidian.
+> **Metodología:** Rational Unified Process (RUP) — Modelado del Negocio (Sesión 4 UTP / Arquitectura Empresarial)  
+> **Estado:** [CONSOLIDADO OFICIAL — ALCANCE B2B PUNTO A PUNTO]  
+>  
+> 🔗 **Documentos Vinculados:**  
+> - [[00_INDICE_Y_MODELO_GENERAL_CUN]] — Marco conceptual y matriz de participación  
+> - [[01_ACTORES_DEL_NEGOCIO]] — Caracterización detallada de actores  
+> - [[07_MATRIZ_TRAZABILIDAD_CUN_VS_RF]] — Matriz CUN vs 28 Requerimientos Funcionales  
 
 ---
 
-## 1. Visualización Nativa en Obsidian (Mermaid)
+## 1. Diagrama de Casos de Uso del Negocio en Mermaid (Nativo para Obsidian)
 
-Este diagrama se renderiza de forma nativa e interactiva directamente en Obsidian sin necesidad de plugins externos:
+Este diagrama representa la relación formal entre los **5 Actores del Negocio** y los **5 Casos de Uso del Negocio (CUN)** dentro de la frontera del negocio de distribución B2B de Yanbal:
 
 ```mermaid
 flowchart LR
-    %% Actores del Negocio
-    subgraph ACTORES_IZQ ["Operación en CD y Ruta"]
+    %% Actores Operativos en CD y Ruta (Izquierda)
+    subgraph ACTORES_IZQ ["Operación en CD y Carretera"]
         SUP["fa:fa-user-tie Supervisor de Distribución<br/>&lt;&lt;business actor&gt;&gt;"]
         SL["fa:fa-truck Socio Logístico / Conductor<br/>&lt;&lt;business actor&gt;&gt;"]
     end
 
-    %% Límite del Negocio
+    %% Frontera del Negocio
     subgraph FRONTERA ["Negocio: Cadena de Distribución y Trazabilidad B2B (Yanbal Perú)"]
         CUN01(["<b>CUN-01</b><br/>Despacho y Salida de Carga<br/>en Centro de Distribución<br/>&lt;&lt;business use case&gt;&gt;"])
-        CUN02(["<b>CUN-02</b><br/>Traslado Interprovincial y<br/>Monitoreo de Carga en Tránsito<br/>&lt;&lt;business use case&gt;&gt;"])
-        CUN03(["<b>CUN-03</b><br/>Gestión de Incidencias y<br/>Contingencias Viales en Ruta<br/>&lt;&lt;business use case&gt;&gt;"])
+        CUN02(["<b>CUN-02</b><br/>Traslado y Monitoreo<br/>de Carga en Tránsito<br/>&lt;&lt;business use case&gt;&gt;"])
+        CUN03(["<b>CUN-03</b><br/>Cancelación Forzada<br/>del Seguimiento<br/>&lt;&lt;business use case&gt;&gt;"])
         CUN04(["<b>CUN-04</b><br/>Entrega y Recepción de Carga<br/>en Punto de Destino<br/>&lt;&lt;business use case&gt;&gt;"])
-        CUN05(["<b>CUN-05</b><br/>Auditoría de Trazabilidad y<br/>Rendimiento de Distribución<br/>&lt;&lt;business use case&gt;&gt;"])
+        CUN05(["<b>CUN-05</b><br/>Consulta de Trazabilidad y<br/>Análisis de Rendimiento<br/>&lt;&lt;business use case&gt;&gt;"])
     end
 
-    %% Actores de Destino y Jefatura
+    %% Actores de Destino, Jefatura y Soporte (Derecha)
     subgraph ACTORES_DER ["Destino, Control y Soporte"]
         PD["fa:fa-warehouse Punto de Destino / Agencia<br/>&lt;&lt;business actor&gt;&gt;"]
         JEF["fa:fa-chart-line Jefe de Distribución<br/>&lt;&lt;business actor&gt;&gt;"]
         SAC["fa:fa-headset Operador SAC / Soporte Logístico<br/>&lt;&lt;business actor&gt;&gt;"]
     end
 
-    %% Conexiones
+    %% Asociaciones del Supervisor de Distribución
     SUP --- CUN01
     SUP --- CUN02
     SUP --- CUN03
-    SUP --- CUN04
-    SUP --- CUN05
 
+    %% Asociaciones del Socio Logístico / Conductor
     SL --- CUN01
     SL --- CUN02
     SL --- CUN03
     SL --- CUN04
 
+    %% Asociación del Punto de Destino
     CUN04 --- PD
 
+    %% Asociaciones de Jefatura y Soporte
     CUN05 --- JEF
     CUN05 --- SAC
 ```
 
 ---
 
-## 2. Código PlantUML Oficial (Para Importar o Dibujar en Visual Paradigm)
+## 2. Mapa Conceptual de Interacción entre Procesos de Negocio
+
+El siguiente esquema refleja la articulación secuencial y de control de los macro-procesos operacionales de la distribución B2B:
+
+```
+                    CADENA LOGÍSTICA Y-TRACE
+                               │
+       ┌───────────────────────┼───────────────────────┐
+       │                       │                       │
+       ▼                       ▼                       ▼
+    CUN-01                  CUN-02                  CUN-04
+Despacho y Salida     Traslado y Monitoreo     Entrega y Recepción
+       │                       │                       │
+       │                       │                       ▼
+       │                       │                    CUN-05
+       │                       │                 Trazabilidad
+       │                       │                 y Rendimiento
+       │                       │
+       │                       └───────────┐
+       │                                   ▼
+       │                                CUN-03
+       │                             Cancelación
+       │                               Forzada
+       │
+       └───────────────────────────────────►
+```
+
+> [!NOTE]
+> **Precisiones de Frontera y Flujo:**
+> - El flujo ordinario (*happy path*) avanza linealmente de **CUN-01** (Salida) $\rightarrow$ **CUN-02** (Traslado) $\rightarrow$ **CUN-04** (Entrega).
+> - Al culminar las entregas, la información histórica alimenta **CUN-05** para consulta analítica y evaluación de rendimiento.
+> - Si se suscita una contingencia externa o siniestro insalvable durante el traslado (o antes de la salida física), el proceso se desvía formalmente hacia **CUN-03 (Cancelación Forzada del Seguimiento)** para el cierre formal, administrativo y técnico.
+
+---
+
+## 3. Código PlantUML Oficial (Para Importar o Dibujar en Visual Paradigm)
 
 Copia el siguiente bloque completo para importarlo en **Visual Paradigm** o en cualquier visor de PlantUML:
 
@@ -112,13 +151,13 @@ rectangle "Negocio: Cadena de Distribución y Trazabilidad B2B (Yanbal Perú)" {
 
     usecase "<b>CUN-01</b>\nDespacho y Salida de Carga\nen Centro de Distribución" as CUN01 <<business use case>>
 
-    usecase "<b>CUN-02</b>\nTraslado Interprovincial y\nMonitoreo de Carga en Tránsito" as CUN02 <<business use case>>
+    usecase "<b>CUN-02</b>\nTraslado y Monitoreo\nde Carga en Tránsito" as CUN02 <<business use case>>
 
-    usecase "<b>CUN-03</b>\nGestión de Incidencias y\nContingencias Viales en Ruta" as CUN03 <<business use case>>
+    usecase "<b>CUN-03</b>\nCancelación Forzada\ndel Seguimiento" as CUN03 <<business use case>>
 
     usecase "<b>CUN-04</b>\nEntrega y Recepción de Carga\nen Punto de Destino" as CUN04 <<business use case>>
 
-    usecase "<b>CUN-05</b>\nAuditoría de Trazabilidad y\nRendimiento de Distribución" as CUN05 <<business use case>>
+    usecase "<b>CUN-05</b>\nConsulta de Trazabilidad y\nAnálisis de Rendimiento" as CUN05 <<business use case>>
 }
 
 ' ==========================================
@@ -129,7 +168,6 @@ rectangle "Negocio: Cadena de Distribución y Trazabilidad B2B (Yanbal Perú)" {
 SUP -- CUN01
 SUP -- CUN02
 SUP -- CUN03
-SUP -- CUN04
 
 ' Conexiones del Conductor / Socio Logístico
 SL -- CUN01
@@ -149,16 +187,14 @@ CUN05 -- SAC
 
 ---
 
-## 3. Guía de Uso en Visual Paradigm
+## 4. Guía de Uso en Visual Paradigm
 
 1. **En Visual Paradigm Community Edition:**
-   - Ve a **Tools** $\rightarrow$ **PlantUML** (o abre un **Use Case Diagram** en blanco).
-   - Si lo dibujas a mano:
-     - Crea los **5 actores** y asígnales el estereotipo `business actor`.
-     - Crea el recuadro **System Boundary** con el nombre: `Negocio: Cadena de Distribución y Trazabilidad B2B (Yanbal Perú)`.
-     - Dibuja los **5 óvalos** dentro y asígnales el estereotipo `business use case` (VP dibujará automáticamente la línea diagonal interior).
-     - Une con líneas de **Association** (sólidas, sin flechas).
+   - Abre o crea un diagrama de tipo **Use Case Diagram**.
+   - Si se dibuja a mano:
+     - Crea los **5 actores del negocio** y asígnales el estereotipo `business actor`.
+     - Crea el contenedor **System Boundary** con el nombre: `Negocio: Cadena de Distribución y Trazabilidad B2B (Yanbal Perú)`.
+     - Dibuja los **5 óvalos** dentro del contenedor y asígnales el estereotipo `business use case`.
+     - Traza líneas de **Association** (sólidas, sin flechas direccionales ni includes/extends) conectando a cada actor con sus respectivos CUNs según la matriz oficial.
 2. **Exportar:**
-   - **Project** $\rightarrow$ **Export** $\rightarrow$ **Active Diagram as Image (PNG/SVG)** a 300 DPI para tu entrega.
-
-
+   - **Project** $\rightarrow$ **Export** $\rightarrow$ **Active Diagram as Image (PNG/SVG)** a 300 DPI.
