@@ -73,14 +73,18 @@
 
 ---
 
-### Actor 4: Persona Autorizada / Receptor en Domicilio
+### Actor 4: Persona Autorizada / Personal Autorizado en Sede
+
+> [!NOTE]
+> **Definición y Alcance B2B en el Proyecto:**  
+> En el marco del modelo de distribución B2B de cargas mono SKU y pallets consolidados desde CD Lurín hacia la red nacional de agencias y sedes autorizadas, la «Persona Autorizada» se conceptualiza formalmente como el **Personal Autorizado en Sede / Agencia de Destino** (el encargado o personal designado en la sede para recepcionar, verificar y consignar físicamente la carga con firma y DNI), sustentando la transparencia requerida en **PR-05** en plena armonía con el caso de estudio.
 
 | Campo | Detalle |
 |---|---|
-| **Elemento** | Persona autorizada presente en el domicilio de entrega |
-| **Por qué pertenece al AS-IS** | Es quien **recibe físicamente el paquete** cuando la consultora titular no se encuentra presente en el domicilio. La falta de visibilidad sobre su identidad como receptor en los sistemas de consulta es la causa directa del problema **PR-05** (reclamos falsos por supuesta pérdida). |
+| **Elemento** | Persona autorizada / Encargado de recepción en sede o agencia autorizada |
+| **Por qué pertenece al AS-IS** | Es quien **recibe físicamente la carga** en destino. La falta de visibilidad oportuna sobre su identidad como receptor en los sistemas de consulta es la causa directa del problema **PR-05** (incertidumbre y reclamos falsos por supuesta pérdida o desvío). |
 | **Fuente / Evidencia** | Entrevista min 24:45–25:01: *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser alguna persona autorizada y el cliente final, al hacer la trazabilidad a través de nuestro sistema, no necesariamente tiene esa información"*. |
-| **Parte del proceso donde interviene** | **Entrega** — Recepción física en domicilio. |
+| **Parte del proceso donde interviene** | **Entrega** — Recepción física y consignación en sede/agencia de destino. |
 | **Correspondencia con Requerimientos** | [[02 - Especificación de Requerimientos Funcionales#RF-07\|RF-07]], [[02 - Especificación de Requerimientos Funcionales#RF-12\|RF-12]]. |
 
 **Actividades actuales que realiza en el proceso:**

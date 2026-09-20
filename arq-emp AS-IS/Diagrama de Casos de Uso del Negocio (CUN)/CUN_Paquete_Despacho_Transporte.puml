@@ -22,47 +22,22 @@ skinparam usecase {
     FontColor #212121
 }
 
-skinparam note {
-    BackgroundColor #FFFDE7
-    BorderColor #FBC02D
-    FontColor #212121
-}
-
 left to right direction
 
 header Yanbal Perú - Etapas de Despacho y Transporte
 title Casos de Uso del Negocio: Despacho y Transporte Nacional (CUN-01 y CUN-02)
 
-actor "Supervisor de Zona de Despacho\n(Operador en CD)" as WorkerSupervisor <<Business Worker>>
+actor "Supervisor de Zona de Despacho\n(Operador en CD Lurín)" as WorkerSupervisor <<Business Worker>>
 actor "Socio Logístico / Transportista\n(Proveedor Contratado)" as ActorSocio <<Business Actor>>
 
 rectangle "Frontera Operativa de Despacho y Tránsito Nacional" {
-    usecase "<b>CUN-01: Despachar Pedidos\ndesde Centro de Distribución</b>\n---\n• ACT-01: Recibir pedidos empacados de picking\n• ACT-02: Clasificar destino (24 departamentos)\n• ACT-03: Asignar socio y modalidad\n• ACT-04: Asociar promesa (24h Lima / 7d provincias)\n• ACT-05: Registrar egreso (Estado 'Despachado')\n---\n<i>Requerimientos: RF-01, RF-02, RF-03, RF-04</i>" as CUN01
-    
-    usecase "<b>CUN-02: Trasladar Pedidos\nhacia Destino Nacional</b>\n---\n• ACT-06: Registrar inicio ruta (Estado 'En Ruta')\n• ACT-07: Traslado terrestre, bimodal o aéreo\n---\n<i>Requerimientos: RF-05</i>" as CUN02
+    usecase "CUN-01: Despachar Cargas Mono SKU\ndesde Centro de Distribución" as CUN01
+    usecase "CUN-02: Trasladar Cargas hacia\nSedes y Agencias Nacionales" as CUN02
 }
 
-' Asociaciones estándar UML (sin direccionalidad de flujo)
 WorkerSupervisor -- CUN01
 ActorSocio -- CUN01
 
 ActorSocio -- CUN02
-
-note bottom of CUN01
-  <b>Reglas Clave AS-IS:</b>
-  - Cobertura territorial: 24 departamentos.
-  - 3 modalidades: terrestre, bimodal o aérea.
-  - Promesa: 24h Lima / 7d provincias (asociada por Supervisor con soporte de sistema).
-  - Estado formal registrado: "Despachado".
-  - Habilita actualización transversal en segundo plano (ACT-12 / RF-10).
-end note
-
-note bottom of CUN02
-  <b>Reglas Clave AS-IS:</b>
-  - Traslado físico multimodal hacia destino.
-  - Estado formal registrado: "En Ruta".
-  - Sin checkpoints ni garitas intermedias en el AS-IS.
-  - Bifurcación operativa hacia CUN-03 (éxito) o CUN-04 (incidencia).
-end note
 
 @enduml

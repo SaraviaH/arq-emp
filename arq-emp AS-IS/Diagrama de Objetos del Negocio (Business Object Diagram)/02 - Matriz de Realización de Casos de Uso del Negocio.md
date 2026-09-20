@@ -42,9 +42,9 @@ A continuación se presenta la matriz integral que vincula las **14 actividades 
 | **CUN-02** | `ACT-06` | **Conductor / Repartidor** | **Valida / Porta** | `Guía / Doc. Despacho` | **R** | Revisa documentación de amparo antes de encender unidad y salir a ruta. | RF-05 |
 | **CUN-02** | `ACT-06` | **Conductor / Repartidor** | **Actualiza** | `Pedido` | **U** | Inicia recorrido formal en sistema (cambio a Estado *"En Ruta"*). | RF-05 |
 | **CUN-02** | `ACT-07` | **Conductor / Repartidor** | **Traslada / Custodia** | `Bulto` | **U** | Desplaza la carga física por la ruta asignada según modalidad de transporte. | RF-05 |
-| **CUN-03** | `ACT-08` | **Conductor / Repartidor** | **Entrega** | `Bulto` | **X** | Pone materialmente las cajas en manos del receptor en el domicilio. | RF-06 |
+| **CUN-03** | `ACT-08` | **Conductor / Repartidor** | **Entrega** | `Bulto` | **X** | Pone materialmente las cajas en la sede o agencia autorizada de destino. | RF-06 |
 | **CUN-03** | `ACT-08` | **Conductor / Repartidor** | **Registra** | `Registro de Entrega` | **C** | Registra comprobante de entrega conforme en sistema móvil (Estado *"Entregado"*). | RF-06 |
-| **CUN-03** | `ACT-09` | **Conductor / Repartidor** | **Captura / Registra** | `Registro de Entrega` | **U** | Identifica receptor real (Consultora Titular o Persona Autorizada con DNI). | RF-07 |
+| **CUN-03** | `ACT-09` | **Conductor / Repartidor** | **Captura / Registra** | `Registro de Entrega` | **U** | Identifica receptor real (Titular o Personal Autorizado con DNI y firma). | RF-07 |
 | **CUN-04** | `ACT-10` | **Conductor / Repartidor** | **Reporta / Registra** | `Incidencia de Entrega` | **C** | Registra causal tipificada de falla: retraso, pérdida o daño (Estado *"Entrega Fallida"*). | RF-08 |
 | **CUN-04** | `ACT-11` | **Conductor / Repartidor** | **Gestiona / Inicia** | `Orden de Retorno` | **C** | Emite constancia de devolución física hacia el CD (solo si hay bulto presente). | RF-09 |
 | **Transv.** | `ACT-12` | *(Sistema / Middleware)* | **Sincroniza** | `Información de Entrega` | **C / U** | Propaga estados de campo a base central (afectado por desfase de hasta 2h). | RF-10 |
@@ -119,8 +119,8 @@ flowchart TD
 
 ---
 
-### 3.3. Realización de CUN-03: Entregar Pedido en Domicilio
-- **Objetivo:** Ejecutar la entrega material de los bultos en la dirección de la consultora, verificar al receptor (titular o persona autorizada) y generar la constancia de entrega conforme.
+### 3.3. Realización de CUN-03: Entregar Carga en Sede Autorizada de Destino
+- **Objetivo:** Ejecutar la entrega material de los bultos en la sede o agencia autorizada de destino, verificar al receptor (titular o personal autorizado) y generar la constancia de entrega conforme.
 - **Trabajador Responsable:** `Conductor / Repartidor`.
 - **Entidades Participantes:** `Bulto`, `Registro de Entrega`, `Pedido`, `Información de Entrega`.
 

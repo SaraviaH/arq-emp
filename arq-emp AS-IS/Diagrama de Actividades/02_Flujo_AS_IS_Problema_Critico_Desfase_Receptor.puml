@@ -14,83 +14,52 @@ title Diagrama de Actividades AS-IS: Flujo Enfocado en el Problema Crítico\n(De
 
 |#E8EAF6|Socio Logístico / Transportista|
 start
-:Arribar al domicilio de la consultora;
-note right
-  **Condición de campo común:**
-  La consultora titular se encuentra fuera del domicilio
-  por motivos laborales o personales.
-end note
+:Arribar a la Sede o Agencia de Distribución de destino;
 
-|#FFF3E0|Persona Autorizada (en domicilio)|
-:Atender en la puerta del domicilio;
-:Identificarse como persona autorizada (familiar/encargado);
-:Recibir físicamente los bultos del pedido;
+|#FFF3E0|Personal Autorizado (en Sede de Destino)|
+:Atender al transportista y verificar la carga;
+:Identificarse como personal autorizado para recepción en sede;
+:Recibir bultos de carga mono SKU;
 
 |#E8EAF6|Socio Logístico / Transportista|
-:Capturar nombres, DNI y parentesco del receptor en aplicativo móvil (ACT-09);
-:Registrar confirmación de entrega física en su terminal (ACT-08);
-note right
-  **Momento T0:**
-  La entrega física se consumó válidamente en destino.
-  El registro queda almacenado localmente en Driving/NSDG.
-end note
+:Capturar datos y firma de recepción del personal autorizado (ACT-09);
+:Registrar confirmación de entrega en terminal móvil (ACT-08);
 
 |#ECEFF1|Proceso de Sincronización Batch (Desfase AS-IS)|
 :Encolar registro de entrega para sincronización por lotes;
-note right #FFCDD2
-  **CUELLO DE BOTELLA CRÍTICO (PR-03 / PR-04):**
-  Desfase de hasta 2 horas en la transmisión de datos
-  hacia el Bus de Integración, Salesforce y el Portal Web.
-  Durante esta ventana de tiempo, los sistemas centrales
-  mantienen información obsoleta ("En Ruta").
-end note
 
-|#E0F2F1|Consultora / Titular|
-:Retornar a su domicilio o revisar aplicativo web de Yanbal;
-:Ingresar N° Pedido para verificar estado del paquete (ACT-13);
+|#E0F2F1|Consultora / Distribuidor|
+:Ingresar N° Pedido o Despacho en portal web para verificar estado (ACT-13);
 
-if (¿Qué visualiza la consultora en el portal web?) then ([Portal desfasado: Estado 'En Ruta'])
+if (¿Qué visualiza en el portal web?) then ([Portal desfasado: Estado 'En Ruta'])
   :Constatar que el sistema indica 'En Ruta' o 'Despachado';
-  :Observar que el paquete ya no está en la puerta o desconocer su paradero;
+  :Desconocer si la carga ya ingresó formalmente a la sede;
 else ([Portal actualizado parcialmente: Estado 'Entregado'])
-  :Visualizar estado 'Entregado' sin detalle del receptor;
-  note right #FFCDD2
-    **BRECHA DE INFORMACIÓN (PR-05):**
-    El portal no expone el nombre ni DNI de la persona
-    autorizada que recibió físicamente el paquete.
-    La titular no sabe quién lo tiene en su casa.
-  end note
+  :Visualizar estado 'Entregado' sin detalle del receptor en sede;
 endif
 
-:Presumir no-entrega, pérdida o sustracción de su mercadería;
-:Llamar de inmediato a la central telefónica de Yanbal;
+:Presumir demora o extravío de la carga;
+:Comunicarse con el canal de atención al cliente de Yanbal;
 
 |#FCE4EC|Agente de Servicio al Cliente|
-:Atender la llamada de reclamo de la consultora;
-:Consultar el N° de Pedido en la plataforma Salesforce CRM (ACT-13);
+:Atender la consulta de seguimiento;
+:Consultar el N° de Pedido en Salesforce CRM (ACT-13);
 
 if (¿Qué información visualiza el Agente en Salesforce?) then ([Desfase activo: Estado 'En Ruta'])
-  :Confirmar a la consultora que el pedido sigue 'En Ruta';
-  :Ingresar ticket de reclamo formal por 'Demora o no entrega';
-else ([Sincronizado sin datos de receptor (PR-05)])
-  :Indicar que figura 'Entregado' pero sin datos de quién firmó;
-  :Registrar ticket de reclamo por 'Paquete no recibido por titular / Pérdida';
+  :Informar que el pedido figura aún en tránsito;
+  :Ingresar ticket de consulta formal por demora;
+else ([Sincronizado sin datos de recepción (PR-05)])
+  :Indicar estado 'Entregado' pero sin detalle de quién consignó la firma;
+  :Registrar ticket de verificación de entrega en sede;
 endif
 
-note right #FFCDD2
-  **IMPACTO OPERATIVO Y FINANCIERO:**
-  - Sobrecarga innecesaria del Call Center (Salesforce).
-  - Activación improcedente de reclamos por siniestro.
-  - Fricción y desconfianza de la consultora con Yanbal.
-end note
-
 |#ECEFF1|Proceso de Sincronización Batch (Desfase AS-IS)|
-:Culminar la ventana de desfase (~2 horas después de T0);
-:Impactar finalmente la confirmación y datos del receptor en la base central (ACT-12);
+:Culminar la ventana de sincronización batch (~2 horas de desfase);
+:Impactar confirmación y datos del personal autorizado en la base central (ACT-12);
 
 |#FCE4EC|Agente de Servicio al Cliente|
-:Verificar tardíamente que el paquete fue recibido por la persona autorizada;
-:Proceder al cierre o anulación manual del ticket de reclamo infundado;
+:Verificar que la carga fue consignada por el personal autorizado en sede;
+:Proceder al cierre o aclaración formal del ticket;
 
 stop
 @enduml

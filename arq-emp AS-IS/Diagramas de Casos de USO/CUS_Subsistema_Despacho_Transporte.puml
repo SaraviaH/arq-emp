@@ -25,19 +25,13 @@ skinparam usecase {
     FontColor #212121
 }
 
-skinparam note {
-    BackgroundColor #FFFDE7
-    BorderColor #FBC02D
-    FontColor #212121
-}
-
 left to right direction
 
 header Universidad Tecnológica del Perú (UTP) - APF1
-title CUS — Subsistemas de Despacho y Transporte en Ruta (AS-IS)\nSistemas: Driving / NSDG Desktop y NSDG Móvil
+title CUS — Subsistemas de Despacho y Transporte en Ruta (Solución Propuesta)\nSistemas: Driving / NSDG Desktop y NSDG Móvil
 
 ' Actores
-actor "Supervisor de Despacho\n(Driving / NSDG Desktop)" as ActSupervisor
+actor "Supervisor de Despacho\n(Driving / NSDG CD)" as ActSupervisor
 actor "Conductor / Transportista\n(NSDG Móvil)" as ActTransportista
 
 ' Subsistema 1: Despacho
@@ -60,30 +54,5 @@ ActSupervisor --> CUS03
 ActSupervisor --> CUS04
 
 ActTransportista --> CUS05
-
-note right of CUS01
-  <b>RF-01 / RNF-02:</b>
-  Zonificación territorial cubriendo
-  los 24 departamentos del Perú.
-end note
-
-note right of CUS02
-  <b>RF-02 / RNF-02:</b>
-  Modalidades de envío:
-  Terrestre, Bimodal y Aérea.
-end note
-
-note right of CUS04
-  <b>RF-04:</b>
-  Estándar de promesa:
-  - 24 horas (Lima Metropolitana)
-  - Hasta 7 días (Provincias)
-end note
-
-note bottom of CUS05
-  <b>RF-05:</b>
-  Transición al estado "En Ruta"
-  al iniciar el reparto en campo.
-end note
 
 @enduml

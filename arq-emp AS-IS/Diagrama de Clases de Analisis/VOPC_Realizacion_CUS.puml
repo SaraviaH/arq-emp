@@ -1,0 +1,121 @@
+@startuml VOPC_Realizacion_CUS
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #90A4AE
+    FontStyle bold
+    FontSize 12
+}
+
+skinparam boundary {
+    BackgroundColor #E1F5FE
+    BorderColor #0288D1
+    FontStyle bold
+}
+
+skinparam control {
+    BackgroundColor #FFF3E0
+    BorderColor #F57C00
+    FontStyle bold
+}
+
+skinparam entity {
+    BackgroundColor #E8F5E9
+    BorderColor #388E3C
+    FontStyle bold
+}
+
+header Universidad Tecnológica del Perú (UTP) - APF1
+title Vista de Clases Participantes (VOPC - RUP)\nRealización de Casos de Uso del Sistema (CUS) en Clases de Análisis
+
+' =========================================================
+' 1. SUBSISTEMA DE DESPACHO (CUS-01 a CUS-04)
+' =========================================================
+package "Realización CUS-01 a CUS-04: Despacho y Zonificación en CD" as PkgDespacho {
+    boundary "FrmZonificacionDespacho" as B_Zon
+    boundary "FrmAsignacionTransporte" as B_Asig
+    boundary "FrmRegistroSalidaCD" as B_Sal
+    control "CtrlDespacho" as C_Desp
+    entity "Pedido" as E_Ped1
+    entity "DireccionEntrega" as E_Dir1
+    entity "SocioLogistico" as E_Soc1
+    entity "RegistroDespacho" as E_RegD1
+
+    B_Zon ..> C_Desp : +clasificarGeograficamente()
+    B_Asig ..> C_Desp : +asignarTransportistaModalidad()
+    B_Sal ..> C_Desp : +formalizarSalidaDespacho()
+    
+    C_Desp ..> E_Ped1 : <<use>>
+    C_Desp ..> E_Dir1 : <<use>>
+    C_Desp ..> E_Soc1 : <<use>>
+    C_Desp ..> E_RegD1 : <<use>>
+}
+
+' =========================================================
+' 2. SUBSISTEMA DE TRANSPORTE Y RUTA (CUS-05)
+' =========================================================
+package "Realización CUS-05: Inicio de Traslado en Ruta" as PkgRuta {
+    boundary "AppMovilInicioRuta" as B_AppRuta
+    control "CtrlTransporteRuta" as C_Ruta
+    entity "Pedido" as E_Ped2
+    entity "EventoTracking" as E_Evt2
+
+    B_AppRuta ..> C_Ruta : +iniciarTraslado()
+    C_Ruta ..> E_Ped2 : <<use>>
+    C_Ruta ..> E_Evt2 : <<use>>
+}
+
+' =========================================================
+' 3. SUBSISTEMA DE ENTREGA Y CONTINGENCIAS (CUS-06 a CUS-09)
+' =========================================================
+package "Realización CUS-06 a CUS-09: Entrega, Identificación de Receptor y Retorno" as PkgEntrega {
+    boundary "AppMovilConfirmacionEntrega" as B_AppEnt
+    boundary "AppMovilGestionIncidencia" as B_AppInc
+    control "CtrlConfirmacionEntrega" as C_Ent
+    control "CtrlIncidenciaRetorno" as C_Inc
+    entity "RegistroEntrega" as E_RegEnt3
+    entity "Receptor" as E_Rec3
+    entity "IncidenciaEntrega" as E_Inc3
+    entity "OrdenRetorno" as E_Ret3
+    entity "Pedido" as E_Ped3
+
+    B_AppEnt ..> C_Ent : +confirmarEntrega()
+    C_Ent ..> E_Ped3 : <<use>>
+    C_Ent ..> E_RegEnt3 : <<use>>
+    C_Ent ..> E_Rec3 : <<use>>
+
+    B_AppInc ..> C_Inc : +registrarIncidencia()
+    C_Inc ..> E_Ped3 : <<use>>
+    C_Inc ..> E_Inc3 : <<use>>
+    C_Inc ..> E_Ret3 : <<use>>
+}
+
+' =========================================================
+' 4. SUBSISTEMA DE SINCRONIZACIÓN Y CONSULTA (CUS-10 a CUS-12)
+' =========================================================
+package "Realización CUS-10 a CUS-12: Sincronización y Consulta" as PkgConsulta {
+    boundary "ApiSincronizacionTracking" as B_ApiSync
+    boundary "PortalWebConsultaTracking" as B_WebCons
+    boundary "InterfaseSalesforceCRM" as B_CrmCons
+    control "CtrlSincronizacion" as C_Sync
+    control "CtrlConsultaTracking" as C_Cons
+    entity "EventoTracking" as E_Evt4
+    entity "Pedido" as E_Ped4
+    entity "Receptor" as E_Rec4
+
+    B_ApiSync ..> C_Sync : +sincronizarLote()
+    C_Sync ..> E_Evt4 : <<use>>
+    C_Sync ..> E_Ped4 : <<use>>
+
+    B_WebCons ..> C_Cons : +consultarTracking()
+    B_CrmCons ..> C_Cons : +consultarTracking()
+    C_Cons ..> E_Ped4 : <<use>>
+    C_Cons ..> E_Rec4 : <<use>>
+}
+
+@enduml

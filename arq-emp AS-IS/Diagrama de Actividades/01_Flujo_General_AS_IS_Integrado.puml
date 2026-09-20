@@ -35,13 +35,12 @@ if (¿Se puede efectuar la entrega física en destino?) then ([Entrega viable en
     |#E8EAF6|Socio Logístico / Transportista|
     :Verificar identidad de la consultora titular;
     :Registrar datos del receptor titular (ACT-09);
-  else ([Persona autorizada presente])
-    |#FFF3E0|Persona Autorizada|
-    :Identificarse como persona autorizada en domicilio;
-    :Recibir físicamente los bultos del pedido;
+  else ([Personal autorizado en sede de destino])
+    |#FFF3E0|Personal Autorizado (en Sede)|
+    :Identificarse como personal autorizado en sede de destino;
+    :Recibir y verificar físicamente los bultos del despacho;
     |#E8EAF6|Socio Logístico / Transportista|
-    :Verificar identidad y registrar vínculo/parentesco;
-    :Registrar datos del receptor (Personal Autorizado) (ACT-09);
+    :Verificar acreditación y registrar datos de recepción en sede (ACT-09);
   endif
 
   |#E8EAF6|Socio Logístico / Transportista|
@@ -63,13 +62,7 @@ else ([Incidencia impeditiva en ruta o domicilio])
 endif
 
 |#ECEFF1|Proceso Técnico de Sincronización (Transversal)|
-note right
-  **Brecha Tecnológica AS-IS (ACT-12):**
-  Los eventos registrados en campo (Driving / NSDG)
-  no se sincronizan en tiempo real con las plataformas
-  corporativas, sufriendo un desfase batch de ~2 horas.
-end note
-:Sincronizar lote de estados y confirmaciones hacia plataformas centrales\n(Desfase de hasta 2 horas en el AS-IS) (ACT-12);
+:Sincronizar lote de estados y confirmaciones hacia plataformas centrales (ACT-12);
 
 if (¿Canal por el cual se consulta el pedido?) then ([Consultora vía Portal Web])
   |#E0F2F1|Consultora / Titular|

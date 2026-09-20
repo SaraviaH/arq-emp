@@ -51,7 +51,7 @@ A partir de la entrevista al Ing. Joao Condorpusa Mendoza (`Transcripción origi
                      │                   │    │    │
          ┌───────────┴────────────┐ ┌────┴────┴────┴─────┐ ┌────────────────────────┐
          │ Socio Logístico /      │ │ Consultora /       │ │ Persona Autorizada     │
-         │ Transportista (Tercero)│ │ Consultor (Cliente)│ │ (Receptor en Domicilio)│
+         │ Transportista (Tercero)│ │ Consultor (Cliente)│ │ (Receptor en Sede/Ag.) │
          └────────────────────────┘ └────────────────────┘ └────────────────────────┘
 ```
 
@@ -90,8 +90,8 @@ flowchart TD
 
     %% Actores Externos del Negocio
     SOC["<b>Socio Logístico / Transportista</b><br/>(Empresas de Transporte)"]:::actorStyle
-    CLI["<b>Consultora / Consultor</b><br/>(Cliente Primario)"]:::actorStyle
-    AUT["<b>Persona Autorizada</b><br/>(Receptor en Domicilio)"]:::actorStyle
+    CLI["<b>Consultora / Distribuidor</b><br/>(Cliente de la Cadena)"]:::actorStyle
+    AUT["<b>Personal Autorizado</b><br/>(Recepción en Sede / Agencia)"]:::actorStyle
 
     %% Intercambios de Negocio de Alto Nivel
     COM -->|1a. Órdenes comerciales facturadas y datos de entrega| CENTRO
@@ -106,8 +106,8 @@ flowchart TD
     CLI -->|4a. Consulta sobre el estado de su pedido| CENTRO
     CENTRO -->|4b. Estado e información de entrega| CLI
 
-    AUT -->|5a. Datos de recepción en domicilio| CENTRO
-    CENTRO -->|5b. Pedido entregado| AUT
+    AUT -->|5a. Datos de recepción y consignación en sede| CENTRO
+    CENTRO -->|5b. Carga física entregada en sede| AUT
 
     SAC -->|6a. Consulta de estado por atención a consultoras| CENTRO
     CENTRO -->|6b. Información de estado y receptor del pedido| SAC
@@ -129,8 +129,8 @@ flowchart TD
 | **Área Comercial** | Unidad Organizacional Interna | **Órdenes comerciales facturadas y datos de entrega:**<br/>N° de pedido, código de consultora y dirección domiciliaria completa. | **Confirmación de entrega del pedido:**<br/>Notificación de entrega conforme para el cierre del ciclo transaccional de venta. | *"la generación del pedido se da a través de la plataforma comercial... va cayendo hacia nuestro gestor de picking... pasa a la zona de despacho donde ya tiene amarrada la información comercial"* (`min 14:43, 17:34`). |
 | **Área de Almacén y Preparación** (CD Lurín) | Unidad Organizacional Interna | **Bultos preparados y rotulados en muelle:**<br/>Cajas terminadas según volumetría con rótulo de destino para su entrega a rampa. | **Bultos devueltos por logística inversa:**<br/>Reingreso de carga rechazada o fallida para evaluación técnica de retorno. | *"estas cajas master son aperturadas para poder hacer el picking de pedidos a nivel unitario y ocurre la preparación... retorna el pedido hacia el área de almacén"* (`min 4:01, 20:55`). |
 | **Socio Logístico / Transportista** | Actor Externo («Business Actor») | **Inicio de traslado, reporte de entrega o incidencia en ruta:**<br/>Confirmación de inicio de ruta, constancia de entrega o reporte de contingencias (retraso, pérdida, daño). | **Carga física y ruta para distribución:**<br/>Bultos consolidados bajo custodia y asignación de tramo nacional (terrestre, bimodal, aéreo). | *"despacho de los pedidos hacia el cliente final a través de proveedores logísticos asociados... el mismo socio logístico hace el registro para hacer un proceso de logística inversa"* (`min 1:24, 20:30`). |
-| **Consultora / Consultor** | Actor Externo («Business Actor») | **Consulta sobre el estado de su pedido:**<br/>Petición de información de seguimiento mediante Número de Pedido o Código de Consultora. | **Estado e información de entrega:**<br/>Visualización del estatus actual del pedido e información actualizada de entrega. | *"para nosotros un consultor o una consultora es nuestro cliente... con esas dos informaciones puede hacer el seguimiento de cada estatus del pedido"* (`min 22:03–22:28`). |
-| **Persona Autorizada** | Actor Externo («Business Actor») | **Datos de recepción en domicilio:**<br/>Conformidad presencial y datos de identificación en destino cuando la titular no se encuentra en el domicilio. | **Pedido entregado:**<br/>Confirmación formal de entrega del pedido en el domicilio consignado. | *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser alguna persona autorizada"* (`min 24:45–25:01`). |
+| **Consultora / Distribuidor** | Actor Externo («Business Actor») | **Consulta sobre el estado de su pedido:**<br/>Petición de información de seguimiento mediante Número de Pedido o Código de Consultora. | **Estado e información de entrega:**<br/>Visualización del estatus actual del pedido e información actualizada de entrega. | *"para nosotros un consultor o una consultora es nuestro cliente... con esas dos informaciones puede hacer el seguimiento de cada estatus del pedido"* (`min 22:03–22:28`). |
+| **Personal Autorizado (en Sede / Agencia)** | Actor Externo («Business Actor») | **Datos de recepción y consignación en sede:**<br/>Conformidad presencial y datos de identificación en destino (DNI y firma) cuando recepciona en sede o agencia autorizada. | **Carga física entregada en sede:**<br/>Confirmación formal de entrega de la carga consolidada en la sede o agencia autorizada. | *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser alguna persona autorizada"* (`min 24:45–25:01`). |
 | **Área de Servicio al Cliente** | Unidad Organizacional Interna | **Consulta de estado por atención a consultoras:**<br/>Requerimiento de trazabilidad para atender llamadas de consultoras ante demoras o dudas. | **Información de estado y receptor del pedido:**<br/>Datos actualizados de cumplimiento y receptor real para absolver reclamos (`PR-05`). | *"para hacer este tipo de gestiones de consultas, reclamos y otro tipo de trámites con el cliente final"* (`min 28:35–28:59`). |
 | **Área de Control de Calidad y Seguridad Patrimonial** | Unidad Organizacional Interna | **Disposición técnica de reposición o activación de póliza:**<br/>Dictamen técnico para reenviar producto a línea o declarar siniestro con garantía. | **Pedidos devueltos por siniestro, pérdida o daño:**<br/>Bultos físicos o reportes de merma derivados de logística inversa para peritaje. | *"El área de almacén evalúa el pedido en base a calidad y en base a seguridad patrimonial para calificarlo si es procedente para el retorno... o en todo caso si se activa algún tipo de seguro o garantía a través de un siniestro"* (`min 20:55–21:25`). |
 

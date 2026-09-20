@@ -42,19 +42,19 @@
 - **Nombre del Rol:** Conductor / Repartidor de Carga (Operador de Transporte en Campo).
 - **Estereotipo RUP:** `«business worker»`.
 - **Ubicación Operativa:** Unidades de transporte multimodal y rutas de última milla a nivel nacional.
-- **Misión del Rol:** Realizar la conducción y custodia material de los bultos a lo largo de las rutas departamentales y locales, entregar físicamente las cajas en el domicilio del cliente validando al receptor, o registrar oportunamente las contingencias e iniciar el retorno formal hacia el CD.
+- **Misión del Rol:** Realizar la conducción y custodia material de los bultos a lo largo de las rutas departamentales y locales, entregar físicamente las cajas en la sede o agencia autorizada de destino validando al receptor, o registrar oportunamente las contingencias e iniciar el retorno formal hacia el CD.
 - **Casos de Uso del Negocio en que Participa:**
-  - `CUN-02: Trasladar Pedidos hacia Destino Nacional` (Operador principal).
-  - `CUN-03: Entregar Pedido en Domicilio` (Operador principal).
-  - `CUN-04: Gestionar Entrega Fallida y Retorno por Logística Inversa` (Operador principal).
+  - `CUN-02: Trasladar Cargas hacia Sedes y Agencias Nacionales` (Operador principal).
+  - `CUN-03: Entregar Carga en Sede Autorizada de Destino` (Operador principal).
+  - `CUN-04: Gestionar Rechazo o Retorno por Logística Inversa` (Operador principal).
 - **Herramientas y Sistemas AS-IS Utilizados:**
-  - **NSDG Móvil / Herramientas de campo del transportista:** Registro de inicio de ruta, confirmación de entrega en domicilio, tipificación de fallas y registro de retorno.
+  - **NSDG Móvil / Herramientas de campo del transportista:** Registro de inicio de ruta, confirmación de entrega en sede, tipificación de fallas y registro de retorno.
   - **Unidad de transporte vehicular:** Camiones troncales, camionetas de reparto urbano, naves fluviales o vuelos comerciales.
 - **Acciones Operativas Principales:**
   - `Portar / Validar:` Porta y exhibe la documentación de transporte ante controles de ruta (`Guía / Documentación de Despacho`).
   - `Actualizar:` Registra el inicio de tránsito formal cambiando el estado a *"En Ruta"* (`Pedido`).
   - `Trasladar / Custodiar:` Conduce y resguarda los bultos por las vías correspondientes (`Bulto`).
-  - `Entregar:` Realiza la entrega material del bulto al receptor titular o persona autorizada (`Bulto`).
+  - `Entregar:` Realiza la entrega material del bulto al titular o personal autorizado en sede (`Bulto`).
   - `Registrar:` Genera el comprobante de entrega consignando receptor, DNI y firma (`Registro de Entrega`).
   - `Reportar / Registrar:` Registra la imposibilidad de entrega tipificando causal: retraso, pérdida o daño (`Incidencia de Entrega`).
   - `Gestionar / Iniciar:` Ampara la devolución física de carga en custodia hacia el CD (`Orden de Retorno`).

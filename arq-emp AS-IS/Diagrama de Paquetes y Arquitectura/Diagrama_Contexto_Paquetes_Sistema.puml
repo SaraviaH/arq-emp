@@ -1,0 +1,90 @@
+@startuml Diagrama_Contexto_Paquetes_Sistema
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #455A64
+    FontColor #263238
+    FontStyle bold
+    FontSize 12
+}
+
+skinparam rectangle {
+    BackgroundColor<<ProposedSystem>> #E8EAF6
+    BorderColor<<ProposedSystem>> #283593
+    FontColor<<ProposedSystem>> #1A237E
+    BorderThickness<<ProposedSystem>> 2
+    FontStyle<<ProposedSystem>> bold
+    
+    BackgroundColor<<ExternalSystem>> #ECEFF1
+    BorderColor<<ExternalSystem>> #546E7A
+    FontColor<<ExternalSystem>> #263238
+    BorderThickness<<ExternalSystem>> 1.5
+    FontStyle<<ExternalSystem>> bold
+}
+
+skinparam arrow {
+    Color #37474F
+    FontColor #263238
+    FontSize 10
+}
+
+header Universidad Tecnológica del Perú (UTP) - APF1
+title Diagrama de Contexto y Paquetes del Sistema Propuesto\nDelimitación de Fronteras, Subsistemas Lógicos y Sistemas Externos (Yanbal Perú)
+
+' =========================================================
+' SISTEMAS EXTERNOS Y CANALES CORPORATIVOS (FUERA DE LA FRONTERA)
+' =========================================================
+rectangle "Sistemas Corporativos Externos (Legados)" as PkgExternos <<ExternalSystem>> {
+    rectangle "SAP R3 / ERP\n(Gestión de Órdenes y Stock)" as ExtSAP
+    rectangle "SPY / WMS\n(Líneas de Picking Unitario en CD)" as ExtSPY
+    rectangle "Salesforce CRM\n(Consola de Servicio al Cliente)" as ExtCRM
+    rectangle "Driving / NSDG\n(Software Legado de Despacho)" as ExtNSDG
+    rectangle "Portal Comercial Maya\n(Canal Web Consultoras)" as ExtMaya
+}
+
+' =========================================================
+' FRONTERA DEL SISTEMA PROPUESTO
+' =========================================================
+rectangle "== FRONTERA DEL SISTEMA PROPUESTO ==\nSistema de Trazabilidad y Distribución B2B (Yanbal Perú)" as SistemaPropuesto <<ProposedSystem>> {
+
+    package "pkg_despacho\n(Despacho y Zonificación CD)" as PkgDespacho
+    package "pkg_transporte\n(Transporte y Control de Ruta)" as PkgTransporte
+    package "pkg_entrega\n(Entrega en Sede y Contingencias)" as PkgEntrega
+    package "pkg_sincronizacion\n(Integración y Propagación)" as PkgSync
+    package "pkg_consulta\n(Consulta y API Tracking)" as PkgConsulta
+    package "pkg_seguridad_transversal\n(Seguridad RBAC y Auditoría)" as PkgSeguridad
+}
+
+' =========================================================
+' DEPENDENCIAS ENTRE PAQUETES INTERNOS (<<use>>)
+' =========================================================
+PkgTransporte ..> PkgDespacho : <<use>>
+PkgEntrega ..> PkgTransporte : <<use>>
+
+PkgTransporte ..> PkgSync : <<use>>
+PkgEntrega ..> PkgSync : <<use>>
+
+PkgSync ..> PkgConsulta : <<use>>
+
+PkgDespacho ..> PkgSeguridad : <<use>>
+PkgTransporte ..> PkgSeguridad : <<use>>
+PkgEntrega ..> PkgSeguridad : <<use>>
+PkgConsulta ..> PkgSeguridad : <<use>>
+
+' =========================================================
+' INTERCAMBIOS CON SISTEMAS EXTERNOS (FRONTERAS DEL SISTEMA)
+' =========================================================
+ExtSPY --> PkgDespacho : Cargas Mono SKU
+ExtSAP --> PkgDespacho : Datos de Despacho
+ExtNSDG ..> PkgDespacho : Integración TMS
+
+PkgSync --> ExtCRM : Estados y Recepción en Sede
+PkgConsulta <-- ExtMaya : Consultas de Seguimiento
+PkgConsulta <-- ExtCRM : Consultas de Soporte SAC
+
+@enduml

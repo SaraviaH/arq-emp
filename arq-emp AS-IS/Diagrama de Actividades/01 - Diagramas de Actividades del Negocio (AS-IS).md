@@ -200,7 +200,7 @@ Este diagrama modela de forma minuciosa la patología operacional que experiment
 sequenceDiagram
     autonumber
     actor T as Transportista en Campo
-    actor PA as Persona Autorizada (Domicilio)
+    actor PA as Personal Autorizado (en Sede)
     participant APP as Driving / NSDG (Móvil)
     participant BATCH as Cola Sincronización Batch
     actor C as Consultora Titular
@@ -208,17 +208,17 @@ sequenceDiagram
     actor A as Agente Servicio al Cliente
     participant SF as Salesforce CRM
 
-    T->>PA: Llega al domicilio y entrega paquete
-    PA-->>T: Se identifica (DNI y parentesco: Hija)
+    T->>PA: Llega a la sede/agencia y entrega carga consolidada
+    PA-->>T: Se identifica (DNI y cargo: Encargado de Recepción en Sede)
     T->>APP: ACT-08 / ACT-09: Registra entrega física y datos de receptor
     Note over APP,BATCH: Momento T0: Entrega completada físicamente
     APP->>BATCH: Encola lote para transmisión
     
     rect rgb(255, 235, 238)
         Note over BATCH,WEB: ⚠️ DESFASE CRÍTICO DE 2 HORAS (PR-03 / PR-04)<br/>Los sistemas centrales no reciben la actualización
-        C->>WEB: ACT-13: Consulta tracking desde su trabajo
+        C->>WEB: ACT-13: Consulta tracking desde portal
         WEB-->>C: Muestra estado obsoleto: "En Ruta" (o "Entregado" sin datos de quién recibió)
-        Note over C: PR-05: Titular no ve su paquete en casa ni sabe quién lo recibió.<br/>Presume pérdida o robo.
+        Note over C: PR-05: Titular no tiene constancia ni sabe quién recibió en la sede.<br/>Presume pérdida o desvío.
         C->>A: Llama angustiada al Call Center reclamando su pedido
         A->>SF: ACT-13: Consulta N° Pedido en CRM
         SF-->>A: Muestra datos desfasados: "En Ruta" (o sin datos de receptor)
@@ -344,11 +344,11 @@ Complementando los diagramas integrados, el proyecto dispone de la descomposici�
 
 | Caso de Uso del Negocio | Título Operativo del CUN | Archivo Fuente `.puml` | Actividades AS-IS Comprendidas | Actores / Swimlanes Intervinientes |
 | :--- | :--- | :--- | :---: | :--- |
-| **`CUN-01`** | **Despachar Pedidos desde Centro de Distribución** | [`CUN_01_Despachar.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_01_Despachar.puml) | `ACT-01` a `ACT-05` | Supervisor de Zona de Despacho, Socio Logístico |
-| **`CUN-02`** | **Trasladar Pedidos hacia Destino Nacional** | [`CUN_02_Trasladar.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_02_Trasladar.puml) | `ACT-06`, `ACT-07` | Socio Logístico / Transportista |
-| **`CUN-03`** | **Entregar Pedido en Domicilio** | [`CUN_03_Entregar.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_03_Entregar.puml) | `ACT-08`, `ACT-09` | Socio Logístico, Consultora Titular, Persona Autorizada |
-| **`CUN-04`** | **Gestionar Entrega Fallida y Retorno por Logística Inversa** | [`CUN_04_Gestionar_Entrega_Fallida_Retorno.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_04_Gestionar_Entrega_Fallida_Retorno.puml) | `ACT-10`, `ACT-11` | Socio Logístico / Transportista |
-| **`CUN-05`** | **Consultar Trazabilidad y Situación del Pedido** | [`CUN_05_Consultar_Trazabilidad.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_05_Consultar_Trazabilidad.puml) | `ACT-13`, `ACT-14` | Consultora / Consultor, Agente de Servicio al Cliente |
+| **`CUN-01`** | **Despachar Cargas Mono SKU desde Centro de Distribución** | [`CUN_01_Despachar.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_01_Despachar.puml) | `ACT-01` a `ACT-05` | Supervisor de Zona de Despacho, Socio Logístico |
+| **`CUN-02`** | **Trasladar Cargas hacia Sedes y Agencias Nacionales** | [`CUN_02_Trasladar.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_02_Trasladar.puml) | `ACT-06`, `ACT-07` | Socio Logístico / Transportista |
+| **`CUN-03`** | **Entregar Carga en Sede Autorizada de Destino** | [`CUN_03_Entregar.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_03_Entregar.puml) | `ACT-08`, `ACT-09` | Socio Logístico, Responsable Titular de Sede, Personal Autorizado (en Sede) |
+| **`CUN-04`** | **Gestionar Rechazo o Retorno por Logística Inversa** | [`CUN_04_Gestionar_Entrega_Fallida_Retorno.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_04_Gestionar_Entrega_Fallida_Retorno.puml) | `ACT-10`, `ACT-11` | Socio Logístico / Transportista |
+| **`CUN-05`** | **Consultar Trazabilidad y Estado de Despacho** | [`CUN_05_Consultar_Trazabilidad.puml`](file:///c:/Users/joses/Obsidian/arq-emp/arq-emp%20AS-IS/Diagrama%20de%20Actividades/CUN_05_Consultar_Trazabilidad.puml) | `ACT-13`, `ACT-14` | Consultora / Distribuidor, Agente de Servicio al Cliente |
 
 ---
 

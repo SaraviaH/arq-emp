@@ -66,15 +66,15 @@ A continuación se detalla la intervención de cada entidad conceptual en los 5 
   - `ModalidadTransporte`: Rige la ruta física recorrida (carretera troncal, transporte combinado bimodal o vuelo comercial).
   - `DireccionEntrega`: Determina el itinerario y destino final del vehículo de transporte.
 
-### 3.3. CUN-03: Entregar Pedido en Domicilio (Camino Principal)
-* **Objetivo del CUN:** Realizar la entrega física de los bultos en el domicilio de la consultora, verificar la identidad de quien recibe y formalizar la constancia de entrega.
+### 3.3. CUN-03: Entregar Carga en Sede Autorizada de Destino (Camino Principal)
+* **Objetivo del CUN:** Realizar la entrega física de los bultos en la sede o agencia autorizada de destino, verificar la identidad de quien recibe y formalizar la constancia de entrega.
 * **Entidades Intervinientes:**
   - `Pedido`: Cambia de estado al valor terminal *"Entregado"* (`ACT-08`).
-  - `Bulto`: Se entrega materialmente al receptor en el domicilio.
+  - `Bulto`: Se entrega materialmente al receptor en la sede o agencia de destino.
   - `RegistroEntrega`: Se genera por el transportista consignando fecha, hora y conformidad (`ACT-08`).
   - `Receptor`: Se registra la persona física que recibe (`ACT-09`), especializándose en:
-    - `ConsultoraTitular`: Si la entrega se efectuó en manos de la titular.
-    - `PersonalAutorizado`: Si la titular estuvo ausente y recibió personal / persona autorizada en el predio.
+    - `ConsultoraTitular`: Si la recepción la efectuó el titular de la cuenta o despacho.
+    - `PersonalAutorizado`: Si recibió el personal o persona autorizada designada en la sede/agencia de destino.
 
 ### 3.4. CUN-04: Gestionar Entrega Fallida y Retorno por Logística Inversa (Camino Alternativo)
 * **Objetivo del CUN:** Registrar la imposibilidad de completar la entrega física por incidencias tipificadas (retraso, pérdida o daño) y formalizar el inicio de retorno al CD en caso de contar con bulto físico.

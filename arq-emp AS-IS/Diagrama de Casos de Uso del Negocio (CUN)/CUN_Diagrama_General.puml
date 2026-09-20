@@ -45,8 +45,8 @@ title Diagrama de Casos de Uso del Negocio (CUN) - Estado Actual (AS-IS)\nProces
 ' ACTORES DEL NEGOCIO (EXTERNOS)
 ' =======================================================
 package "Actores del Negocio («Business Actors»)" as PkgActores {
-    actor "Consultora / Consultor\n(Cliente Primario)" as ActorConsultora <<Business Actor>>
-    actor "Persona Autorizada\n(Receptor en Domicilio)" as ActorPersonaAutorizada <<Business Actor>>
+    actor "Consultora / Distribuidor\n(Cliente de la Cadena)" as ActorConsultora <<Business Actor>>
+    actor "Personal Autorizado\n(Recepción en Sede / Agencia)" as ActorPersonaAutorizada <<Business Actor>>
     actor "Socio Logístico / Transportista\n(Proveedor Contratado)" as ActorSocio <<Business Actor>>
 }
 
@@ -54,30 +54,29 @@ package "Actores del Negocio («Business Actors»)" as PkgActores {
 ' TRABAJADORES DEL NEGOCIO (INTERNOS)
 ' =======================================================
 package "Trabajadores del Negocio («Business Workers»)" as PkgTrabajadores {
-    actor "Supervisor de Zona de Despacho\n(Operador en CD)" as WorkerSupervisor <<Business Worker>>
+    actor "Supervisor de Zona de Despacho\n(Operador en CD Lurín)" as WorkerSupervisor <<Business Worker>>
     actor "Agente de Servicio al Cliente\n(Atención en Salesforce)" as WorkerAgente <<Business Worker>>
-    actor "Jefatura de Distribución\n(Gobierno y Lead Times)" as WorkerJefatura <<Business Worker>>
+    actor "Jefatura de Distribución\n(Supervisión de Lead Times)" as WorkerJefatura <<Business Worker>>
 }
 
 ' =======================================================
 ' FRONTERA DEL SISTEMA DEL NEGOCIO (5 CUN)
 ' =======================================================
-rectangle "Frontera del Negocio: Cadena de Distribución y Trazabilidad (Yanbal Perú)" as SistemaNegocio {
+rectangle "Frontera del Negocio: Cadena de Distribución B2B y Trazabilidad (Yanbal Perú)" as SistemaNegocio {
     
-    usecase "<b>CUN-01</b>\nDespachar Pedidos desde\nCentro de Distribución\n---\n..Trazabilidad..\nRF-01, RF-02, RF-03, RF-04\nACT-01 a ACT-05\n..Estado..\nDespachado" as CUN01
+    usecase "CUN-01: Despachar Cargas Mono SKU\ndesde Centro de Distribución" as CUN01
     
-    usecase "<b>CUN-02</b>\nTrasladar Pedidos hacia\nDestino Nacional\n---\n..Trazabilidad..\nRF-05\nACT-06, ACT-07\n..Estado..\nEn Ruta (24 Deptos)" as CUN02
+    usecase "CUN-02: Trasladar Cargas hacia\nSedes y Agencias Nacionales" as CUN02
     
-    usecase "<b>CUN-03</b>\nEntregar Pedido\nen Domicilio\n---\n..Trazabilidad..\nRF-06, RF-07\nACT-08, ACT-09\n..Estado..\nEntregado" as CUN03
+    usecase "CUN-03: Entregar Carga en Sede\nAutorizada de Destino" as CUN03
     
-    usecase "<b>CUN-04</b>\nGestionar Entrega Fallida\ny Retorno por Logística Inversa\n---\n..Trazabilidad..\nRF-08, RF-09\nACT-10, ACT-11\n..Estado..\nEntrega Fallida" as CUN04
+    usecase "CUN-04: Gestionar Rechazo o Retorno\npor Logística Inversa" as CUN04
     
-    usecase "<b>CUN-05</b>\nConsultar Trazabilidad\ny Situación del Pedido\n---\n..Trazabilidad..\nRF-11, RF-12\nACT-13, ACT-14\n..Búsqueda..\nN° Pedido / Cód. Consultora" as CUN05
+    usecase "CUN-05: Consultar Trazabilidad\ny Estado de Despacho" as CUN05
 }
 
 ' =======================================================
 ' RELACIONES DE ASOCIACIÓN (ACTORES <-> CUN)
-' Asociaciones estándar UML (sin direccionalidad de flujo)
 ' =======================================================
 WorkerSupervisor -- CUN01
 ActorSocio -- CUN01
@@ -92,34 +91,6 @@ ActorSocio -- CUN04
 
 ActorConsultora -- CUN05
 WorkerAgente -- CUN05
-
-' =======================================================
-' NOTAS DE REGLAS, BIFURCACIÓN Y DELIMITACIÓN
-' =======================================================
-note bottom of CUN04
-  <b>Responsable Único en Campo:</b>
-  El Socio Logístico tipifica la incidencia
-  (retraso, pérdida o daño). Si existe bulto
-  físico (retraso o daño), registra el inicio
-  del retorno (RF-09 / ACT-11); en caso de
-  pérdida, registra la incidencia sin retorno físico.
-  Concluye sin incluir recepción física en CD.
-  Supervisor no participa en este caso de uso.
-end note
-
-note right of CUN03
-  <b>Caminos Alternativos desde 'En Ruta' (CUN-02):</b>
-  - CUN-03: Entrega exitosa en domicilio (Camino Principal).
-  - CUN-04: Entrega fallida e inicio de retorno (Camino Alternativo).
-  (Modelados sin relación <<extend>> ni <<include>>).
-end note
-
-note bottom of CUN05
-  <b>Actividad Transversal (ACT-12 / RF-10):</b>
-  La sincronización de estados opera como actividad
-  técnica transversal en segundo plano (desfase ~2h),
-  alimentando los datos que se visualizan en CUN-05.
-end note
 
 footer Caso de Estudio: Yanbal Perú | Modelo de Casos de Uso del Negocio (APF1)
 

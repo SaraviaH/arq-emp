@@ -68,16 +68,16 @@ package "Realización CUN-02: Trasladar Pedidos hacia Destino Nacional" as PkgCU
 }
 
 ' =========================================================
-' PAQUETE CUN-03: ENTREGAR PEDIDO EN DOMICILIO
+' PAQUETE CUN-03: ENTREGAR CARGA EN SEDE AUTORIZADA
 ' =========================================================
-package "Realización CUN-03: Entregar Pedido en Domicilio" as PkgCUN03 {
+package "Realización CUN-03: Entregar Carga en Sede Autorizada" as PkgCUN03 {
     class "Conductor / Repartidor" as W_Cond03 <<business worker>>
     class "Bulto" as E_Bul03 <<business entity>>
     class "Registro de Entrega" as E_Ent03 <<business entity>>
     class "Pedido" as E_Ped03 <<business entity>>
 
-    W_Cond03 ..> E_Bul03 : 1. entrega física a receptor
-    W_Cond03 ..> E_Ent03 : 2. registra receptor y firma
+    W_Cond03 ..> E_Bul03 : 1. entrega física en sede
+    W_Cond03 ..> E_Ent03 : 2. registra receptor autorizado
     W_Cond03 ..> E_Ped03 : 3. actualiza a 'Entregado'
 }
 

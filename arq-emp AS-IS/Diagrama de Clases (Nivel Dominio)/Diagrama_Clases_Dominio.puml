@@ -19,29 +19,100 @@ skinparam class {
 title Diagrama de Clases de Dominio (Nivel Dominio) - Proceso Logístico AS-IS
 
 ' =========================================================
-' CLASES DEL DOMINIO
+' CLASES DEL DOMINIO CON ATRIBUTOS CONCEPTUALES
 ' =========================================================
 
-class Pedido
-class Bulto
-class RegistroDespacho
+class Pedido {
+    +numeroPedido : String
+    +estadoPedido : String
+    +promesaEntrega : String
+    +fechaDespacho : DateTime
+    +fechaEntregaEstimada : Date
+}
 
-class Consultora
-class DireccionEntrega
+class Bulto {
+    +formatoCaja : String
+    +estadoFisico : String
+}
 
-class SocioLogistico
-abstract class ModalidadTransporte
-class TransporteTerrestre
-class TransporteBimodal
-class TransporteAereo
+class RegistroDespacho {
+    +codigoDespacho : String
+    +fechaHoraSalida : DateTime
+    +supervisorDespacho : String
+    +conformidadCarga : Boolean
+}
 
-class RegistroEntrega
-abstract class Receptor
-class ConsultoraTitular
-class PersonalAutorizado
+class Consultora {
+    +codigoConsultora : String
+    +nombreTitular : String
+    +telefono : String
+    +correoElectronico : String
+}
 
-class IncidenciaEntrega
-class OrdenRetorno
+class DireccionEntrega {
+    +departamento : String
+    +provincia : String
+    +distrito : String
+    +tipoCiudad : String
+    +direccionDetallada : String
+}
+
+class SocioLogistico {
+    +ruc : String
+    +razonSocial : String
+    +nombreComercial : String
+    +contactoOperativo : String
+}
+
+abstract class ModalidadTransporte {
+    +tipoModalidad : String
+    +tiempoTransitoEstimado : String
+}
+
+class TransporteTerrestre {
+    +rutaTroncal : String
+}
+
+class TransporteBimodal {
+    +puertoEmbarque : String
+}
+
+class TransporteAereo {
+    +vueloCarga : String
+}
+
+class RegistroEntrega {
+    +codigoEntrega : String
+    +fechaHoraEntrega : DateTime
+    +firmaConformidad : Boolean
+}
+
+abstract class Receptor {
+    +nombresReceptor : String
+    +numeroDocumento : String
+}
+
+class ConsultoraTitular {
+    +firmaTitular : Boolean
+}
+
+class PersonalAutorizado {
+    +parentescoRelacion : String
+}
+
+class IncidenciaEntrega {
+    +codigoIncidencia : String
+    +tipoCausal : String
+    +fechaHoraIncidencia : DateTime
+    +descripcion : String
+}
+
+class OrdenRetorno {
+    +numeroOrdenRetorno : String
+    +fechaInicioRetorno : DateTime
+    +motivoRetorno : String
+    +estadoRetorno : String
+}
 
 
 ' =========================================================

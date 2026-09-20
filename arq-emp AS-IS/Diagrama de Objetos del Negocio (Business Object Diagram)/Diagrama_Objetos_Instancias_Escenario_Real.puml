@@ -1,0 +1,98 @@
+@startuml Diagrama_Objetos_Instancias_Escenario_Real
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+
+skinparam object {
+    BackgroundColor White
+    BorderColor #37474F
+    ArrowColor #263238
+    FontSize 11
+    FontStyle bold
+    AttributeFontSize 10
+}
+
+header Universidad Tecnológica del Perú (UTP) - APF1
+title Diagrama de Objetos UML — Escenario Real de Distribución y Entrega (Snapshot en T = 16:45h)\nInstanciación Concreta de Clases de Dominio: Entrega Exitosa a Persona Autorizada (Caso Yanbal Perú)
+
+' =========================================================
+' INSTANCIAS CONCRETAS DEL DOMINIO (OBJETOS EN ESTADO REAL)
+' =========================================================
+
+object "<u>ped_84920 : Pedido</u>" as ped {
+    numeroPedido = "PED-2026-84920"
+    estadoPedido = "Entregado"
+    promesaEntrega = "24 horas"
+    fechaDespacho = 2026-09-18 08:30:00
+    fechaEntregaEstimada = 2026-09-19
+}
+
+object "<u>bulto_01 : Bulto</u>" as bul {
+    formatoCaja = "Formato 3 (Mediana)"
+    estadoFisico = "Íntegro"
+}
+
+object "<u>despacho_cd : RegistroDespacho</u>" as des {
+    codigoDespacho = "DSP-LUR-2026-0918-04"
+    fechaHoraSalida = 2026-09-18 08:30:00
+    supervisorDespacho = "Carlos Quispe (Sup. CD)"
+    conformidadCarga = true
+}
+
+object "<u>socio_olva : SocioLogistico</u>" as soc {
+    ruc = "20100686810"
+    razonSocial = "OLVA COURIER S.A.C."
+    nombreComercial = "Olva Express"
+    contactoOperativo = "despachos.lima@olva.com.pe"
+}
+
+object "<u>mod_terrestre : TransporteTerrestre</u>" as mod {
+    tipoModalidad = "Terrestre Urbano"
+    tiempoTransitoEstimado = "24 horas"
+    rutaTroncal = "Ruta Lima Centro-Sur (R-14)"
+}
+
+object "<u>dir_sede_destino : DireccionEntrega</u>" as dir {
+    departamento = "Lima"
+    provincia = "Lima"
+    distrito = "San Borja"
+    tipoCiudad = "Principal"
+    direccionDetallada = "Agencia de Distribución / Sede Autorizada Lima Sur"
+}
+
+object "<u>consultora_maria : Consultora</u>" as con {
+    codigoConsultora = "CONS-74892"
+    nombreTitular = "María Elena Torres Flores"
+    telefono = "+51 987654321"
+    correoElectronico = "m.torres@gmail.com"
+}
+
+object "<u>reg_entrega_ok : RegistroEntrega</u>" as ent {
+    codigoEntrega = "ENT-2026-0918-992"
+    fechaHoraEntrega = 2026-09-18 16:45:00
+    firmaConformidad = true
+}
+
+object "<u>receptor_carlos : PersonalAutorizado</u>" as rec {
+    nombresReceptor = "Carlos Torres Flores"
+    numeroDocumento = "45892147"
+    parentescoRelacion = "Encargado de Recepción en Sede"
+}
+
+' =========================================================
+' VÍNCULOS ENTRE OBJETOS (LINKS DE ASOCIACIÓN INSTANCIADOS)
+' =========================================================
+
+con -- ped : emite orden
+ped *-- bul : contiene
+ped -- des : egresa formalmente
+ped -- dir : asignado a destino
+soc -- ped : transporta
+ped -- mod : vía
+ped -- ent : concluye con
+ent -- rec : consignado y firmado por
+
+@enduml

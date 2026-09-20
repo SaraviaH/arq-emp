@@ -203,10 +203,10 @@ Cada interacción del Modelo de Objetos del Negocio se desprende de los 5 Casos 
 
 | CUN Vinculado | Nombre del Caso de Uso del Negocio | Trabajador(es) Interviniente(s) | Entidad(es) del Negocio Manipulada(s) | Acción(es) Principal(es) |
 |:---:|:---|:---|:---|:---|
-| **CUN-01** | Despachar Pedidos desde Centro de Distribución | **Supervisor de CD** | `Pedido`, `Bulto`, `Registro de Despacho`, `Guía / Documentación de Despacho` | `validar`, `clasificar`, `emitir`, `registrar` |
-| **CUN-02** | Trasladar Pedidos hacia Destino Nacional | **Conductor / Repartidor** | `Bulto`, `Guía / Documentación de Despacho`, `Pedido` | `trasladar`, `custodiar`, `portar` |
-| **CUN-03** | Entregar Pedido en Domicilio | **Conductor / Repartidor** | `Bulto`, `Registro de Entrega`, `Pedido`, `Información de Entrega` | `entregar`, `capturar`, `registrar` |
-| **CUN-04** | Gestionar Entrega Fallida y Retorno por Logística Inversa | **Conductor / Repartidor** | `Incidencia de Entrega`, `Orden de Retorno`, `Bulto`, `Pedido` | `reportar`, `registrar`, `gestionar` |
-| **CUN-05** | Consultar Trazabilidad y Situación del Pedido | **Personal SAC** | `Información de Entrega`, `Pedido`, `Incidencia de Entrega` | `consultar`, `verificar`, `gestionar` |
+| **CUN-01** | Despachar Cargas Mono SKU desde Centro de Distribución | **Supervisor de CD** | `Pedido`, `Bulto`, `Registro de Despacho`, `Guía / Documentación de Despacho` | `validar`, `clasificar`, `emitir`, `registrar` |
+| **CUN-02** | Trasladar Cargas hacia Sedes y Agencias Nacionales | **Conductor / Repartidor** | `Bulto`, `Guía / Documentación de Despacho`, `Pedido` | `trasladar`, `custodiar`, `portar` |
+| **CUN-03** | Entregar Carga en Sede Autorizada de Destino | **Conductor / Repartidor** | `Bulto`, `Registro de Entrega`, `Pedido`, `Información de Entrega` | `entregar`, `capturar`, `registrar` |
+| **CUN-04** | Gestionar Rechazo o Retorno por Logística Inversa | **Conductor / Repartidor** | `Incidencia de Entrega`, `Orden de Retorno`, `Bulto`, `Pedido` | `reportar`, `registrar`, `gestionar` |
+| **CUN-05** | Consultar Trazabilidad y Estado de Despacho | **Personal SAC** | `Información de Entrega`, `Pedido`, `Incidencia de Entrega` | `consultar`, `verificar`, `gestionar` |
 
 Para el desglose exhaustivo de cómo cada trabajador realiza las actividades específicas (`ACT-01` a `ACT-14`) a través de estas entidades, consultar la [[02 - Matriz de Realización de Casos de Uso del Negocio]].

@@ -1,0 +1,248 @@
+@startuml Clases_Diseno_Logico_General
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor White
+    BorderColor #37474F
+    ArrowColor #263238
+    FontSize 11
+    FontStyle bold
+}
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #90A4AE
+    FontStyle bold
+    FontSize 12
+}
+
+header Universidad Tecnológica del Perú (UTP) - APF1
+title Diagrama de Clases del Diseño (Modelo Lógico de Software)\nArquitectura por Capas para el Sistema de Trazabilidad y Distribución (Yanbal Perú)
+
+' =========================================================
+' 1. CAPA DE CONTROLADORES DE APLICACIÓN (API / WEB / MOBILE)
+' =========================================================
+package "Capa de Controladores (Application / Presentation)" as PkgControllers {
+    class DespachoController {
+        -despachoService : IDespachoService
+        +obtenerPedidosPorZona(departamento : String, tipoCiudad : String) : List<PedidoDTO>
+        +asignarSocioYModalidad(pedidoId : Long, socioId : Long, modalidad : String) : ResponseDTO
+        +formalizarSalidaDespacho(request : SalidaDespachoRequest) : DespachoResultDTO
+    }
+
+    class TransporteMobileController {
+        -transporteService : ITransporteService
+        +iniciarTraslado(request : InicioRutaRequest) : ResponseDTO
+        +capturarPosicionGPS(request : TelemetriaRequest) : void
+    }
+
+    class EntregaMobileController {
+        -entregaService : IEntregaService
+        +confirmarEntregaDomicilio(request : ConfirmacionEntregaRequest) : EntregaResultDTO
+        +registrarIncidencia(request : IncidenciaRequest) : IncidenciaResultDTO
+    }
+
+    class SincronizacionController {
+        -syncService : ISincronizacionService
+        +procesarLoteEventos(loteRequest : LoteSyncRequest) : SyncResponseDTO
+    }
+
+    class ConsultaTrackingController {
+        -consultaService : IConsultaTrackingService
+        +consultarTrazabilidad(criterio : String) : TrazabilidadDTO
+    }
+}
+
+' =========================================================
+' 2. CAPA DE INTERFACES Y SERVICIOS DE NEGOCIO (APPLICATION SERVICES)
+' =========================================================
+package "Capa de Servicios de Negocio (Business Services)" as PkgServices {
+    interface IDespachoService {
+        +filtrarPedidosPendientes(dep : String, tipo : String) : List<PedidoDTO>
+        +vincularSocioModalidad(pedId : Long, socId : Long, mod : String) : boolean
+        +registrarEgresoCD(codigo : String, sup : String, bultos : List<Long>) : DespachoResultDTO
+    }
+
+    interface ITransporteService {
+        +iniciarViaje(pedidoId : Long, fechaHora : LocalDateTime, gps : CoordenadaDTO) : void
+    }
+
+    interface IEntregaService {
+        +registrarEntregaExitosa(pedId : Long, receptor : ReceptorDTO, firma : byte[]) : EntregaResultDTO
+        +registrarFallaEntrega(pedId : Long, causal : String, retorno : boolean) : IncidenciaResultDTO
+    }
+
+    interface ISincronizacionService {
+        +sincronizarLotePendientes(eventos : List<EventoTrackingDTO>) : SyncResponseDTO
+    }
+
+    interface IConsultaTrackingService {
+        +obtenerDetalleSeguimiento(numPedido : String) : TrazabilidadDTO
+        +obtenerPorConsultora(codConsultora : String) : List<TrazabilidadDTO>
+    }
+
+    class DespachoServiceImpl implements IDespachoService {
+        -pedidoRepository : IPedidoRepository
+        -despachoRepository : IDespachoRepository
+    }
+
+    class TransporteServiceImpl implements ITransporteService {
+        -pedidoRepository : IPedidoRepository
+        -eventoRepository : IEventoTrackingRepository
+    }
+
+    class EntregaServiceImpl implements IEntregaService {
+        -pedidoRepository : IPedidoRepository
+        -entregaRepository : IEntregaRepository
+        -incidenciaRepository : IIncidenciaRepository
+        -retornoRepository : IOrdenRetornoRepository
+    }
+
+    class SincronizacionServiceImpl implements ISincronizacionService {
+        -eventoRepository : IEventoTrackingRepository
+        -pedidoRepository : IPedidoRepository
+    }
+
+    class ConsultaTrackingServiceImpl implements IConsultaTrackingService {
+        -pedidoRepository : IPedidoRepository
+        -entregaRepository : IEntregaRepository
+    }
+}
+
+' =========================================================
+' 3. CAPA DE ENTIDADES DEL MODELO LÓGICO DE DATOS (DOMAIN ENTITIES)
+' =========================================================
+package "Capa de Entidades Lógicas (Domain Model)" as PkgEntities {
+    class PedidoEntity {
+        -id : Long
+        -numeroPedido : String
+        -estadoPedido : String
+        -promesaEntrega : String
+        -fechaDespacho : LocalDateTime
+        -fechaEntregaEstimada : LocalDate
+        +actualizarEstado(nuevoEstado : String) : void
+        +asociarPromesa(plazo : String) : void
+    }
+
+    class BultoEntity {
+        -id : Long
+        -formatoCaja : String
+        -estadoFisico : String
+        -pedidoId : Long
+    }
+
+    class RegistroDespachoEntity {
+        -id : Long
+        -codigoDespacho : String
+        -fechaHoraSalida : LocalDateTime
+        -supervisorDespacho : String
+        -conformidadCarga : boolean
+    }
+
+    class RegistroEntregaEntity {
+        -id : Long
+        -codigoEntrega : String
+        -fechaHoraEntrega : LocalDateTime
+        -firmaDigitalBytes : byte[]
+        -pedidoId : Long
+        -receptorId : Long
+    }
+
+    class ReceptorEntity {
+        -id : Long
+        -nombres : String
+        -numeroDocumento : String
+        -tipoReceptor : String
+        -parentescoRelacion : String
+    }
+
+    class IncidenciaEntregaEntity {
+        -id : Long
+        -codigoIncidencia : String
+        -tipoCausal : String
+        -fechaHoraIncidencia : LocalDateTime
+        -descripcion : String
+        -pedidoId : Long
+    }
+
+    class OrdenRetornoEntity {
+        -id : Long
+        -numeroOrdenRetorno : String
+        -fechaInicioRetorno : LocalDateTime
+        -motivoRetorno : String
+        -incidenciaId : Long
+    }
+
+    class EventoTrackingEntity {
+        -id : Long
+        -pedidoId : Long
+        -tipoEvento : String
+        -fechaHoraOcurrencia : LocalDateTime
+        -latitudGPS : Double
+        -longitudGPS : Double
+        -sincronizado : boolean
+    }
+}
+
+' =========================================================
+' 4. CAPA DE ACCESO A DATOS (REPOSITORIOS / DAO)
+' =========================================================
+package "Capa de Repositorios (Data Access Layer)" as PkgRepositories {
+    interface IPedidoRepository {
+        +findById(id : Long) : PedidoEntity
+        +findByNumeroPedido(num : String) : PedidoEntity
+        +findByZonaDestino(dep : String, tipo : String) : List<PedidoEntity>
+        +save(pedido : PedidoEntity) : PedidoEntity
+    }
+
+    interface IEntregaRepository {
+        +save(entrega : RegistroEntregaEntity) : RegistroEntregaEntity
+        +findByPedidoId(pedidoId : Long) : RegistroEntregaEntity
+    }
+
+    interface IEventoTrackingRepository {
+        +saveAll(eventos : List<EventoTrackingEntity>) : void
+        +findPendientesSincronizacion() : List<EventoTrackingEntity>
+    }
+
+    interface IDespachoRepository
+    interface IIncidenciaRepository
+    interface IOrdenRetornoRepository
+}
+
+' =========================================================
+' RELACIONES ENTRE CAPAS
+' =========================================================
+DespachoController --> IDespachoService
+TransporteMobileController --> ITransporteService
+EntregaMobileController --> IEntregaService
+SincronizacionController --> ISincronizacionService
+ConsultaTrackingController --> IConsultaTrackingService
+
+DespachoServiceImpl --> IPedidoRepository
+DespachoServiceImpl --> IDespachoRepository
+
+TransporteServiceImpl --> IPedidoRepository
+TransporteServiceImpl --> IEventoTrackingRepository
+
+EntregaServiceImpl --> IPedidoRepository
+EntregaServiceImpl --> IEntregaRepository
+EntregaServiceImpl --> IIncidenciaRepository
+EntregaServiceImpl --> IOrdenRetornoRepository
+
+SincronizacionServiceImpl --> IEventoTrackingRepository
+SincronizacionServiceImpl --> IPedidoRepository
+
+ConsultaTrackingServiceImpl --> IPedidoRepository
+ConsultaTrackingServiceImpl --> IEntregaRepository
+
+RegistroEntregaEntity "1" -- "1" ReceptorEntity
+PedidoEntity "1" *-- "1..*" BultoEntity
+
+@enduml

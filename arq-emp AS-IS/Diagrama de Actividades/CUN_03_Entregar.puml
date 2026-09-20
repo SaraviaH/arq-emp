@@ -5,23 +5,23 @@ skinparam roundcorner 10
 skinparam defaultFontName "Arial"
 skinparam defaultFontSize 12
 
-title Diagrama de Actividades AS-IS: CUN-03 Entregar Pedido en Domicilio
+title Diagrama de Actividades AS-IS: CUN-03 Entregar Carga en Sede Autorizada de Destino
 
 |Socio Logístico / Transportista|
 start
-:Arribar al domicilio de entrega;
-if (¿Quién se encuentra en el domicilio?) then ([Consultora titular])
-  |Consultora / Consultor|
-  :Identificarse como receptora titular;
+:Arribar a la sede o agencia autorizada de destino;
+if (¿Quién recepciona en la sede/agencia?) then ([Responsable titular de sede])
+  |Responsable Titular de Sede|
+  :Identificarse como responsable titular de la sede;
   |Socio Logístico / Transportista|
-  :Entregar físicamente el paquete a la titular;
-  :Registrar datos de la persona que recibe el paquete (titular) (ACT-09);
-else ([Persona autorizada])
-  |Persona Autorizada|
-  :Identificarse como persona autorizada en domicilio;
+  :Entregar físicamente la carga consolidada;
+  :Registrar datos del receptor titular (ACT-09);
+else ([Personal autorizado de recepción])
+  |Personal Autorizado (en Sede)|
+  :Identificarse como personal autorizado para recepción;
   |Socio Logístico / Transportista|
-  :Entregar físicamente el paquete a la persona autorizada;
-  :Registrar datos de la persona que recibe el paquete (persona autorizada) (ACT-09);
+  :Entregar físicamente la carga consolidada;
+  :Registrar datos del personal autorizado que recibe (ACT-09);
 endif
 
 |Socio Logístico / Transportista|

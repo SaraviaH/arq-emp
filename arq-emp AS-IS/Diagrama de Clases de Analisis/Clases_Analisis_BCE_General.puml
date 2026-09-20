@@ -1,0 +1,151 @@
+@startuml Clases_Analisis_BCE_General
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+
+' Paleta de colores RUP BCE
+skinparam boundary {
+    BackgroundColor #E1F5FE
+    BorderColor #0288D1
+    FontColor #01579B
+    FontStyle bold
+}
+
+skinparam control {
+    BackgroundColor #FFF3E0
+    BorderColor #F57C00
+    FontColor #E65100
+    FontStyle bold
+}
+
+skinparam entity {
+    BackgroundColor #E8F5E9
+    BorderColor #388E3C
+    FontColor #1B5E20
+    FontStyle bold
+}
+
+skinparam arrow {
+    Color #37474F
+    FontColor #263238
+    FontSize 10
+}
+
+left to right direction
+
+header Universidad Tecnológica del Perú (UTP) - APF1
+title Diagrama General de Clases de Análisis (Modelo RUP BCE)\nArquitectura del Sistema de Trazabilidad y Distribución (Yanbal Perú)
+
+' =========================================================
+' ACTORES DEL SISTEMA
+' =========================================================
+actor "Supervisor de Despacho" as ActSupervisor
+actor "Conductor / Transportista" as ActTransportista
+actor "Bus de Integración (ESB)" as ActESB
+actor "Consultora / Cliente" as ActConsultora
+actor "Agente de SAC" as ActSAC
+
+' =========================================================
+' CLASES BOUNDARY (INTERFACES DE USUARIO Y SISTEMA)
+' =========================================================
+boundary "FrmZonificacionDespacho" as BndZonificacion
+boundary "FrmAsignacionTransporte" as BndAsignacion
+boundary "FrmRegistroSalidaCD" as BndSalidaCD
+boundary "AppMovilInicioRuta" as BndAppRuta
+boundary "AppMovilConfirmacionEntrega" as BndAppEntrega
+boundary "AppMovilGestionIncidencia" as BndAppIncidencia
+boundary "ApiSincronizacionTracking" as BndApiSync
+boundary "PortalWebConsultaTracking" as BndPortalWeb
+boundary "InterfaseSalesforceCRM" as BndSalesforce
+
+' =========================================================
+' CLASES CONTROL (LÓGICA Y COORDINACIÓN DE CUS)
+' =========================================================
+control "CtrlDespacho" as CtrlDespacho
+control "CtrlTransporteRuta" as CtrlRuta
+control "CtrlConfirmacionEntrega" as CtrlEntrega
+control "CtrlIncidenciaRetorno" as CtrlIncidencia
+control "CtrlSincronizacion" as CtrlSync
+control "CtrlConsultaTracking" as CtrlConsulta
+
+' =========================================================
+' CLASES ENTITY (INFORMACIÓN PERSISTENTE DEL SISTEMA)
+' =========================================================
+entity "Pedido" as EntPedido
+entity "Bulto" as EntBulto
+entity "RegistroDespacho" as EntDespacho
+entity "DireccionEntrega" as EntDireccion
+entity "SocioLogistico" as EntSocio
+entity "RegistroEntrega" as EntEntrega
+entity "Receptor" as EntReceptor
+entity "IncidenciaEntrega" as EntIncidencia
+entity "OrdenRetorno" as EntRetorno
+entity "EventoTracking" as EntEvento
+
+' =========================================================
+' RELACIONES: ACTOR -> BOUNDARY
+' =========================================================
+ActSupervisor --> BndZonificacion
+ActSupervisor --> BndAsignacion
+ActSupervisor --> BndSalidaCD
+
+ActTransportista --> BndAppRuta
+ActTransportista --> BndAppEntrega
+ActTransportista --> BndAppIncidencia
+
+ActESB --> BndApiSync
+
+ActConsultora --> BndPortalWeb
+ActSAC --> BndSalesforce
+
+' =========================================================
+' RELACIONES: BOUNDARY -> CONTROL
+' =========================================================
+BndZonificacion --> CtrlDespacho
+BndAsignacion --> CtrlDespacho
+BndSalidaCD --> CtrlDespacho
+
+BndAppRuta --> CtrlRuta
+
+BndAppEntrega --> CtrlEntrega
+BndAppIncidencia --> CtrlIncidencia
+
+BndApiSync --> CtrlSync
+
+BndPortalWeb --> CtrlConsulta
+BndSalesforce --> CtrlConsulta
+
+' =========================================================
+' RELACIONES: CONTROL -> ENTITY
+' =========================================================
+CtrlDespacho --> EntPedido
+CtrlDespacho --> EntDireccion
+CtrlDespacho --> EntSocio
+CtrlDespacho --> EntBulto
+CtrlDespacho --> EntDespacho
+
+CtrlRuta --> EntPedido
+CtrlRuta --> EntEvento
+
+CtrlEntrega --> EntPedido
+CtrlEntrega --> EntEntrega
+CtrlEntrega --> EntReceptor
+CtrlEntrega --> EntEvento
+
+CtrlIncidencia --> EntPedido
+CtrlIncidencia --> EntIncidencia
+CtrlIncidencia --> EntRetorno
+CtrlIncidencia --> EntBulto
+
+CtrlSync --> EntEvento
+CtrlSync --> EntPedido
+CtrlSync --> EntEntrega
+
+CtrlConsulta --> EntPedido
+CtrlConsulta --> EntEntrega
+CtrlConsulta --> EntReceptor
+CtrlConsulta --> EntEvento
+
+@enduml

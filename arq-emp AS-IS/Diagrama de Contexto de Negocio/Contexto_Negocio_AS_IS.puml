@@ -52,7 +52,7 @@ rectangle "Área de Control de Calidad\ny Seguridad Patrimonial" as AreaCalidad 
 ' =======================================================
 actor "Socio Logístico /\nTransportista" as Socio
 actor "Consultora / Consultor\n(Cliente Primario)" as Consultora
-actor "Persona Autorizada\n(Receptor en Domicilio)" as PersonaAut
+actor "Personal Autorizado\n(Recepción en Sede / Agencia)" as PersonaAut
 
 ' =======================================================
 ' INTERCAMBIOS DE NEGOCIO (ENTRADAS Y SALIDAS)
@@ -74,9 +74,9 @@ Socio --> ProcesoCentral : Inicio de traslado, reporte de entrega o incidencia e
 Consultora --> ProcesoCentral : Consulta sobre el estado de su pedido
 ProcesoCentral --> Consultora : Estado e información de entrega
 
-' 5. Con la Persona Autorizada
-PersonaAut --> ProcesoCentral : Datos de recepción en domicilio
-ProcesoCentral --> PersonaAut : Pedido entregado
+' 5. Con el Personal Autorizado en Sede
+PersonaAut --> ProcesoCentral : Constancia y datos de recepción en sede
+ProcesoCentral --> PersonaAut : Carga física entregada en sede
 
 ' 6. Con el Área de Servicio al Cliente
 AreaSAC --> ProcesoCentral : Consulta de estado por atención a consultoras

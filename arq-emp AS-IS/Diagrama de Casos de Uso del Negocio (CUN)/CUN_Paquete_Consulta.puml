@@ -22,44 +22,19 @@ skinparam usecase {
     FontColor #212121
 }
 
-skinparam note {
-    BackgroundColor #FFFDE7
-    BorderColor #FBC02D
-    FontColor #212121
-}
-
 left to right direction
 
 header Yanbal Perú - Etapa de Consulta y Seguimiento de Trazabilidad
-title Caso de Uso del Negocio: Consulta de Trazabilidad y Situación del Pedido (CUN-05)
+title Caso de Uso del Negocio: Consulta de Trazabilidad y Estado de Despacho (CUN-05)
 
-actor "Consultora / Consultor\n(Cliente Primario)" as ActorConsultora <<Business Actor>>
+actor "Consultora / Distribuidor\n(Destinatario de Carga)" as ActorConsultora <<Business Actor>>
 actor "Agente de Servicio al Cliente\n(Atención en Salesforce)" as WorkerAgente <<Business Worker>>
 
 rectangle "Frontera de Consulta de Trazabilidad" {
-    usecase "<b>CUN-05: Consultar Trazabilidad\ny Situación del Pedido</b>\n---\n• ACT-13: Consulta por N° Pedido o Cód. Consultora\n• ACT-14: Visualización de datos del receptor real\n(sujeto a limitación AS-IS / PR-05)\n• Necesidad RF-12: Visualizar datos del receptor real\n---\n<i>Requerimientos: RF-11, RF-12</i>" as CUN05
+    usecase "CUN-05: Consultar Trazabilidad\ny Estado de Despacho" as CUN05
 }
 
-' =======================================================
-' RELACIONES DE ASOCIACIÓN (ACTORES <-> CUN)
-' Asociaciones estándar UML (sin direccionalidad de flujo)
-' =======================================================
 ActorConsultora -- CUN05
 WorkerAgente -- CUN05
-
-note bottom of CUN05
-  <b>Actividad Transversal Asociada (ACT-12 / RF-10):</b>
-  La información consultada proviene de la actualización
-  técnica en segundo plano, la cual presenta un desfase
-  actual (AS-IS) de hasta 2 horas (~120 min).
-end note
-
-note top of CUN05
-  <b>Problemática AS-IS y Necesidad Derivada:</b>
-  - PR-03/PR-04: La consulta exhibe datos con desfase de hasta 2h.
-  - PR-05: Cuando recibe una persona autorizada, los datos
-    del receptor no están disponibles oportunamente,
-    motivando la formulación del requerimiento derivado RF-12.
-end note
 
 @enduml
