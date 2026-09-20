@@ -1,0 +1,79 @@
+@startuml CUN_Paquete_Entrega_LogisticaInversa
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+skinparam actor {
+    BackgroundColor<<Business Actor>> #E3F2FD
+    BorderColor<<Business Actor>> #1976D2
+    FontColor<<Business Actor>> #0D47A1
+    
+    BackgroundColor<<Business Worker>> #FFF3E0
+    BorderColor<<Business Worker>> #F57C00
+    FontColor<<Business Worker>> #E65100
+}
+
+skinparam usecase {
+    BackgroundColor #FFFFFF
+    BorderColor #424242
+    ArrowColor #37474F
+    FontColor #212121
+}
+
+skinparam note {
+    BackgroundColor #FFFDE7
+    BorderColor #FBC02D
+    FontColor #212121
+}
+
+left to right direction
+
+header Yanbal Perú - Etapas de Entrega en Domicilio y Logística Inversa
+title Casos de Uso del Negocio: Entrega y Contingencias (CUN-03 y CUN-04)
+
+actor "Socio Logístico / Transportista\n(Proveedor en Campo)" as ActorSocio <<Business Actor>>
+actor "Consultora / Consultor\n(Cliente Primario)" as ActorConsultora <<Business Actor>>
+actor "Familiar Autorizado\n(Receptor en Domicilio)" as ActorFamiliar <<Business Actor>>
+
+rectangle "Frontera de Entrega y Excepciones en Destino" {
+    usecase "<b>CUN-03: Entregar Pedido\nen Domicilio</b>\n---\n• ACT-08: Confirmación física (Estado 'Entregado')\n• ACT-09: Registro del receptor real\n(Titular o Familiar Autorizado)\n---\n<i>Requerimientos: RF-06, RF-07</i>" as CUN03
+    
+    usecase "<b>CUN-04: Gestionar Entrega Fallida\ny Retorno por Logística Inversa</b>\n---\n• ACT-10: Registro de incidencia (Estado 'Entrega Fallida')\nCausales válidas: Retraso / Pérdida / Daño\n• ACT-11: Registro de inicio de retorno al CD\n---\n<i>Requerimientos: RF-08, RF-09</i>" as CUN04
+}
+
+' =======================================================
+' RELACIONES DE ASOCIACIÓN (ACTORES <-> CUN)
+' Asociaciones estándar UML (sin direccionalidad de flujo)
+' =======================================================
+ActorSocio -- CUN03
+ActorConsultora -- CUN03
+ActorFamiliar -- CUN03
+
+ActorSocio -- CUN04
+
+note right of CUN03
+  <b>Registro de Receptor:</b>
+  Captura de la condición de quien recibe
+  (Titular o Familiar Autorizado) en el domicilio.
+  Alimenta la actualización transversal (ACT-12 / RF-10).
+end note
+
+note bottom of CUN04
+  <b>Responsable y Frontera Estricta:</b>
+  - El Socio Logístico es el único actor operativo responsable.
+  - El Supervisor de Despacho no participa en este CUN.
+  - Concluye formalmente con el registro del inicio del retorno.
+  - Recepción física en almacén del CD, peritajes y reposición quedan excluidos.
+end note
+
+note top of CUN03
+  <b>Caminos Alternativos del Proceso desde Tránsito:</b>
+  Al arribar al destino, se presentan dos caminos directos:
+  - Camino Exitoso: CUN-03 (Entregado)
+  - Camino Fallido: CUN-04 (Entrega Fallida e Inicio de Retorno)
+  <i>(Modelados sin relación <<extend>> ni <<include>>)</i>
+end note
+
+@enduml
