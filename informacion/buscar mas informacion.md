@@ -1,3 +1,0 @@
-Yanbal gestiona operaciones de transporte y distribución mediante transportistas y utiliza tecnología TMS para la planificación, seguimiento y trazabilidad de dichas operaciones.
-
-Hay además documentación oficial de Yanbal que muestra que la empresa trabaja con **proveedores** para servicios relacionados con transporte. Por ejemplo, sus términos generales de órdenes de compra, publicados hace menos de un año, contemplan expresamente prestaciones realizadas por proveedores y establecen que, cuando corresponde, los costos de transporte y carga son asumidos por el proveedor. Esto confirma que Yanbal utiliza un esquema de contratación de proveedores, aunque ese documento por sí solo no demuestra que toda la distribución de última milla sea tercerizada
