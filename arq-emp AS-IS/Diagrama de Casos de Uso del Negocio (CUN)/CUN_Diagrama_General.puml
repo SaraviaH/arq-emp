@@ -99,8 +99,10 @@ WorkerAgente -- CUN05
 note bottom of CUN04
   <b>Responsable Único en Campo:</b>
   El Socio Logístico tipifica la incidencia
-  (retraso, pérdida o daño) y registra
-  el inicio del retorno (RF-09 / ACT-11).
+  (retraso, pérdida o daño). Si existe bulto
+  físico (retraso o daño), registra el inicio
+  del retorno (RF-09 / ACT-11); en caso de
+  pérdida, registra la incidencia sin retorno físico.
   Concluye sin incluir recepción física en CD.
   Supervisor no participa en este caso de uso.
 end note

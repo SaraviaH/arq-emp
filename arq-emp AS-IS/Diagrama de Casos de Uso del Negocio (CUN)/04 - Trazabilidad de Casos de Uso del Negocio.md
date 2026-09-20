@@ -54,12 +54,12 @@ Este documento constituye el **instrumento de auditoría y coherencia metodológ
 | **ACT-03** | Asignar socio logístico y modalidad (terrestre, bimodal, aérea) | `CUN-01` | ✅ Cubierta (Paso 3 Flujo Básico) |
 | **ACT-04** | Asociar promesa estimada de entrega (24h Lima / 7d provincias) | `CUN-01` | ✅ Cubierta (Paso 4 Flujo Básico) |
 | **ACT-05** | Registrar salida de despacho y entrega formal de carga | `CUN-01` | ✅ Cubierta (Paso 5 Flujo Básico) |
-| **ACT-06** | Registrar inicio de traslado físico del pedido | `CUN-02` | ✅ Cubierta (Paso 1-2 Flujo Básico) |
-| **ACT-07** | Trasladar pedidos por la ruta asignada según modalidad | `CUN-02` | ✅ Cubierta (Paso 4 Flujo Básico) |
+| **ACT-06** | Registrar inicio de traslado físico del pedido | `CUN-02` | ✅ Cubierta (Paso 1 Flujo Básico) |
+| **ACT-07** | Trasladar pedidos por la ruta asignada según modalidad | `CUN-02` | ✅ Cubierta (Paso 2 Flujo Básico) |
 | **ACT-08** | Registrar confirmación de entrega física en destino | `CUN-03` | ✅ Cubierta (Paso 4-5 Flujo Básico) |
 | **ACT-09** | Registrar datos de la persona que recibe el paquete | `CUN-03` | ✅ Cubierta (Paso 4 Flujo Básico / Alt. 2.a) |
-| **ACT-10** | Registrar entrega fallida por incidencia (retraso, pérdida, daño) | `CUN-04` | ✅ Cubierta (Paso 2-3 Flujo Básico) |
-| **ACT-11** | Registrar inicio de retorno del pedido hacia el CD | `CUN-04` | ✅ Cubierta (Paso 5-6 Flujo Básico) |
+| **ACT-10** | Registrar entrega fallida por incidencia (retraso, pérdida, daño) | `CUN-04` | ✅ Cubierta (Paso 2-3 Flujo Básico / Alt. 2.a) |
+| **ACT-11** | Registrar inicio de retorno del pedido hacia el CD | `CUN-04` | ✅ Cubierta (Paso 4 Flujo Básico, escenario con bulto físico) |
 | **ACT-12** | Sincronizar y disponibilizar estados registrados en campo | *Actividad Transversal (RF-10)* | ✅ Cubierta (Actualización en background hacia CUN-05) |
 | **ACT-13** | Consultar situación y promesa por N° Pedido o Cód. Consultora | `CUN-05` | ✅ Cubierta (Paso 1-2 Flujo Básico) |
 | **ACT-14** | Visualizar datos del receptor real en canales de atención | `CUN-05` | ✅ Cubierta (Paso 4 Flujo Básico / Necesidad RF-12) |
@@ -88,10 +88,10 @@ pie title Cobertura de Requerimientos Funcionales (12 RF)
 | **RF-06** | Registro de entrega exitosa (Estado 'Entregado') | `CUN-03` | Confirmación de entrega en destino con estampa temporal. |
 | **RF-07** | Registro de la identidad del receptor real | `CUN-03` | Captura de la condición de quien recibe (titular o familiar autorizado). |
 | **RF-08** | Registro de entrega fallida e incidencias | `CUN-04` | Tipificación exclusiva de contingencias: retraso, pérdida o daño. |
-| **RF-09** | Registro de retorno de carga por logística inversa | `CUN-04` | Registro del inicio de retorno del pedido hacia el Centro de Distribución. |
+| **RF-09** | Registro de retorno de carga por logística inversa | `CUN-04` | Registro del inicio de retorno del pedido hacia el Centro de Distribución (cuando existe bulto físico presente; en pérdida solo rige RF-08). |
 | **RF-10** | Sincronización y disponibilidad de estados | *Actividad Transversal* | Propagación automática de estados hacia plataformas centrales (`ACT-12`). |
-| **RF-11** | Consulta de trazabilidad con soporte multicriterio | `CUN-05` | Búsqueda por Número de Pedido o Código de Consultora/Cliente. |
-| **RF-12** | Visualización de datos del receptor en consulta | `CUN-05` | Necesidad derivada de visibilizar oportunamente el receptor real (familiar) para mitigar reclamos prematuros (PR-04/PR-05). |
+| **RF-11** | Consulta de trazabilidad con soporte multicriterio | `CUN-05` | Búsqueda por Número de Pedido o Código de Consultora. |
+| **RF-12** | Visualización de datos del receptor en consulta | `CUN-05` | Necesidad derivada de visibilizar oportunamente el receptor real (familiar autorizado) para mitigar reclamos infundados de no-entrega (**PR-05**). |
 | **RNF-01** | Tiempo de propagación de estados de entrega | Transversal a `ACT-12` | Reducción de latencia de 2h a meta $\le 30$ min. |
 | **RNF-02** | Soporte territorial nacional y operación multimodal | `CUN-01`, `CUN-02` | Cobertura en los 24 departamentos bajo 3 modalidades. |
 | **RNF-03** | Capacidad para grandes volúmenes de datos | `CUN-02`, `CUN-05` | Escalabilidad ante alta carga de transacciones y consultas concurrentes. |

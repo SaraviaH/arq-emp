@@ -40,7 +40,7 @@ actor "Familiar Autorizado\n(Receptor en Domicilio)" as ActorFamiliar <<Business
 rectangle "Frontera de Entrega y Excepciones en Destino" {
     usecase "<b>CUN-03: Entregar Pedido\nen Domicilio</b>\n---\n• ACT-08: Confirmación física (Estado 'Entregado')\n• ACT-09: Registro del receptor real\n(Titular o Familiar Autorizado)\n---\n<i>Requerimientos: RF-06, RF-07</i>" as CUN03
     
-    usecase "<b>CUN-04: Gestionar Entrega Fallida\ny Retorno por Logística Inversa</b>\n---\n• ACT-10: Registro de incidencia (Estado 'Entrega Fallida')\nCausales válidas: Retraso / Pérdida / Daño\n• ACT-11: Registro de inicio de retorno al CD\n---\n<i>Requerimientos: RF-08, RF-09</i>" as CUN04
+    usecase "<b>CUN-04: Gestionar Entrega Fallida\ny Retorno por Logística Inversa</b>\n---\n• ACT-10: Registro de incidencia (Estado 'Entrega Fallida')\nCausales válidas: Retraso / Pérdida / Daño\n• ACT-11: Registro de inicio de retorno al CD\n(aplica ante retraso/daño con bulto presente)\n---\n<i>Requerimientos: RF-08, RF-09</i>" as CUN04
 }
 
 ' =======================================================
@@ -57,6 +57,7 @@ note right of CUN03
   <b>Registro de Receptor:</b>
   Captura de la condición de quien recibe
   (Titular o Familiar Autorizado) en el domicilio.
+  El registro operativo lo ejecuta el Socio Logístico.
   Alimenta la actualización transversal (ACT-12 / RF-10).
 end note
 
@@ -64,7 +65,8 @@ note bottom of CUN04
   <b>Responsable y Frontera Estricta:</b>
   - El Socio Logístico es el único actor operativo responsable.
   - El Supervisor de Despacho no participa en este CUN.
-  - Concluye formalmente con el registro del inicio del retorno.
+  - Retorno físico: si existe bulto (retraso/daño), se registra el retorno al CD (ACT-11 / RF-09).
+  - Pérdida: se registra la incidencia sin retorno físico de carga.
   - Recepción física en almacén del CD, peritajes y reposición quedan excluidos.
 end note
 

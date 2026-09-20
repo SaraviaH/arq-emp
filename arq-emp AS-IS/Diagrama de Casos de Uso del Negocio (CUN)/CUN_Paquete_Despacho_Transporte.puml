@@ -52,9 +52,9 @@ note bottom of CUN01
   <b>Reglas Clave AS-IS:</b>
   - Cobertura territorial: 24 departamentos.
   - 3 modalidades: terrestre, bimodal o aérea.
-  - Promesa: 24h Lima / 7d provincias.
-  - Estado formal: "Despachado".
-  - Habilita actualización transversal (ACT-12 / RF-10).
+  - Promesa: 24h Lima / 7d provincias (asociada por Supervisor con soporte de sistema).
+  - Estado formal registrado: "Despachado".
+  - Habilita actualización transversal en segundo plano (ACT-12 / RF-10).
 end note
 
 note bottom of CUN02
@@ -62,7 +62,7 @@ note bottom of CUN02
   - Traslado físico multimodal hacia destino.
   - Estado formal registrado: "En Ruta".
   - Sin checkpoints ni garitas intermedias en el AS-IS.
-  - Desvío a CUN-04 ante contingencia tipificada.
+  - Bifurcación operativa hacia CUN-03 (éxito) o CUN-04 (incidencia).
 end note
 
 @enduml

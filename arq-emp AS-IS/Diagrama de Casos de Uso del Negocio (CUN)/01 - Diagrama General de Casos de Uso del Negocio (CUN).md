@@ -91,7 +91,7 @@ flowchart TD
 - **Bifurcación Operativa en Destino:** Desde el traslado en ruta (`CUN-02`), el flujo contempla dos caminos alternativos directos:
   1. *Camino Principal:* Entrega exitosa al receptor en domicilio (`CUN-03`).
   2. *Camino Alternativo:* Incidencia confirmada (retraso, pérdida o daño) y registro del inicio de retorno por logística inversa (`CUN-04`).
-- **Punto de Cierre:** Entrega efectiva en manos del receptor (`CUN-03`) o registro del inicio de retorno de la carga no entregada (`CUN-04`).
+- **Punto de Cierre:** Entrega efectiva en manos del receptor (`CUN-03`) o registro del inicio de retorno de la carga no entregada (en retraso o daño con bulto físico) / registro de incidencia por pérdida (`CUN-04`).
 
 ---
 
@@ -273,9 +273,11 @@ WorkerAgente -- CUN05
 ' Notas de Reglas y Delimitación
 note bottom of CUN04
   <b>Responsable Único en Campo:</b>
-  El Socio Logístico registra la incidencia
-  (retraso, pérdida o daño) y formaliza
-  el inicio del retorno (RF-09 / ACT-11).
+  El Socio Logístico tipifica la incidencia
+  (retraso, pérdida o daño). Si existe bulto
+  físico (retraso o daño), formaliza el inicio
+  del retorno (RF-09 / ACT-11); en caso de
+  pérdida, formaliza la incidencia sin retorno físico.
   Concluye sin incluir recepción física en CD.
 end note
 
@@ -303,8 +305,10 @@ footer Caso de Estudio: Yanbal Perú | Modelo de Casos de Uso del Negocio (APF1)
 ## 5. Justificación Metodológica de las Correcciones
 
 1. **Eliminación de la sincronización como CUN:**  
-   La sincronización de bases de datos (`ACT-12` / `RF-10`) es una tarea técnica automatizada de integración, no un proceso donde un actor humano del negocio reciba un servicio directo. Se mantiene en la matriz como requerimiento funcional del sistema, pero se excluye de la capa de casos de uso del negocio.
+   La sincronización de bases de datos (`ACT-12` / `RF-10`) es una tarea técnica automatizada de integración, no un proceso donde un actor humano del negocio reciba un servicio directo. Se mantiene en la matriz como requerimiento funcional del sistema, pero se excluye de la capa de casos de uso del negocio, modelándose como actividad técnica transversal de actualización.
 2. **Eliminación de la relación `<<extend>>` entre CUN-03 y CUN-04:**  
    La entrega física en domicilio (`CUN-03`) y la contingencia por logística inversa (`CUN-04`) representan **dos caminos alternativos directos** del ciclo de transporte desde el estado *"En Ruta"*. Si la entrega se concreta, se ejecuta `CUN-03`; si ocurre una incidencia tipificada (retraso, pérdida o daño), se ejecuta directamente `CUN-04`.
 3. **Actor único en CUN-04:**  
    En estricta consonancia con `ACT-10`, `ACT-11`, `RF-08` y `RF-09`, el responsable de tipificar la entrega fallida y ejecutar el retorno material hacia el Centro de Distribución es exclusivamente el **Socio Logístico / Transportista**.
+4. **Diferenciación de escenarios en CUN-04 (Retorno físico vs. Pérdida):**  
+   Se subsana la contradicción de postcondición: el inicio formal de retorno (`ACT-11` / `RF-09`) rige únicamente cuando existe bulto físico presente (retraso o daño). En contingencias de pérdida de mercancía, se registra formalmente la entrega fallida por pérdida (`ACT-10` / `RF-08`) sin afirmar ni exigir un retorno físico inexistente.

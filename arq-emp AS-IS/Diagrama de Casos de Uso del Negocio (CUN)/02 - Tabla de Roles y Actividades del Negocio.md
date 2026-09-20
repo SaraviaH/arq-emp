@@ -31,11 +31,11 @@ Su objetivo es caracterizar formalmente a cada actor del negocio y trabajador de
 
 | Rol / Actor del Negocio | Tipo en Metodología RUP | Responsabilidad Operativa Principal en el AS-IS | Actividades AS-IS Vinculadas | CUNs en que Participa | Sistemas Utilizados | Evidencia Primaria (`trascrito.text`) |
 |:---|:---:|:---|:---:|:---:|:---|:---|
-| **Consultora / Consultor de Yanbal** | «Business Actor»<br/>*(Actor del Negocio)* | Cliente primario de la distribución. Recibe físicamente el pedido en su domicilio y consulta la situación de entrega en el portal web. | [[03 - Actividades y eventos#ACT-13\|ACT-13]]<br/>*(Receptora presencial en CUN-03; el registro operativo corresponde al transportista)* | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-03\|CUN-03]], [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-05\|CUN-05]] | Portal Web / Canal de Tracking | Líneas 21-22, 24-25<br/>(min 22:03–22:28, 24:45) |
-| **Familiar Autorizado** | «Business Actor»<br/>*(Actor del Negocio)* | Receptor alterno presente en el domicilio cuando la consultora titular está ausente. Recibe físicamente el paquete e interactúa con el transportista. | *(Receptor presencial en CUN-03; el registro operativo corresponde al transportista)* | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-03\|CUN-03]] | Interacción física en campo | Línea 25<br/>(min 24:45–25:01) |
-| **Socio Logístico / Transportista** | «Business Actor»<br/>*(Actor del Negocio)* | Proveedor externo contratado. Asume la custodia en despacho, realiza el transporte multimodal nacional, ejecuta la entrega física y realiza los registros operativos en campo (entrega, receptor, falla e inicio de retorno). | [[03 - Actividades y eventos#ACT-05\|ACT-05]], [[03 - Actividades y eventos#ACT-06\|ACT-06]], [[03 - Actividades y eventos#ACT-07\|ACT-07]], [[03 - Actividades y eventos#ACT-08\|ACT-08]], [[03 - Actividades y eventos#ACT-09\|ACT-09]], [[03 - Actividades y eventos#ACT-10\|ACT-10]], [[03 - Actividades y eventos#ACT-11\|ACT-11]] | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-01\|CUN-01]], [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-02\|CUN-02]], [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-03\|CUN-03]], [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-04\|CUN-04]] | NSDG / Driving | Líneas 1:24, 18, 19, 20<br/>(min 19:15–20:55) |
-| **Supervisor de Zona de Despacho** | «Business Worker»<br/>*(Trabajador del Negocio)* | Operador interno de Yanbal en el CD. Clasifica pedidos por destino geográfico, asocia transportista, modalidad y promesa de entrega, y registra el egreso formal (Estado *"Despachado"*). | [[03 - Actividades y eventos#ACT-01\|ACT-01]], [[03 - Actividades y eventos#ACT-02\|ACT-02]], [[03 - Actividades y eventos#ACT-03\|ACT-03]], [[03 - Actividades y eventos#ACT-04\|ACT-04]], [[03 - Actividades y eventos#ACT-05\|ACT-05]] | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-01\|CUN-01]] | Driving / NSDG | Líneas 14, 16-18<br/>(min 17:34–19:44) |
-| **Agente de Servicio al Cliente** | «Business Worker»<br/>*(Trabajador del Negocio)* | Operador interno de atención. Consulta la situación y promesa del pedido en Salesforce para responder a las consultas de las consultoras. | [[03 - Actividades y eventos#ACT-13\|ACT-13]] | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-05\|CUN-05]] | Salesforce (Cellforce) | Líneas 24-25, 32<br/>(min 24:29–24:36, 28:35) |
+| **Consultora / Consultor de Yanbal** | «Business Actor»<br/>*(Actor del Negocio)* | Cliente primario de la distribución. Recibe físicamente el pedido en su domicilio (`CUN-03`), consulta la situación y promesa de entrega (`ACT-13`) y visualiza la información de entrega en el portal web (`ACT-14`), experimentando en el AS-IS la limitación de visibilidad de `PR-05`. | [[03 - Actividades y eventos#ACT-13\|ACT-13]], [[03 - Actividades y eventos#ACT-14\|ACT-14]]<br/>*(Receptora presencial en CUN-03; el registro operativo en sistema corresponde al transportista)* | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-03\|CUN-03]], [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-05\|CUN-05]] | Portal Web / Canal de Tracking | Líneas 21-22, 24-25<br/>(min 22:03–22:28, 24:45) |
+| **Familiar Autorizado** | «Business Actor»<br/>*(Actor del Negocio)* | Receptor alterno presente en el domicilio cuando la consultora titular está ausente. Recibe físicamente el paquete e interactúa con el transportista. No realiza registros en el sistema. | [[03 - Actividades y eventos#ACT-09\|ACT-09 (Receptor presencial)]]<br/>*(Receptor presencial en CUN-03; la captura operativa en sistema corresponde al transportista)* | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-03\|CUN-03]] | Interacción física en campo | Línea 25<br/>(min 24:45–25:01) |
+| **Socio Logístico / Transportista** | «Business Actor»<br/>*(Actor del Negocio)* | Proveedor externo contratado. Asume la custodia en despacho, realiza el transporte multimodal nacional, ejecuta la entrega física y realiza los registros operativos en campo (entrega, receptor, falla e inicio de retorno cuando corresponde). | [[03 - Actividades y eventos#ACT-05\|ACT-05]], [[03 - Actividades y eventos#ACT-06\|ACT-06]], [[03 - Actividades y eventos#ACT-07\|ACT-07]], [[03 - Actividades y eventos#ACT-08\|ACT-08]], [[03 - Actividades y eventos#ACT-09\|ACT-09]], [[03 - Actividades y eventos#ACT-10\|ACT-10]], [[03 - Actividades y eventos#ACT-11\|ACT-11]] | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-01\|CUN-01]], [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-02\|CUN-02]], [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-03\|CUN-03]], [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-04\|CUN-04]] | NSDG / Driving | Líneas 1:24, 18, 19, 20<br/>(min 19:15–20:55) |
+| **Supervisor de Zona de Despacho** | «Business Worker»<br/>*(Trabajador del Negocio)* | Operador interno de Yanbal en el CD. Responsable de clasificar pedidos por destino geográfico, asociar transportista y modalidad, asociar/controlar la promesa estimada de entrega con soporte del sistema (`ACT-04`), y registrar el egreso formal y entrega de custodia (Estado *"Despachado"*). | [[03 - Actividades y eventos#ACT-01\|ACT-01]], [[03 - Actividades y eventos#ACT-02\|ACT-02]], [[03 - Actividades y eventos#ACT-03\|ACT-03]], [[03 - Actividades y eventos#ACT-04\|ACT-04]], [[03 - Actividades y eventos#ACT-05\|ACT-05]] | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-01\|CUN-01]] | Driving / NSDG | Líneas 14, 16-18, 21-22<br/>(min 17:34–19:44, 22:38) |
+| **Agente de Servicio al Cliente** | «Business Worker»<br/>*(Trabajador del Negocio)* | Operador interno de atención. Consulta la situación y promesa del pedido en Salesforce para responder a las consultoras (`ACT-13`) y verifica los datos registrados del receptor (`ACT-14`), padeciendo directamente el desfase de 2h (`PR-04`) y la falta de visibilidad del receptor real (`PR-05`). | [[03 - Actividades y eventos#ACT-13\|ACT-13]], [[03 - Actividades y eventos#ACT-14\|ACT-14]] | [[01 - Diagrama General de Casos de Uso del Negocio (CUN)#CUN-05\|CUN-05]] | Salesforce (Cellforce) | Líneas 24-25, 32<br/>(min 24:29–24:36, 28:35) |
 | **Jefatura de Distribución** *(Ing. Joao Condorpusa)* | «Business Worker»<br/>*(Trabajador del Negocio)* | Responsable de gobierno logístico. Supervisa el cumplimiento de los tiempos de entrega (24h Lima / 7d provincias) y evalúa el desempeño de los transportistas asociados. | Ninguna actividad operativa directa en los CUN definidos | Ninguno *(Rol de gobierno/supervisión general, sin CUN asociado)* | Plataformas de gestión | Entrevista completa (`trascrito.text`) |
 
 ---
@@ -44,18 +44,18 @@ Su objetivo es caracterizar formalmente a cada actor del negocio y trabajador de
 
 ### Ficha 1: Consultora / Consultor de Yanbal
 - **Clasificación RUP:** «Business Actor» (Actor del Negocio externo).
-- **Misión Operativa:** Cliente final del proceso de distribución. Recibe físicamente los pedidos de su campaña y consulta el estado de seguimiento.
+- **Misión Operativa:** Cliente primario del proceso de distribución. Recibe físicamente los pedidos de su campaña y consulta el estado de seguimiento.
 - **Participación en los CUN:**
   - `CUN-03 (Entregar Pedido en Domicilio):` Receptora titular del pedido en destino (participación física presencial; el registro operativo en sistema es realizado por el transportista).
-  - `CUN-05 (Consultar Trazabilidad y Situación del Pedido):` Consultante de la situación de su pedido mediante Número de Pedido o Código de Consultora (`ACT-13`).
-- **Impacto de Problemas AS-IS:** Padece **PR-03** (información desfasada por hasta 2 horas en el portal) y **PR-05** (al no ser notificada oportunamente si recibió un familiar, presume pérdida de su paquete).
+  - `CUN-05 (Consultar Trazabilidad y Situación del Pedido):` Consultante de la situación de su pedido mediante Número de Pedido o Código de Consultora (`ACT-13`), y visualizadora de la información disponible sobre la entrega (`ACT-14`).
+- **Impacto de Problemas AS-IS:** Padece **PR-03** (información desfasada por hasta 2 horas en el portal) y **PR-05** (al no ser notificada oportunamente si recibió un familiar autorizado en domicilio, presume no-entrega o pérdida de su paquete).
 
 ### Ficha 2: Familiar Autorizado
 - **Clasificación RUP:** «Business Actor» (Actor del Negocio externo).
 - **Misión Operativa:** Persona presente en el domicilio que actúa como receptor alterno cuando la consultora titular no se encuentra disponible.
 - **Participación en los CUN:**
-  - `CUN-03 (Entregar Pedido en Domicilio):` Recibe físicamente el paquete e interactúa con el transportista (participación física presencial; el registro operativo es ejecutado por el transportista).
-- **Impacto de Problemas AS-IS:** Centro del problema **PR-05**: su recepción física es válida, pero la falta de visibilidad oportuna de sus datos en la consulta genera falsos reclamos por pérdida.
+  - `CUN-03 (Entregar Pedido en Domicilio):` Recibe físicamente el paquete en domicilio e interactúa con el transportista (`ACT-09`, participación física presencial; el registro operativo es ejecutado exclusivamente por el transportista).
+- **Impacto de Problemas AS-IS:** Centro del problema **PR-05**: su recepción física en destino es válida, pero la falta de visibilidad oportuna de sus datos en los canales de consulta genera falsos reclamos por pérdida.
 
 ### Ficha 3: Socio Logístico / Transportista Asociado
 - **Clasificación RUP:** «Business Actor» (Actor del Negocio externo / Contratista de transporte).
@@ -64,22 +64,22 @@ Su objetivo es caracterizar formalmente a cada actor del negocio y trabajador de
   - `CUN-01 (Despachar Pedidos desde CD):` Asume la custodia formal de la carga consolidada (`ACT-05`).
   - `CUN-02 (Trasladar Pedidos hacia Destino Nacional):` Registra el inicio de ruta (Estado *"En Ruta"*, `ACT-06`) y realiza el traslado multimodal cubriendo los 24 departamentos (`ACT-07`).
   - `CUN-03 (Entregar Pedido en Domicilio):` Ejecuta la entrega física, registra la confirmación (Estado *"Entregado"*, `ACT-08`) y la condición de quien recibió (`ACT-09`).
-  - `CUN-04 (Gestionar Entrega Fallida y Retorno por Logística Inversa):` Responsable de tipificar la contingencia (retraso, pérdida o daño, pasando a Estado *"Entrega Fallida"*, `ACT-10`) y registrar el inicio del retorno de la carga no entregada (`ACT-11`).
+  - `CUN-04 (Gestionar Entrega Fallida y Retorno por Logística Inversa):` Responsable de tipificar la contingencia (retraso, pérdida o daño, pasando a Estado *"Entrega Fallida"*, `ACT-10`) y registrar el inicio del retorno de la carga cuando existe bulto físico presente (`ACT-11`). En caso de pérdida, registra la incidencia sin retorno físico de carga.
 - **Sistemas Operativos:** Herramientas de campo vinculadas a **NSDG** y **Driving**.
 
 ### Ficha 4: Supervisor de Zona de Despacho
 - **Clasificación RUP:** «Business Worker» (Trabajador del Negocio interno).
-- **Misión Operativa:** Operador del Centro de Distribución responsable de clasificar los pedidos y formalizar la salida de muelle.
+- **Misión Operativa:** Operador del Centro de Distribución responsable de clasificar los pedidos, asociar transportista/modalidad, asociar la promesa de entrega y formalizar la salida de muelle.
 - **Participación en los CUN:**
-  - `CUN-01 (Despachar Pedidos desde CD):` Recibe pedidos de picking (`ACT-01`), los clasifica geográficamente mediante Driving (`ACT-02`), asocia socio logístico y modalidad (`ACT-03`), vincula lead time (`ACT-04`) y formaliza la salida en muelle (`ACT-05`, Estado *"Despachado"*).
+  - `CUN-01 (Despachar Pedidos desde CD):` Recibe pedidos de picking (`ACT-01`), los clasifica geográficamente mediante Driving (`ACT-02`), asocia socio logístico y modalidad (`ACT-03`), asocia/controla la promesa de entrega con soporte del sistema (`ACT-04`) y formaliza la salida en muelle (`ACT-05`, Estado *"Despachado"*).
 - **Aclaración de Delimitación:** Participa exclusivamente en `CUN-01`. No interviene en `CUN-04` (la gestión de contingencias y registro de inicio de retorno en campo compete al transportista).
 
 ### Ficha 5: Agente de Servicio al Cliente
 - **Clasificación RUP:** «Business Worker» (Trabajador del Negocio interno).
 - **Misión Operativa:** Operador de atención que responde a las consultas de las consultoras.
 - **Participación en los CUN:**
-  - `CUN-05 (Consultar Trazabilidad y Situación del Pedido):` Consulta en Salesforce el estado de entrega y la promesa del pedido (`ACT-13`) ante solicitudes de seguimiento.
-- **Impacto de Problemas AS-IS:** Padece directamente **PR-04** (margen de desconocimiento de hasta 2 horas provocado por la latencia en la actualización) y la falta de visibilidad del receptor real (PR-05).
+  - `CUN-05 (Consultar Trazabilidad y Situación del Pedido):` Consulta en Salesforce el estado de entrega y la promesa del pedido (`ACT-13`) y visualiza los datos del receptor real (`ACT-14`) ante solicitudes de seguimiento.
+- **Impacto de Problemas AS-IS:** Padece directamente **PR-04** (margen de desconocimiento de hasta 2 horas provocado por la latencia en la actualización) y **PR-05** (falta de visibilidad oportuna de la identidad del receptor real cuando recibió un familiar).
 
 ### Ficha 6: Jefatura de Distribución (Ing. Joao Condorpusa)
 - **Clasificación RUP:** «Business Worker» (Trabajador del Negocio interno / Gobierno logístico).
@@ -88,7 +88,30 @@ Su objetivo es caracterizar formalmente a cada actor del negocio y trabajador de
 
 ---
 
-## 4. Matriz de Roles Excluidos del Modelado del Negocio
+## 4. Tabla de Correspondencia: Rol → Actividad del Negocio → Caso de Uso del Negocio (CUN)
+
+En estricta correspondencia con [[03 - Actividades y eventos]], a continuación se detalla el mapeo individual de las 14 actividades operativas (`ACT-01` a `ACT-14`) con su rol responsable y CUN correspondiente:
+
+| ID Actividad | Actividad Operativa AS-IS | Rol / Trabajador Responsable | Rol del Sistema | Caso de Uso del Negocio (CUN) | Descripción Operativa Sustentada |
+|:---:|:---|:---|:---|:---:|:---|
+| **ACT-01** | Recibir pedidos empacados desde la línea de picking | Supervisor de Zona de Despacho *(Worker)* | — | `CUN-01` | Recepción física de cajas consolidadas con N° de pedido en zona de despacho. |
+| **ACT-02** | Clasificar pedidos por destino geográfico (24 departamentos) | Supervisor de Zona de Despacho *(Worker)* | Driving (TMS) | `CUN-01` | Canalización y zonificación territorial por departamento, provincia, distrito y tipo de ciudad. |
+| **ACT-03** | Asignar socio logístico y modalidad de transporte | Supervisor de Zona de Despacho *(Worker)* | Driving / NSDG | `CUN-01` | Vinculación del proveedor de transporte y modo de envío (terrestre, bimodal, aérea). |
+| **ACT-04** | Asociar promesa estimada de entrega al pedido según destino | Supervisor de Zona de Despacho *(Worker)* | NSDG / Tracking (soporte) | `CUN-01` | Asociación y verificación del lead time comprometido (24h Lima / hasta 7 días provincias). |
+| **ACT-05** | Registrar salida de despacho y entrega formal de carga | Supervisor de Despacho *(Worker)* / Socio Logístico *(Actor)* | Driving / NSDG | `CUN-01` | Transferencia formal de custodia física al transportista y cambio a estado *"Despachado"*. |
+| **ACT-06** | Registrar inicio de traslado físico del pedido | Socio Logístico / Transportista *(Actor)* | NSDG / Driving | `CUN-02` | Asume carga e inicia recorrido formal, cambiando el estado a *"En Ruta"*. |
+| **ACT-07** | Trasladar pedidos por la ruta asignada según modalidad | Socio Logístico / Transportista *(Actor)* | Unidades de transporte | `CUN-02` | Desplazamiento material multimodal cubriendo los 24 departamentos hacia destino. |
+| **ACT-08** | Registrar confirmación de entrega física en destino | Socio Logístico / Transportista *(Actor)* | NSDG | `CUN-03` | Entrega física en domicilio y registro de completitud (Estado *"Entregado"*). |
+| **ACT-09** | Registrar datos de la persona que recibe el paquete | Socio Logístico *(Actor)*<br/>*(Receptor: Consultora o Familiar)* | NSDG | `CUN-03` | Captura de la condición de quién recibió en destino (titular o familiar autorizado). |
+| **ACT-10** | Registrar entrega fallida por incidencia tipificada | Socio Logístico / Transportista *(Actor)* | NSDG / Driving | `CUN-04` | Registro de no-entrega por causales exclusivas sustentadas: **retraso, pérdida o daño**. |
+| **ACT-11** | Registrar inicio de retorno del pedido hacia el CD | Socio Logístico / Transportista *(Actor)* | NSDG | `CUN-04` | Registro de retorno de carga no entregada (aplica cuando existe bulto físico presente). |
+| **ACT-12** | Sincronizar y disponibilizar estados registrados en campo | *Actividad Técnica Transversal (Sistema)* | Bus Corporativo / Middleware | *Transversal (Actualización hacia CUN-05)* | Propagación automática de estados hacia plataformas centrales (con latencia AS-IS de hasta 2h). |
+| **ACT-13** | Consultar situación y promesa de entrega del pedido | Consultora *(Actor)* / Agente de Servicio *(Worker)* | Portal Web / Salesforce | `CUN-05` | Búsqueda por Número de Pedido o Código de Consultora de estado y lead time. |
+| **ACT-14** | Visualizar datos del receptor real en canales de atención | Consultora *(Actor)* / Agente de Servicio *(Worker)* | Portal Web / Salesforce | `CUN-05` | Despliegue de datos del receptor real, sujeto en el AS-IS a la falta de visibilidad oportuna (PR-05 / RF-12). |
+
+---
+
+## 5. Matriz de Roles Excluidos del Modelado del Negocio
 
 | Rol Excluido | Área Funcional | Justificación Técnica de Exclusión |
 |:---|:---|:---|

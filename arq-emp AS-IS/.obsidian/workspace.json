@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Matriz de Requerimientos/01 - Matriz Consolidada de Requerimientos.md",
+                "file": "Diagrama de Casos de Uso del Negocio (CUN)/03 - Especificación de Casos de Uso del Negocio.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01 - Matriz Consolidada de Requerimientos"
+              "title": "03 - Especificación de Casos de Uso del Negocio"
             }
           }
         ]
@@ -187,28 +187,28 @@
   },
   "active": "47e5067d22e10610",
   "lastOpenFiles": [
+    "Diagrama de Casos de Uso del Negocio (CUN)/02 - Tabla de Roles y Actividades del Negocio.md",
     "Diagrama de Casos de Uso del Negocio (CUN)/01 - Diagrama General de Casos de Uso del Negocio (CUN).md",
+    "Diagrama de Casos de Uso del Negocio (CUN)/04 - Trazabilidad de Casos de Uso del Negocio.md",
+    "Diagrama de Casos de Uso del Negocio (CUN)/03 - Especificación de Casos de Uso del Negocio.md",
+    "AS-IS/05 - Problemas y desfases.md",
+    "AS-IS/06 - Evidencia y fuentes.md",
+    "AS-IS/04 - Sistemas e información.md",
+    "AS-IS/02 - Actores relevantes.md",
+    "AS-IS/01 - Proceso actual.md",
+    "Matriz de Requerimientos/01 - Matriz Consolidada de Requerimientos.md",
     "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Paquete_Consulta.puml",
     "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Paquete_Sincronizacion_Consulta.puml",
     "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Paquete_Entrega_LogisticaInversa.puml",
     "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Paquete_Despacho_Transporte.puml",
     "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Diagrama_General.puml",
-    "Diagrama de Casos de Uso del Negocio (CUN)/04 - Trazabilidad de Casos de Uso del Negocio.md",
-    "Diagrama de Casos de Uso del Negocio (CUN)/03 - Especificación de Casos de Uso del Negocio.md",
-    "Diagrama de Casos de Uso del Negocio (CUN)/02 - Tabla de Roles y Actividades del Negocio.md",
     "AS-IS/03 - Actividades y eventos.md",
     "Diagrama de Casos de Uso del Negocio (CUN)",
     "Matriz de Requerimientos/04 - Trazabilidad y Registro de Depuración.md",
     "Matriz de Requerimientos/02 - Especificación de Requerimientos Funcionales.md",
-    "Matriz de Requerimientos/01 - Matriz Consolidada de Requerimientos.md",
     "Matriz de Requerimientos/03 - Especificación de Requerimientos No Funcionales.md",
     "trascirto pdf/02 - Guía Oficial de Propuesta de Proyecto Final.md",
     "Matriz de Requerimientos",
-    "AS-IS/01 - Proceso actual.md",
-    "AS-IS/02 - Actores relevantes.md",
-    "AS-IS/06 - Evidencia y fuentes.md",
-    "AS-IS/05 - Problemas y desfases.md",
-    "AS-IS/04 - Sistemas e información.md",
     "AS-IS",
     "09 - AS-IS/06 - Evidencia y fuentes.md",
     "09 - AS-IS/05 - Problemas y desfases.md",

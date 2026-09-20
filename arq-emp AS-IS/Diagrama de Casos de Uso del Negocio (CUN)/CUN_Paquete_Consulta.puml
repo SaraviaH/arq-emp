@@ -37,7 +37,7 @@ actor "Consultora / Consultor\n(Cliente Primario)" as ActorConsultora <<Business
 actor "Agente de Servicio al Cliente\n(Atención en Salesforce)" as WorkerAgente <<Business Worker>>
 
 rectangle "Frontera de Consulta de Trazabilidad" {
-    usecase "<b>CUN-05: Consultar Trazabilidad\ny Situación del Pedido</b>\n---\n• ACT-13: Búsqueda por N° Pedido o Cód. Consultora\n• ACT-14: Despliegue de situación y promesa pactada\n• Necesidad RF-12: Visibilizar recepción por familiar\n---\n<i>Requerimientos: RF-11, RF-12</i>" as CUN05
+    usecase "<b>CUN-05: Consultar Trazabilidad\ny Situación del Pedido</b>\n---\n• ACT-13: Consulta por N° Pedido o Cód. Consultora\n• ACT-14: Visualización de datos del receptor real\n(sujeto a limitación AS-IS / PR-05)\n• Necesidad RF-12: Visualizar datos del receptor real\n---\n<i>Requerimientos: RF-11, RF-12</i>" as CUN05
 }
 
 ' =======================================================
