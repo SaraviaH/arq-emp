@@ -1,0 +1,22 @@
+@startuml CUN_04_Gestionar_Entrega_Fallida_Retorno
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+title Diagrama de Actividades AS-IS: CUN-04 Gestionar Entrega Fallida y Retorno por Logística Inversa
+
+|Socio Logístico / Transportista|
+start
+:Constatar incidencia tipificada en ruta o destino;
+:Registrar entrega fallida por incidencia tipificada (retraso, pérdida o daño) (ACT-10);
+if (¿Existe bulto físico para retornar?) then ([Retraso o daño (con bulto presente)])
+  :Registrar inicio de retorno del pedido hacia el CD (ACT-11);
+  :Trasladar carga no entregada hacia el Centro de Distribución;
+else ([Pérdida (sin bulto físico)])
+  :Concluir gestión de incidencia en campo sin retorno físico;
+endif
+stop
+
+@enduml

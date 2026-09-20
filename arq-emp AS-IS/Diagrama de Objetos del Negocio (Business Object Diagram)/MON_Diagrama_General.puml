@@ -1,0 +1,76 @@
+@startuml MON_Yanbal_AS_IS
+
+!theme plain
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam roundcorner 8
+left to right direction
+
+' =========================================================
+' ESTILOS VISUALES
+' =========================================================
+skinparam actor {
+    BackgroundColor #E1F5FE
+    BorderColor #0288D1
+    FontColor #01579B
+    FontStyle bold
+}
+
+skinparam entity {
+    BackgroundColor #E8F5E9
+    BorderColor #388E3C
+    FontColor #1B5E20
+    FontStyle bold
+}
+
+skinparam arrow {
+    Color #37474F
+    FontColor #263238
+    FontSize 11
+}
+
+title Modelo de Objetos del Negocio (MON) - Proceso Logístico AS-IS (Yanbal Perú)
+
+' =========================================================
+' TRABAJADORES DEL NEGOCIO (Roles / Personas)
+' =========================================================
+actor "Supervisor de CD" as SupervisorCD
+actor "Conductor / Repartidor" as ConductorRepartidor
+actor "Personal SAC" as PersonalSAC
+
+' =========================================================
+' ENTIDADES DEL NEGOCIO (Elementos Simples)
+' =========================================================
+entity "Pedido" as Pedido
+entity "Bulto" as Bulto
+entity "Registro de Despacho" as RegistroDespacho
+entity "Guía / Documentación\nde Despacho" as GuiaDespacho
+entity "Registro de Entrega" as RegistroEntrega
+entity "Incidencia de Entrega" as IncidenciaEntrega
+entity "Orden de Retorno" as OrdenRetorno
+entity "Información de Entrega" as InformacionEntrega
+
+' =========================================================
+' RELACIONES: ACCIONES DEL NEGOCIO (Trabajador -> Acción -> Entidad)
+' =========================================================
+
+' Supervisor de CD
+SupervisorCD --> Pedido : valida
+SupervisorCD --> Bulto : clasifica
+SupervisorCD --> RegistroDespacho : registra
+SupervisorCD --> GuiaDespacho : entrega
+
+' Conductor / Repartidor
+ConductorRepartidor --> Bulto : traslada
+ConductorRepartidor --> GuiaDespacho : porta
+ConductorRepartidor --> RegistroEntrega : registra
+ConductorRepartidor --> IncidenciaEntrega : registra
+ConductorRepartidor --> OrdenRetorno : gestiona
+
+' Personal SAC
+PersonalSAC --> InformacionEntrega : consulta
+PersonalSAC --> Pedido : verifica
+PersonalSAC --> IncidenciaEntrega : consulta
+
+@enduml

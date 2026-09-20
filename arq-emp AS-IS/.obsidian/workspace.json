@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Diagrama de Casos de Uso del Negocio (CUN)/03 - Especificación de Casos de Uso del Negocio.md",
+                "file": "trascirto pdf/02 - Guía Oficial de Propuesta de Proyecto Final.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "03 - Especificación de Casos de Uso del Negocio"
+              "title": "02 - Guía Oficial de Propuesta de Proyecto Final"
             }
           }
         ]
@@ -83,7 +83,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 453.5
   },
   "right": {
     "id": "760940402baccb33",
@@ -187,40 +187,41 @@
   },
   "active": "47e5067d22e10610",
   "lastOpenFiles": [
+    "DESCRIPCION_GENERAL_SOLUCION_YTRACE_YANBAL_ACTUALIZADO.md",
+    "Diagrama de Contexto de Negocio/01 - Diagrama de Contexto del Negocio (AS-IS).md",
+    "Diagrama de clases del diseño",
+    "Diagramas de Casos de USO/01 - Diagrama General de Casos de Uso del Sistema (CUS).md",
+    "Diagramas de Casos de USO/02 - Especificación y Fichas Técnicas Oficiales de Casos de Uso.md",
+    "Diagrama de Contexto de Negocio/Contexto_Negocio_AS_IS.puml",
+    "Diagrama de Contexto de Negocio",
+    "Diagramas de Casos de USO/CUS_Subsistema_Entrega_Consulta.puml",
+    "Diagramas de Casos de USO/CUS_Subsistema_Despacho_Transporte.puml",
+    "Diagramas de Casos de USO/CUS_Diagrama_General.puml",
+    "Diagramas de Casos de USO",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/MON_Realizacion_CUN.puml",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/MON_Diagrama_General.puml",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/03 - Especificación de Trabajadores y Entidades del Negocio.md",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/02 - Matriz de Realización de Casos de Uso del Negocio.md",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/01 - Modelo de Objetos del Negocio (MON).md",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/03 - Diagrama de Objetos del Negocio (Trabajadores y Entidades RUP).md",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/Diagrama_Objetos_Negocio_Trabajadores_Entidades.puml",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/02 - Especificación de Instancias y Valores de Negocio.md",
+    "Diagrama de Objetos del Negocio (Business Object Diagram)/01 - Diagrama de Objetos del Negocio (Business Object Diagram).md",
+    "Diagrama de Actividades/01 - Diagramas de Actividades del Negocio (AS-IS).md",
+    "Diagrama de Clases (Nivel Dominio)/02 - Diccionario de Datos del Modelo de Dominio.md",
+    "Diagrama de Clases (Nivel Dominio)/01 - Diagrama de Clases de Dominio (Nivel Dominio).md",
+    "Diagrama_objeto/01 - Diagrama de Objetos del Negocio.md",
+    "Diagrama de Clases (Nivel Dominio)/03 - Matriz del Modelo de Dominio.md",
+    "Diagrama de Casos de Uso del Negocio (CUN)/03 - Especificación de Casos de Uso del Negocio.md",
     "Diagrama de Casos de Uso del Negocio (CUN)/02 - Tabla de Roles y Actividades del Negocio.md",
     "Diagrama de Casos de Uso del Negocio (CUN)/01 - Diagrama General de Casos de Uso del Negocio (CUN).md",
     "Diagrama de Casos de Uso del Negocio (CUN)/04 - Trazabilidad de Casos de Uso del Negocio.md",
-    "Diagrama de Casos de Uso del Negocio (CUN)/03 - Especificación de Casos de Uso del Negocio.md",
     "AS-IS/05 - Problemas y desfases.md",
     "AS-IS/06 - Evidencia y fuentes.md",
     "AS-IS/04 - Sistemas e información.md",
     "AS-IS/02 - Actores relevantes.md",
     "AS-IS/01 - Proceso actual.md",
     "Matriz de Requerimientos/01 - Matriz Consolidada de Requerimientos.md",
-    "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Paquete_Consulta.puml",
-    "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Paquete_Sincronizacion_Consulta.puml",
-    "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Paquete_Entrega_LogisticaInversa.puml",
-    "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Paquete_Despacho_Transporte.puml",
-    "Diagrama de Casos de Uso del Negocio (CUN)/CUN_Diagrama_General.puml",
-    "AS-IS/03 - Actividades y eventos.md",
-    "Diagrama de Casos de Uso del Negocio (CUN)",
-    "Matriz de Requerimientos/04 - Trazabilidad y Registro de Depuración.md",
-    "Matriz de Requerimientos/02 - Especificación de Requerimientos Funcionales.md",
-    "Matriz de Requerimientos/03 - Especificación de Requerimientos No Funcionales.md",
-    "trascirto pdf/02 - Guía Oficial de Propuesta de Proyecto Final.md",
-    "Matriz de Requerimientos",
-    "AS-IS",
-    "09 - AS-IS/06 - Evidencia y fuentes.md",
-    "09 - AS-IS/05 - Problemas y desfases.md",
-    "09 - AS-IS/04 - Sistemas e información.md",
-    "09 - AS-IS/03 - Actividades y eventos.md",
-    "09 - AS-IS/02 - Actores relevantes.md",
-    "09 - AS-IS/01 - Proceso actual.md",
-    "09 - AS-IS",
-    "Entrevista/09 - AS-IS/06 - Evidencia y fuentes.md",
-    "Entrevista/09 - AS-IS/05 - Problemas y desfases.md",
-    "Entrevista/09 - AS-IS/04 - Sistemas e información.md",
-    "Entrevista/09 - AS-IS/03 - Actividades y eventos.md",
-    "Entrevista/09 - AS-IS"
+    "AS-IS/03 - Actividades y eventos.md"
   ]
 }

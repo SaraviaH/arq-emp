@@ -35,10 +35,10 @@ title Casos de Uso del Negocio: Entrega y Contingencias (CUN-03 y CUN-04)
 
 actor "Socio Logístico / Transportista\n(Proveedor en Campo)" as ActorSocio <<Business Actor>>
 actor "Consultora / Consultor\n(Cliente Primario)" as ActorConsultora <<Business Actor>>
-actor "Familiar Autorizado\n(Receptor en Domicilio)" as ActorFamiliar <<Business Actor>>
+actor "Persona Autorizada\n(Receptor en Domicilio)" as ActorPersonaAutorizada <<Business Actor>>
 
 rectangle "Frontera de Entrega y Excepciones en Destino" {
-    usecase "<b>CUN-03: Entregar Pedido\nen Domicilio</b>\n---\n• ACT-08: Confirmación física (Estado 'Entregado')\n• ACT-09: Registro del receptor real\n(Titular o Familiar Autorizado)\n---\n<i>Requerimientos: RF-06, RF-07</i>" as CUN03
+    usecase "<b>CUN-03: Entregar Pedido\nen Domicilio</b>\n---\n• ACT-08: Confirmación física (Estado 'Entregado')\n• ACT-09: Registro del receptor real\n(Titular o Persona Autorizada)\n---\n<i>Requerimientos: RF-06, RF-07</i>" as CUN03
     
     usecase "<b>CUN-04: Gestionar Entrega Fallida\ny Retorno por Logística Inversa</b>\n---\n• ACT-10: Registro de incidencia (Estado 'Entrega Fallida')\nCausales válidas: Retraso / Pérdida / Daño\n• ACT-11: Registro de inicio de retorno al CD\n(aplica ante retraso/daño con bulto presente)\n---\n<i>Requerimientos: RF-08, RF-09</i>" as CUN04
 }
@@ -49,14 +49,14 @@ rectangle "Frontera de Entrega y Excepciones en Destino" {
 ' =======================================================
 ActorSocio -- CUN03
 ActorConsultora -- CUN03
-ActorFamiliar -- CUN03
+ActorPersonaAutorizada -- CUN03
 
 ActorSocio -- CUN04
 
 note right of CUN03
   <b>Registro de Receptor:</b>
   Captura de la condición de quien recibe
-  (Titular o Familiar Autorizado) en el domicilio.
+  (Titular o Persona Autorizada) en el domicilio.
   El registro operativo lo ejecuta el Socio Logístico.
   Alimenta la actualización transversal (ACT-12 / RF-10).
 end note

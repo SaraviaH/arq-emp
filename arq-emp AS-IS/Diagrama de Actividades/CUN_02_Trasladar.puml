@@ -1,0 +1,18 @@
+@startuml CUN_02_Trasladar
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+title Diagrama de Actividades AS-IS: CUN-02 Trasladar Pedidos hacia Destino Nacional
+
+|Socio Logístico / Transportista|
+start
+:Cargar pedidos en unidades de transporte según modalidad asignada;
+:Registrar inicio de traslado físico del pedido (ACT-06);
+:Trasladar pedidos por la ruta asignada según modalidad (terrestre, bimodal o aérea) (ACT-07);
+:Arribar a la localidad o domicilio de destino;
+stop
+
+@enduml

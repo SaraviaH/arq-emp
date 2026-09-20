@@ -43,11 +43,11 @@ A continuación se detallan las actividades operativas del proceso delimitado y 
 | ID | Actividad Operativa | Actor Responsable | Sistema Utilizado | Entrada | Salida | Correspondencia RF | Evidencia Primaria (`trascrito.text`) |
 |:---:|:---|:---|:---|:---|:---|:---:|:---|
 | **ACT-08** | Registrar confirmación de entrega física en destino | Socio Logístico | NSDG | Pedido entregado al receptor en domicilio | Pedido completado (Estado $\rightarrow$ *"Entregado"*) | [[02 - Especificación de Requerimientos Funcionales#RF-06\|RF-06]] | Línea 18 (min 19:53) |
-| **ACT-09** | Registrar datos de la persona que recibe el paquete (consultora titular o familiar autorizado) | Socio Logístico | NSDG | Identificación del receptor en campo | Identidad del receptor asociada al registro de entrega | [[02 - Especificación de Requerimientos Funcionales#RF-07\|RF-07]] | Línea 25 (min 24:45–25:01) |
+| **ACT-09** | Registrar datos de la persona que recibe el paquete (consultora titular o persona autorizada) | Socio Logístico | NSDG | Identificación del receptor en campo | Identidad del receptor asociada al registro de entrega | [[02 - Especificación de Requerimientos Funcionales#RF-07\|RF-07]] | Línea 25 (min 24:45–25:01) |
 | **ACT-10** | Registrar entrega fallida por incidencia tipificada (retraso, pérdida o daño) | Socio Logístico | NSDG / Driving | Incidencia confirmada en ruta o destino | Pedido no entregado (Estado $\rightarrow$ *"Entrega Fallida"*) | [[02 - Especificación de Requerimientos Funcionales#RF-08\|RF-08]] | Línea 19 (min 20:03–20:30) |
 
 > [!NOTE]
-> **Aclaración de depuración:** En ACT-10, las causales se restringen estrictamente a **retraso, pérdida y daño**, eliminando motivos no declarados en la entrevista. En ACT-09, se captura si fue titular o familiar autorizado sin presuponer campos obligatorios no sustentados.
+> **Aclaración de depuración:** En ACT-10, las causales se restringen estrictamente a **retraso, pérdida y daño**, eliminando motivos no declarados en la entrevista. En ACT-09, se captura si fue titular o persona autorizada sin presuponer campos obligatorios no sustentados.
 
 ---
 
@@ -96,7 +96,7 @@ Cada uno de los 12 Requerimientos Funcionales (RF) posee **exactamente una corre
 | **RF-04** | **ACT-04** | Asociar promesa estimada de entrega al pedido según destino (24h Lima / hasta 7 días provincias). | ✅ Válida (Regla de lead time según región) |
 | **RF-05** | **ACT-06** | Registrar inicio de traslado físico del pedido (Estado *"En Ruta"*). | ✅ Válida (Sin checkpoints intermedios) |
 | **RF-06** | **ACT-08** | Registrar confirmación de entrega física en destino (Estado *"Entregado"*). | ✅ Válida (Cierre regular en campo) |
-| **RF-07** | **ACT-09** | Registrar datos de la persona que recibe el paquete (consultora titular o familiar autorizado). | ✅ Válida (Captura titular o familiar en entrega) |
+| **RF-07** | **ACT-09** | Registrar datos de la persona que recibe el paquete (consultora titular o persona autorizada). | ✅ Válida (Captura titular o persona autorizada en entrega) |
 | **RF-08** | **ACT-10** | Registrar entrega fallida por incidencia tipificada (retraso, pérdida o daño). | ✅ Válida (Causales exclusivas sustentadas) |
 | **RF-09** | **ACT-11** | Registrar inicio de retorno del pedido hacia el Centro de Distribución por el socio logístico. | ✅ Válida (Concluye en registro de retorno) |
 | **RF-10** | **ACT-12** | Sincronizar y disponibilizar estados de distribución registrados en campo hacia canales de consulta. | ✅ Válida (Mitiga desfase actual de 2h) |
@@ -133,7 +133,7 @@ Se ha auditado rigurosamente que **ningún requerimiento (RF o RNF) dependa de a
 | **"Pesaje de comprobación en balanza"** | Despacho | ACT-01, ACT-05 / RF-03 | Se eliminó el pesaje físico en balanza de despacho. La actividad se limita a recibir la caja con su volumetría teórica calculada en picking. |
 | **"Hitos o checkpoints intermedios en ruta"** | Transporte | ACT-06, ACT-07 / RF-05 | No se asumen lecturas en garitas ni paradas intermedias. El pedido se mantiene en estado macro *"En Ruta"* hasta su arribo a destino. |
 | **"Ausencia de receptor" y "Dirección errónea"** | Entrega fallida | ACT-10 / RF-08 | La tipificación de contingencias se restringe con rigor a las únicas 3 causales declaradas por la fuente: **retraso, pérdida o daño**. |
-| **"Obligatoriedad de DNI y bloqueo de sistema"** | Receptor real | ACT-09, ACT-14 / RF-07, RF-12 | Se registra la condición de quién recibe (titular o familiar autorizado) sin imponer campos rígidos ni bloqueos que no fueron manifestados textualmente por la jefatura. |
+| **"Obligatoriedad de DNI y bloqueo de sistema"** | Receptor real | ACT-09, ACT-14 / RF-07, RF-12 | Se registra la condición de quién recibe (titular o persona autorizada) sin imponer campos rígidos ni bloqueos que no fueron manifestados textualmente por la jefatura. |
 | **"Peritaje de calidad/seguridad, seguros y reposición"** | Logística inversa | ACT-11 / RF-09 | El alcance del proceso y del requerimiento concluye estrictamente en el **registro del retorno de la carga**. Las actividades internas del almacén quedan excluidas. |
 | **"Levantamiento y gestión de tickets en CRM"** | Consulta / Reclamos | ACT-13, ACT-14 / RF-11, RF-12 | El requerimiento se delimita a la consulta de trazabilidad y receptor. La apertura y gestión de tickets de reclamo pertenece al proceso externo de postventa en CRM. |
 | **"Campañas comerciales y cierres de catálogo"** | Capacidad de datos | Transversal / RNF-03 | Se eliminó cualquier referencia a eventos comerciales específicos; RNF-03 se sustenta exclusivamente en la capacidad declarada para gran volumen de data. |
@@ -168,7 +168,7 @@ stateDiagram-v2
 | En Preparación | Tareas de recolección en picking | Sistema (SPY) | SPY / Almacén *(Contexto previo)* |
 | **Despachado** | Salida física de despacho y entrega a transportista | Supervisor de despacho | Driving / NSDG |
 | **En Ruta** | Socio logístico asume carga e inicia traslado | Socio logístico | NSDG / Driving |
-| **Entregado** | Receptor (titular o familiar) recibe paquete | Socio logístico | NSDG / Driving (con latencia de hasta 2h hacia consulta) |
+| **Entregado** | Receptor (titular o persona autorizada) recibe paquete | Socio logístico | NSDG / Driving (con latencia de hasta 2h hacia consulta) |
 | **Entrega Fallida** | Incidencia en ruta o destino (retraso, pérdida o daño) | Socio logístico | NSDG / Driving |
 
 ---
@@ -180,7 +180,7 @@ stateDiagram-v2
 | **Egreso de despacho y transferencia de carga** | Negocio | Zona de Despacho | El pedido sale del Centro de Distribución y pasa a responsabilidad del transportista |
 | **Inicio de traslado en ruta** | Negocio | Centro de Distribución / Ruta | El transportista inicia el recorrido hacia la localidad de destino |
 | **Entrega a consultora titular** | Negocio | Domicilio de destino | Cierre exitoso regular del pedido |
-| **Entrega a familiar autorizado** | Negocio | Domicilio de destino | Cierre exitoso; requiere registrar quién recibió para evitar reclamos falsos (PR-05) |
+| **Entrega a persona autorizada** | Negocio | Domicilio de destino | Cierre exitoso; requiere registrar quién recibió para evitar reclamos falsos (PR-05) |
 | **Entrega fallida por incidencia** | Excepción | Ruta o destino | Retraso, pérdida o daño confirmado; habilita el registro de retorno por logística inversa |
 | **Sincronización desfasada de estados** | Técnico | Sistemas de transporte $\rightarrow$ Consulta | Genera la ventana ciega de información de hasta 2 horas (PR-03) |
 | **Consulta de trazabilidad** | Negocio | Portal web / Salesforce | Consultora o agente verifican el estado del pedido y promesa de entrega |

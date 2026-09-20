@@ -78,9 +78,9 @@ A pesar de contar con un ecosistema de sistemas integrados mediante un Bus centr
 - Si un socio logístico entrega un pedido a las 10:00 AM, el sistema puede seguir mostrando "En ruta" hasta el mediodía.
 - Genera una "ventana ciega" que impide al personal de servicio al cliente brindar información fidedigna e instantánea.
 
-### Brecha 2: Falta de Evidencia en Entregas a Terceros (Familiares Autorizados)
-- En la venta por catálogo, es común que la consultora no se encuentre presente en el domicilio y reciba el pedido un familiar autorizado.
-- La trazabilidad actual no comunica en tiempo real el nombre o parentesco de quien recepcionó el paquete, provocando reportes prematuros por supuesta pérdida o no entrega.
+### Brecha 2: Falta de Evidencia en Entregas a Terceros (Personas Autorizadas)
+- En la venta por catálogo, es común que la consultora no se encuentre presente en el domicilio y reciba el pedido una persona autorizada.
+- La trazabilidad actual no comunica en tiempo real el nombre o identidad de quien recepcionó el paquete, provocando reportes prematuros por supuesta pérdida o no entrega.
 
 ### Brecha 3: Desfase de 6 horas en Merma Operativa
 - La merma producida por rotura durante el picking no se descuenta en vivo, desalineando la trazabilidad entre el stock físico real y el stock digital en SAP.

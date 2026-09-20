@@ -1,0 +1,114 @@
+@startuml MON_Realizacion_CUN_Yanbal
+
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor White
+    BorderColor #455A64
+    ArrowColor #37474F
+    FontSize 11
+    FontStyle bold
+}
+
+skinparam class<<business worker>> {
+    BackgroundColor #E1F5FE
+    BorderColor #0288D1
+    FontStyle bold
+}
+
+skinparam class<<business entity>> {
+    BackgroundColor #E8F5E9
+    BorderColor #388E3C
+    FontStyle bold
+}
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #90A4AE
+    FontStyle bold
+    FontSize 12
+}
+
+title Realización de Casos de Uso del Negocio (CUN a MON) - Proceso Logístico AS-IS
+
+' =========================================================
+' PAQUETE CUN-01: DESPACHAR PEDIDOS DESDE CD
+' =========================================================
+package "Realización CUN-01: Despachar Pedidos desde CD" as PkgCUN01 {
+    class "Supervisor de CD" as W_Sup01 <<business worker>>
+    class "Pedido" as E_Ped01 <<business entity>>
+    class "Bulto" as E_Bul01 <<business entity>>
+    class "Registro de Despacho" as E_Des01 <<business entity>>
+    class "Guía / Doc. Despacho" as E_Gui01 <<business entity>>
+
+    W_Sup01 ..> E_Ped01 : 1. valida correspondencia\ny asigna socio/modalidad
+    W_Sup01 ..> E_Bul01 : 2. clasifica por destino
+    W_Sup01 ..> E_Gui01 : 3. emite manifiesto y ruta
+    W_Sup01 ..> E_Des01 : 4. registra egreso en muelle
+}
+
+' =========================================================
+' PAQUETE CUN-02: TRASLADAR PEDIDOS HACIA DESTINO
+' =========================================================
+package "Realización CUN-02: Trasladar Pedidos hacia Destino Nacional" as PkgCUN02 {
+    class "Conductor / Repartidor" as W_Cond02 <<business worker>>
+    class "Guía / Doc. Despacho" as E_Gui02 <<business entity>>
+    class "Pedido" as E_Ped02 <<business entity>>
+    class "Bulto" as E_Bul02 <<business entity>>
+
+    W_Cond02 ..> E_Gui02 : 1. porta y valida en ruta
+    W_Cond02 ..> E_Ped02 : 2. actualiza a 'En Ruta'
+    W_Cond02 ..> E_Bul02 : 3. traslada y custodia
+}
+
+' =========================================================
+' PAQUETE CUN-03: ENTREGAR PEDIDO EN DOMICILIO
+' =========================================================
+package "Realización CUN-03: Entregar Pedido en Domicilio" as PkgCUN03 {
+    class "Conductor / Repartidor" as W_Cond03 <<business worker>>
+    class "Bulto" as E_Bul03 <<business entity>>
+    class "Registro de Entrega" as E_Ent03 <<business entity>>
+    class "Pedido" as E_Ped03 <<business entity>>
+
+    W_Cond03 ..> E_Bul03 : 1. entrega física a receptor
+    W_Cond03 ..> E_Ent03 : 2. registra receptor y firma
+    W_Cond03 ..> E_Ped03 : 3. actualiza a 'Entregado'
+}
+
+' =========================================================
+' PAQUETE CUN-04: GESTIONAR ENTREGA FALLIDA Y RETORNO
+' =========================================================
+package "Realización CUN-04: Gestionar Entrega Fallida y Retorno" as PkgCUN04 {
+    class "Conductor / Repartidor" as W_Cond04 <<business worker>>
+    class "Incidencia de Entrega" as E_Inc04 <<business entity>>
+    class "Pedido" as E_Ped04 <<business entity>>
+    class "Orden de Retorno" as E_Ret04 <<business entity>>
+    class "Bulto" as E_Bul04 <<business entity>>
+
+    W_Cond04 ..> E_Inc04 : 1. tipifica retraso/pérdida/daño
+    W_Cond04 ..> E_Ped04 : 2. actualiza a 'Entrega Fallida'
+    W_Cond04 ..> E_Ret04 : 3. gestiona retorno de carga
+    W_Cond04 ..> E_Bul04 : 4. retiene en custodia de devolución
+}
+
+' =========================================================
+' PAQUETE CUN-05: CONSULTAR TRAZABILIDAD Y SITUACIÓN
+' =========================================================
+package "Realización CUN-05: Consultar Trazabilidad y Situación" as PkgCUN05 {
+    class "Personal SAC" as W_Sac05 <<business worker>>
+    class "Información de Entrega" as E_Inf05 <<business entity>>
+    class "Pedido" as E_Ped05 <<business entity>>
+    class "Incidencia de Entrega" as E_Inc05 <<business entity>>
+
+    W_Sac05 ..> E_Inf05 : 1. consulta tracking y receptor
+    W_Sac05 ..> E_Ped05 : 2. verifica promesa y datos
+    W_Sac05 ..> E_Inc05 : 3. gestiona reclamo por falla
+}
+
+@enduml

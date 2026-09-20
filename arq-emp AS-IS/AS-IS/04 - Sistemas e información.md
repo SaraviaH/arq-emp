@@ -149,7 +149,7 @@ flowchart LR
 | **Registro de salida de despacho** | Despacho | Supervisor de Despacho | Driving / NSDG (Estado *"Despachado"*) |
 | **Registro de inicio de traslado** | Transporte | Socio Logístico | NSDG / Driving (Estado *"En Ruta"*) |
 | **Confirmación de entrega física** | Entrega | Socio Logístico | NSDG (Estado *"Entregado"*) |
-| **Identidad del receptor real** | Entrega | Socio Logístico | NSDG (nombre y condición: titular o familiar autorizado) |
+| **Identidad del receptor real** | Entrega | Socio Logístico | NSDG (nombre y condición: titular o persona autorizada) |
 | **Registro de incidencia** | Entrega fallida | Socio Logístico | NSDG / Driving (causales: retraso, pérdida o daño) |
 | **Registro de retorno** | Logística inversa | Socio Logístico | NSDG (retorno físico hacia el Centro de Distribución) |
 

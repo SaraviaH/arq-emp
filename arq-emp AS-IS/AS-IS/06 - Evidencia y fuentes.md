@@ -28,7 +28,7 @@
 | Supervisores de Zona de Despacho | F-01 (min 17:34–19:04) | *"pasa a la zona de despacho [...] donde es zonificado"* | ✅ |
 | Socios Logísticos / Transportistas | F-01 (min 1:24, 19:15–20:55) | *"proveedores logísticos asociados [...] el mismo socio logístico hace el registro"* | ✅ |
 | Consultora / Consultor | F-01 (min 22:03–22:28) | *"la información necesaria que el usuario o el cliente debe conocer es el número del pedido [...] para nosotros un consultor o una consultora es nuestro cliente"* | ✅ |
-| Familiar Autorizado / Receptor en Domicilio | F-01 (min 24:45–25:01) | *"puede ser algún familiar autorizado y el cliente final, al hacer la trazabilidad [...] no necesariamente tiene esa información"* | ✅ |
+| Persona Autorizada / Receptor en Domicilio | F-01 (min 24:45–25:01) | *"puede ser alguna persona autorizada y el cliente final, al hacer la trazabilidad [...] no necesariamente tiene esa información"* | ✅ |
 | Agentes de Servicio al Cliente | F-01 (min 24:29–24:36) | *"para poder responder ante algún reclamo o ante la consulta del mismo cliente final a través de nuestro servicio al cliente acerca del estatus de su pedido"* | ✅ |
 | Jefatura de Distribución (Ing. Joao) | F-01 (Entrevista completa) | Declaraciones directas del encargado de distribución a lo largo de toda la entrevista | ✅ |
 
@@ -51,7 +51,7 @@
 |---|---|---|:---:|
 | PR-03: Desfase de hasta 2h en tracking | F-01 (min 23:19–24:18) | *"nuestro sistema de tracking nos arroja una trazabilidad [...] en promedio de dos horas [...] el sistema todavía se actualiza hasta en un lapso de dos horas"* | ✅ |
 | PR-04: Desconocimiento de situación en atención | F-01 (min 24:29–24:36) | *"para poder responder ante algún reclamo o ante la consulta del mismo cliente final a través de nuestro servicio al cliente acerca del estatus de su pedido"* | ✅ |
-| PR-05: Receptor real no comunicado (familiar) | F-01 (min 24:45–25:01) | *"puede ser algún familiar autorizado y el cliente final, al hacer la trazabilidad [...] no necesariamente tiene esa información. Entonces es ahí donde está nuestro reto"* | ✅ |
+| PR-05: Receptor real no comunicado (persona autorizada) | F-01 (min 24:45–25:01) | *"puede ser alguna persona autorizada y el cliente final, al hacer la trazabilidad [...] no necesariamente tiene esa información. Entonces es ahí donde está nuestro reto"* | ✅ |
 
 ---
 

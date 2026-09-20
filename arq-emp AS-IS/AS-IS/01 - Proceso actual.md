@@ -101,13 +101,13 @@ stateDiagram-v2
 - El socio logístico llega al domicilio de destino y efectúa la entrega física.
 - El receptor puede ser:
   - La **consultora/consultor** titular del pedido, o
-  - Un **familiar autorizado** que se encuentra en el domicilio.
+  - Una **persona autorizada** que se encuentra en el domicilio.
 - El socio logístico registra la entrega completada.
 
 **Estado del pedido:** Cambia a **"Entregado"** (o *"Pedido entregado"*).
 
 **Problema crítico en esta etapa:**
-- Cuando un familiar autorizado recibe el pedido, **no se comunica oportunamente** quién fue el receptor real.
+- Cuando una persona autorizada recibe el pedido, **no se comunica oportunamente** quién fue el receptor real.
 - La consultora titular, al consultar el sistema, todavía ve el pedido como "En ruta" (por el desfase de 2h) o como entregado sin saber quién lo recibió.
 - Esto genera **reclamos prematuros por supuesta no-entrega**, cuando el paquete ya fue recibido por un tercero en el domicilio.
 
@@ -142,7 +142,7 @@ stateDiagram-v2
 
 **Limitaciones actuales de la consulta:**
 - La información mostrada puede estar desactualizada hasta por 2 horas.
-- No se muestra con claridad quién recibió el paquete si fue un familiar autorizado.
+- No se muestra con claridad quién recibió el paquete si fue una persona autorizada.
 - El agente de atención ve los mismos datos desfasados y no puede confirmar con certeza si la entrega ya se realizó.
 
 > **Fuente:** Entrevista min 22:03–22:47, min 24:29–24:36.
@@ -179,7 +179,7 @@ flowchart TD
         C["Socio logístico asume carga<br/>y pedido pasa a 'En Ruta'"]
         D["Tránsito según modalidad<br/>(Terrestre / Bimodal / Aérea)"]
         E{"¿Entrega exitosa?"}
-        F["Entrega en domicilio a<br/>consultora o familiar"]
+        F["Entrega en domicilio a<br/>consultora o persona autorizada"]
         G["Entrega fallida:<br/>retraso, pérdida o daño"]
         H["Actualización de estados<br/>(Desfase de hasta 2h)"]
         I["Consulta por N° Pedido o Cód. Consultor<br/>(Consultora / Servicio al Cliente)"]
@@ -211,7 +211,7 @@ flowchart TD
 |---|---|---|---|
 | **Despachado** | Al registrar la salida del pedido en zona de despacho y entregarlo al socio logístico | Supervisor de despacho | Driving / NSDG |
 | **En Ruta** | Cuando el socio logístico asume la carga y comienza el traslado | Socio logístico | NSDG / Driving |
-| **Entregado** | Cuando el receptor (consultora o familiar autorizado) recibe el paquete | Socio logístico | NSDG / Driving (con desfase de hasta 2h en sistemas de consulta) |
+| **Entregado** | Cuando el receptor (consultora o persona autorizada) recibe el paquete | Socio logístico | NSDG / Driving (con desfase de hasta 2h en sistemas de consulta) |
 | **Entrega Fallida** | Cuando ocurre una incidencia que impide la entrega (retraso, daño, pérdida) | Socio logístico | NSDG / Driving |
 
 > [!NOTE]

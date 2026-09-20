@@ -92,7 +92,7 @@ flowchart LR
 | **Roles Operativos** | Ejecutan tareas físicas puntuales: manufactura, escaneo de RF, preparación de picking, despacho. |
 | **Socios Logísticos Asociados** | Empresas terceras contratistas que operan las flotas de transporte terrestre, bimodal y aéreo. |
 | **Consultores / Consultoras** | Clientes principales de Yanbal que comercializan y/o reciben los pedidos. |
-| **Clientes Finales / Familiares Autorizados** | Receptores en destino final. |
+| **Clientes Finales / Personas Autorizadas** | Receptores en destino final. |
 
 ---
 

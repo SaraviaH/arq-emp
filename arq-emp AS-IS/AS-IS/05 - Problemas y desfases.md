@@ -53,13 +53,13 @@ flowchart TD
 
 ---
 
-### Problema 3: Falta de visibilidad sobre el receptor real — familiar autorizado (PR-05)
+### Problema 3: Falta de visibilidad sobre el receptor real — persona autorizada (PR-05)
 
 | Campo | Detalle |
 |---|---|
-| **Elemento** | Cuando un familiar autorizado recibe el pedido, la consultora no dispone de esa información en el sistema |
-| **Por qué pertenece al AS-IS** | Afecta directamente las etapas de **Entrega** y **Consulta**. En la venta directa de Yanbal, es habitual que la consultora no se encuentre en casa y un familiar reciba el paquete. Como el sistema no comunica oportunamente quién recibió, la titular reporta que "no recibió su pedido" cuando el producto ya está en su domicilio. |
-| **Fuente / Evidencia** | Entrevista min 24:45–25:01: *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser algún familiar autorizado y el cliente final, al hacer la trazabilidad a través de nuestro sistema, no necesariamente tiene esa información. Entonces es ahí donde está nuestro reto"*. |
+| **Elemento** | Cuando una persona autorizada recibe el pedido, la consultora no dispone de esa información en el sistema |
+| **Por qué pertenece al AS-IS** | Afecta directamente las etapas de **Entrega** y **Consulta**. En la venta directa de Yanbal, es habitual que la consultora no se encuentre en casa y una persona autorizada reciba el paquete. Como el sistema no comunica oportunamente quién recibió, la titular reporta que "no recibió su pedido" cuando el producto ya está en su domicilio. |
+| **Fuente / Evidencia** | Entrevista min 24:45–25:01: *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser alguna persona autorizada y el cliente final, al hacer la trazabilidad a través de nuestro sistema, no necesariamente tiene esa información. Entonces es ahí donde está nuestro reto"*. |
 | **Parte del proceso donde interviene** | Entrega $\longrightarrow$ Consulta / Trazabilidad. |
 | **Requerimientos asociados** | [[02 - Especificación de Requerimientos Funcionales#RF-07\|RF-07]] (Captura de receptor) y [[02 - Especificación de Requerimientos Funcionales#RF-12\|RF-12]] (Visualización en consulta). |
 
@@ -70,7 +70,7 @@ flowchart TD
     A["Socio logístico llega<br/>al domicilio"]
     --> B{"¿Consultora titular<br/>presente?"}
     B -->|Sí| C["Entrega física directa a<br/>la consultora titular"]
-    B -->|No| D["Entrega física a familiar<br/>autorizado en domicilio"]
+    B -->|No| D["Entrega física a persona<br/>autorizada en domicilio"]
     D --> E["⚠️ El sistema NO comunica<br/>oportunamente quién recibió"]
     E --> F["Consultora consulta la<br/>situación de su pedido"]
     F --> G["Sistema muestra 'En Ruta' (por desfase 2h)<br/>o 'Entregado' sin dato del receptor"]

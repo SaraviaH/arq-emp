@@ -98,7 +98,7 @@ graph TD
 #### 10. Proveedores Logísticos Asociados (Socios de Transporte)
 - **Entidad:** Empresas contratistas terceras de transporte nacional.
 - **Actividades que realiza:** Carga en Centro de Distribución, traslado terrestre, bimodal o aéreo a los 24 departamentos, entrega de paquetes y ejecución del proceso de retorno por logística inversa.
-- **Relacionamiento:** Reportan eventos de tránsito al sistema NSDG / Driving y entregan pedidos a consultoras o familiares autorizados.
+- **Relacionamiento:** Reportan eventos de tránsito al sistema NSDG / Driving y entregan pedidos a consultoras o personas autorizadas.
 
 #### 11. Contratista de TI (Desarrollador de NSDG)
 - **Entidad:** Empresa proveedora de desarrollo de software.
@@ -110,7 +110,7 @@ graph TD
 - **Actividades que realiza:** Captación de pedidos en catálogo, ingreso de compras a través de la plataforma comercial Maya y recepción de las cajas consolidadas para su posterior entrega.
 - **Relacionamiento:** Utilizan su Código de Consultor y Número de Pedido para monitorear entregas y contactar a Servicio al Cliente.
 
-#### 13. Clientes Finales y Familiares Autorizados
+#### 13. Clientes Finales y Personas Autorizadas
 - **Entidad:** Consumidores finales o personas autorizadas en el domicilio de destino.
 - **Actividades que realiza:** Recepción física del pedido en el hogar y firma de conformidad de recepción.
 - **Relacionamiento:** Interactúan con el conductor del socio logístico y con la consultora titular.
@@ -129,7 +129,7 @@ graph TD
 | **SPY (WMS)** | **Operario de Picking** | Lista de tareas de recolección unitaria por ubicación | Pantalla de terminal / SPY |
 | **Picking (CD)** | **Zona de Despacho** | Caja consolidada (1 de 8 formatos) rotulada | Número de Pedido |
 | **Despacho** | **Socio Logístico** | Paquetes zonificados por departamento | Registro de salida de despacho / Driving / NSDG |
-| **Socio Logístico** | **Consultora / Familiar** | Entrega física del pedido en domicilio | Confirmación de entrega en campo (NSDG) |
+| **Socio Logístico** | **Consultora / Persona Autorizada** | Entrega física del pedido en domicilio | Confirmación de entrega en campo (NSDG) |
 | **Socio Logístico** | **Almacén / Calidad** | Retorno de paquete por entrega fallida/daño | Registro de retorno por logística inversa (NSDG) |
 | **Servicio al Cliente** | **Distribución / Despacho**| Alerta de reclamo o solicitud de reposición urgente | Salesforce $\rightarrow$ Bus de Integración |
 
@@ -139,7 +139,7 @@ graph TD
 
 > [!NOTE]
 > - Dotación de personal (número de colaboradores operando en turnos simultáneos en el Centro de Distribución de 15,000 m²).
-> - Mecanismos formales de autorización legal requeridos para que un familiar reciba un pedido en ausencia de la consultora titular.
+> - Mecanismos formales de autorización requeridos para que una persona autorizada reciba un pedido en ausencia de la consultora titular.
 
 ---
 
@@ -156,7 +156,7 @@ graph TD
 | Supervisor de despacho | Zonifica/despacha | Clasificar y entregar carga al socio logístico | Despacho | Driving/NSDG [validar responsable] | Pedido preparado, dirección/destino | Pedido despachado/zonificado | [FALTA INFORMACIÓN] sobre evento y sistema exactos | Entrevista / 🟡 |
 | Socio logístico | Transporta y registra eventos | Trasladar, entregar o retornar pedido | Transporte/última milla | NSDG/Driving [validar] | Pedido, destino y datos de entrega | Evento de tránsito, entrega o incidencia | Tracking puede actualizarse tarde | Entrevista / ✅ |
 | Consultora/consultor | Cliente primario | Generar pedido y consultar seguimiento | Comercial/seguimiento | Maya; canal de tracking [validar] | Catálogo, estado y promesa de entrega | Pedido; consulta/reclamo | Incertidumbre si el estado está desactualizado | Entrevista / ✅ |
-| Cliente final o familiar autorizado | Receptor | Recibir pedido | Entrega | [FALTA INFORMACIÓN] | Pedido | Confirmación de recepción [mecanismo no precisado] | Receptor real no visible oportunamente | Entrevista / 🟡 |
+| Cliente final o persona autorizada | Receptor | Recibir pedido | Entrega | [FALTA INFORMACIÓN] | Pedido | Confirmación de recepción [mecanismo no precisado] | Receptor real no visible oportunamente | Entrevista / 🟡 |
 | Servicio al Cliente | Atiende consulta/reclamo | Consultar estado y gestionar atención | Postventa | CRM nombrado “Cellforce/Salesforce” [validar] | Consulta/reclamo y datos de tracking | Atención/ticket [estructura no precisada] | Datos de tracking tardíos | Entrevista / 🟡 |
 | Control de Calidad | Dictamina condición | Evaluar cuarentena/retorno | Calidad/logística inversa | SAP R3 [según módulos] | Producto o pedido retornado | Dictamen de liberación/aprobación | Tiempo de evaluación no cuantificado | Entrevista / 🟡 |
 | Seguridad Patrimonial | Evalúa siniestro | Revisar pérdida/daño y seguro | Logística inversa | [FALTA INFORMACIÓN] | Pedido retornado e incidencia | Dictamen de siniestro/garantía [FALTA DETALLE] | Doble evaluación secuencial | Entrevista / 🟡 |

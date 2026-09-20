@@ -87,7 +87,7 @@ stateDiagram-v2
 2. **En elaboración / En preparación:** Se ejecutan las tareas de recolección en la línea de picking guiadas por [[Sistemas y tecnología#SPY|SPY]] *(Contexto previo)*.
 3. **Despachado (o Pedido Despachado):** El pedido está embalado en zona de despacho, clasificado por destino y entregado formalmente al socio logístico.
 4. **Pedido en Ruta (o En Ruta):** El socio logístico carga el pedido e inicia el traslado físico hacia el destino final.
-5. **Pedido Entregado (o Entregado):** Entrega física efectiva en manos de la consultora o familiar autorizado.
+5. **Pedido Entregado (o Entregado):** Entrega física efectiva en manos de la consultora o persona autorizada.
 6. **Entrega Fallida / Logística Inversa:** Cuando ocurre una incidencia tipificada (retraso, pérdida o daño), el transportista registra la entrega fallida y el retorno de la carga al Centro de Distribución. *(Nota: La recepción interna en almacén, el peritaje de calidad/seguridad y la reposición comercial corresponden a procesos internos fuera del alcance de distribución).*
 
 ---
@@ -125,7 +125,7 @@ Cuando ocurre una incidencia durante el transporte o en destino tipificada segú
 - **Impacto en Atención al Cliente:**  
   Cuando una consultora llama a [[Sistemas y tecnología#Salesforce (Cellforce)|Servicio al Cliente]], el operador ve información desactualizada, generando reclamos innecesarios o respuestas erróneas.
 - **Falta de Trazabilidad sobre el Receptor Real:**  
-  Frecuentemente el paquete es recibido por un **familiar autorizado** y no directamente por la consultora titular. Debido al retraso del sistema, la consultora reporta que no recibió el pedido cuando en realidad ya fue entregado a un tercero en su domicilio.
+  Frecuentemente el paquete es recibido por una **persona autorizada** y no directamente por la consultora titular. Debido al retraso del sistema, la consultora reporta que no recibió el pedido cuando en realidad ya fue entregado a un tercero en su domicilio.
 
 ---
 

@@ -64,7 +64,7 @@ flowchart TB
     subgraph TRANSPORTE_Y_ULTIMA_MILLA [4. Transporte Nacional y Entrega]
         P6 --> T1["Socios Logísticos de Transporte<br/>(Driving / NSDG)"]
         T1 -->|Terrestre / Bimodal / Aéreo| T2["Entrega en Destino<br/>(Lima: 24h / Provincias: hasta 7d)"]
-        T2 --> T3["Cliente Final o Familiar Autorizado"]
+        T2 --> T3["Cliente Final o Persona Autorizada"]
     end
 
     subgraph ATENCION_E_INCIDENCIAS [5. Atención al Cliente y Logística Inversa]
@@ -117,7 +117,7 @@ flowchart TB
 | **Ventas y Facturación** | **Riesgo de quiebre de stock y ventas perdidas** | Venta de producto físicamente destruido por falta de sinceramiento en SAP | Evitar ofrecer stock comprometido en la plataforma Maya ([[Problemas y necesidades#PR-02\|PR-02]]) |
 | **Transporte y Entrega** | **Desfase de hasta 2 horas en el tracking de despacho** | Latencia en sincronización de datos móviles de socios logísticos al Bus | **Reducción de latencia:** Lograr respuesta en tiempo real o con desfase $\le$ 30 min ([[Problemas y necesidades#NEC-01\|NEC-01]]) |
 | **Atención al Cliente** | **Margen de desconocimiento de la situación del pedido** | Desactualización de estados en Salesforce al momento de reclamos | Disponibilidad de datos frescos de trazabilidad para los agentes ([[Problemas y necesidades#PR-04\|PR-04]]) |
-| **Entrega Última Milla** | **Incertidumbre cuando recibe un familiar autorizado** | Ausencia de confirmación inmediata con el nombre del receptor real | Identificación precisa del receptor para evitar falsos reportes de pérdida ([[Problemas y necesidades#PR-05\|PR-05]]) |
+| **Entrega Última Milla** | **Incertidumbre cuando recibe una persona autorizada** | Ausencia de confirmación inmediata con el nombre del receptor real | Identificación precisa del receptor para evitar falsos reportes de pérdida ([[Problemas y necesidades#PR-05\|PR-05]]) |
 | **Logística Inversa** | **Retraso por doble peritaje manual (Calidad + Seguridad)** | Validación física secuencial antes de liberar pedidos de reposición | Estandarización y agilización de garantías y reposiciones urgentes ([[Problemas y necesidades#PR-06\|PR-06]]) |
 
 ---

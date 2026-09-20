@@ -57,7 +57,7 @@ end note
 note top of CUN05
   <b>Problemática AS-IS y Necesidad Derivada:</b>
   - PR-03/PR-04: La consulta exhibe datos con desfase de hasta 2h.
-  - PR-05: Cuando recibe un familiar autorizado, los datos
+  - PR-05: Cuando recibe una persona autorizada, los datos
     del receptor no están disponibles oportunamente,
     motivando la formulación del requerimiento derivado RF-12.
 end note

@@ -1,0 +1,101 @@
+@startuml CUS_Diagrama_General
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+' Estilos y Paleta de Colores
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #78909C
+    FontColor #263238
+    FontStyle bold
+}
+
+skinparam actor {
+    BackgroundColor #E1F5FE
+    BorderColor #0288D1
+    FontColor #01579B
+    
+    BackgroundColor<<System>> #ECEFF1
+    BorderColor<<System>> #455A64
+    FontColor<<System>> #263238
+}
+
+skinparam usecase {
+    BackgroundColor #FFFFFF
+    BorderColor #455A64
+    ArrowColor #37474F
+    FontColor #212121
+}
+
+left to right direction
+
+header Universidad Tecnológica del Perú (UTP) - APF1
+title Diagrama General de Casos de Uso del Sistema (CUS) — Estado Actual (AS-IS)\nProceso de Distribución y Transporte (Yanbal Perú)
+
+' =======================================================
+' ACTORES DEL SISTEMA DE INFORMACIÓN
+' =======================================================
+actor "Supervisor de Despacho" as ActSupervisor
+actor "Conductor / Transportista" as ActTransportista
+actor "Bus de Integración ESB" as ActESB <<System>>
+actor "Consultora / Consultor" as ActConsultora
+actor "Agente de Servicio al Cliente" as ActSAC
+
+' =======================================================
+' SUBSISTEMAS Y CASOS DE USO
+' =======================================================
+package "Subsistema de Despacho" as SubDespacho {
+    usecase "CUS-01: Clasificar Pedidos\nGeográficamente" as CUS01
+    usecase "CUS-02: Asignar Transportista\ny Modalidad" as CUS02
+    usecase "CUS-03: Registrar Salida\nde Despacho" as CUS03
+    usecase "CUS-04: Asociar Promesa\nEstimada de Entrega" as CUS04
+}
+
+package "Subsistema de Transporte y Ruta" as SubRuta {
+    usecase "CUS-05: Registrar Inicio\nde Traslado" as CUS05
+}
+
+package "Subsistema de Entrega y Contingencias" as SubEntrega {
+    usecase "CUS-06: Registrar Confirmación\nde Entrega" as CUS06
+    usecase "CUS-07: Registrar Identidad\ndel Receptor" as CUS07
+    usecase "CUS-08: Registrar Entrega Fallida\npor Incidencia" as CUS08
+    usecase "CUS-09: Registrar Orden de\nRetorno de Carga" as CUS09
+}
+
+package "Subsistema de Sincronización" as SubSync {
+    usecase "CUS-10: Sincronizar Estados\nde Distribución" as CUS10
+}
+
+package "Subsistema de Consulta y Seguimiento" as SubConsulta {
+    usecase "CUS-11: Consultar Trazabilidad\nde Pedido" as CUS11
+    usecase "CUS-12: Visualizar Información\ndel Receptor Real" as CUS12
+}
+
+' =======================================================
+' ASOCIACIONES: ACTOR -> CASO DE USO
+' =======================================================
+ActSupervisor --> CUS01
+ActSupervisor --> CUS02
+ActSupervisor --> CUS03
+ActSupervisor --> CUS04
+
+ActTransportista --> CUS05
+ActTransportista --> CUS06
+ActTransportista --> CUS08
+
+ActESB --> CUS10
+
+ActConsultora --> CUS11
+ActSAC --> CUS11
+
+' =======================================================
+' RELACIONES <<include>> Y <<extend>>
+' =======================================================
+CUS06 .> CUS07 : <<include>>
+CUS09 .> CUS08 : <<extend>>\n[Bulto físico presente]
+CUS11 .> CUS12 : <<include>>
+
+@enduml

@@ -1,0 +1,90 @@
+@startuml 01_Flujo_General_AS_IS_Integrado
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam ArrowColor #37474F
+skinparam ActivityBorderColor #455A64
+skinparam ActivityBackgroundColor #ECEFF1
+
+title Diagrama de Actividades AS-IS: Flujo General de Negocio Integrado (End-to-End)\nProceso: Despacho -> Transporte -> Entrega -> Logística Inversa -> Sincronización -> Consulta
+
+|#EFEBE9|Supervisor de Zona de Despacho|
+start
+:Recibir pedidos consolidados y empacados\ndesde la línea de picking (ACT-01);
+:Clasificar pedidos por destino geográfico\n(24 departamentos del Perú) (ACT-02);
+:Asignar socio logístico y modalidad\nde transporte (Terrestre, Bimodal, Aérea) (ACT-03);
+:Asociar promesa estimada de entrega según destino\n(24h Lima Metropolitana / hasta 7d Provincias) (ACT-04);
+:Registrar salida de despacho y formalizar entrega de carga (ACT-05);
+:Transferir formalmente la custodia física de la carga;
+
+|#E8EAF6|Socio Logístico / Transportista|
+:Asumir custodia física de la carga en muelle de CD (ACT-05);
+:Cargar bultos en unidades según modalidad (ACT-06);
+:Registrar inicio de traslado físico del pedido\n(Estado cambia a "En Ruta") (ACT-06);
+:Trasladar pedidos por la ruta asignada según modalidad\n(Terrestre, Bimodal o Aérea) (ACT-07);
+:Arribar a la localidad y presentarse en el domicilio de entrega;
+
+if (¿Se puede efectuar la entrega física en destino?) then ([Entrega viable en domicilio])
+
+  if (¿Quién recibe presencialmente en el domicilio?) then ([Consultora titular presente])
+    |#E0F2F1|Consultora / Titular|
+    :Identificarse como receptora titular;
+    :Recibir físicamente los bultos del pedido;
+    |#E8EAF6|Socio Logístico / Transportista|
+    :Verificar identidad de la consultora titular;
+    :Registrar datos del receptor titular (ACT-09);
+  else ([Persona autorizada presente])
+    |#FFF3E0|Persona Autorizada|
+    :Identificarse como persona autorizada en domicilio;
+    :Recibir físicamente los bultos del pedido;
+    |#E8EAF6|Socio Logístico / Transportista|
+    :Verificar identidad y registrar vínculo/parentesco;
+    :Registrar datos del receptor (Personal Autorizado) (ACT-09);
+  endif
+
+  |#E8EAF6|Socio Logístico / Transportista|
+  :Registrar confirmación de entrega física en destino\n(Estado cambia a "Entregado") (ACT-08);
+
+else ([Incidencia impeditiva en ruta o domicilio])
+
+  |#E8EAF6|Socio Logístico / Transportista|
+  :Constatar incidencia tipificada\n(Retraso / Pérdida / Daño) (ACT-10);
+  :Registrar entrega fallida e incidencia en aplicativo de campo\n(Estado cambia a "Entrega Fallida") (ACT-10);
+
+  if (¿Existe bulto físico disponible para retornar?) then ([Retraso o Daño (bulto presente)])
+    :Registrar inicio de retorno del pedido hacia el CD\n(Generar Orden de Retorno) (ACT-11);
+    :Trasladar carga no entregada hacia el Centro de Distribución\n(Flujo de Logística Inversa) (ACT-11);
+  else ([Pérdida o Siniestro (sin bulto físico)])
+    :Cerrar gestión operativa en campo sin retorno de carga;
+  endif
+
+endif
+
+|#ECEFF1|Proceso Técnico de Sincronización (Transversal)|
+note right
+  **Brecha Tecnológica AS-IS (ACT-12):**
+  Los eventos registrados en campo (Driving / NSDG)
+  no se sincronizan en tiempo real con las plataformas
+  corporativas, sufriendo un desfase batch de ~2 horas.
+end note
+:Sincronizar lote de estados y confirmaciones hacia plataformas centrales\n(Desfase de hasta 2 horas en el AS-IS) (ACT-12);
+
+if (¿Canal por el cual se consulta el pedido?) then ([Consultora vía Portal Web])
+  |#E0F2F1|Consultora / Titular|
+  :Ingresar al Portal Web de seguimiento con N° Pedido o Cód. Consultora;
+  :Consultar situación actual y promesa estimada de entrega (ACT-13);
+  :Visualizar estado disponible del pedido (ACT-13);
+  :Visualizar datos disponibles sobre la entrega del pedido (ACT-14);
+else ([Atención telefónica vía Servicio al Cliente])
+  |#FCE4EC|Agente de Servicio al Cliente|
+  :Recibir llamada o ticket de consulta de la consultora;
+  :Ingresar N° Pedido o Cód. Consultora en Salesforce (CRM);
+  :Consultar situación registrada y promesa de entrega (ACT-13);
+  :Verificar datos disponibles sobre la entrega física (ACT-14);
+  :Informar a la consultora el estado visualizado en sistema;
+endif
+
+stop
+@enduml

@@ -46,7 +46,7 @@ title Diagrama de Casos de Uso del Negocio (CUN) - Estado Actual (AS-IS)\nProces
 ' =======================================================
 package "Actores del Negocio («Business Actors»)" as PkgActores {
     actor "Consultora / Consultor\n(Cliente Primario)" as ActorConsultora <<Business Actor>>
-    actor "Familiar Autorizado\n(Receptor en Domicilio)" as ActorFamiliar <<Business Actor>>
+    actor "Persona Autorizada\n(Receptor en Domicilio)" as ActorPersonaAutorizada <<Business Actor>>
     actor "Socio Logístico / Transportista\n(Proveedor Contratado)" as ActorSocio <<Business Actor>>
 }
 
@@ -86,7 +86,7 @@ ActorSocio -- CUN02
 
 ActorSocio -- CUN03
 ActorConsultora -- CUN03
-ActorFamiliar -- CUN03
+ActorPersonaAutorizada -- CUN03
 
 ActorSocio -- CUN04
 

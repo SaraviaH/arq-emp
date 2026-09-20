@@ -1,0 +1,117 @@
+@startuml CUS_Subsistema_Entrega_Consulta
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #78909C
+    FontColor #263238
+    FontStyle bold
+}
+
+skinparam actor {
+    BackgroundColor #E1F5FE
+    BorderColor #0288D1
+    FontColor #01579B
+    
+    BackgroundColor<<System>> #ECEFF1
+    BorderColor<<System>> #455A64
+    FontColor<<System>> #263238
+}
+
+skinparam usecase {
+    BackgroundColor #FFFFFF
+    BorderColor #455A64
+    ArrowColor #37474F
+    FontColor #212121
+}
+
+skinparam note {
+    BackgroundColor #FFFDE7
+    BorderColor #FBC02D
+    FontColor #212121
+}
+
+left to right direction
+
+header Universidad Tecnológica del Perú (UTP) - APF1
+title CUS — Subsistemas de Entrega, Contingencias, Sincronización y Consulta (AS-IS)\nSistemas: NSDG Móvil, Bus ESB, Portal Web de Tracking y Salesforce CRM
+
+' Actores
+actor "Conductor / Transportista\n(NSDG Móvil)" as ActTransportista
+actor "Bus de Integración ESB\n(Middleware Corporativo)" as ActESB <<System>>
+actor "Consultora / Consultor\n(Portal Web)" as ActConsultora
+actor "Agente de Servicio al Cliente\n(Salesforce CRM)" as ActSAC
+
+' Subsistema 3: Entrega y Contingencias
+package "3. Subsistema de Entrega y Contingencias (NSDG Móvil)" as SubEntrega {
+    usecase "CUS-06: Registrar Confirmación\nde Entrega" as CUS06
+    usecase "CUS-07: Registrar Identidad\ndel Receptor" as CUS07
+    usecase "CUS-08: Registrar Entrega Fallida\npor Incidencia" as CUS08
+    usecase "CUS-09: Registrar Orden de\nRetorno de Carga" as CUS09
+}
+
+' Subsistema 4: Sincronización
+package "4. Subsistema de Sincronización (Bus ESB)" as SubSync {
+    usecase "CUS-10: Sincronizar Estados\nde Distribución" as CUS10
+}
+
+' Subsistema 5: Consulta y Seguimiento
+package "5. Subsistema de Consulta y Seguimiento (Portal / CRM)" as SubConsulta {
+    usecase "CUS-11: Consultar Trazabilidad\nde Pedido" as CUS11
+    usecase "CUS-12: Visualizar Información\ndel Receptor Real" as CUS12
+}
+
+' Asociaciones
+ActTransportista --> CUS06
+ActTransportista --> CUS08
+
+ActESB --> CUS10
+
+ActConsultora --> CUS11
+ActSAC --> CUS11
+
+' Relaciones <<include>> y <<extend>>
+CUS06 .> CUS07 : <<include>>
+CUS09 .> CUS08 : <<extend>>\n[Bulto físico presente]
+CUS11 .> CUS12 : <<include>>
+
+' Notas explicativas
+note bottom of CUS07
+  <b>RF-07 (Mitigación PR-05):</b>
+  Captura obligatoria de:
+  - Titular o Tercero Autorizado
+  - Nombre completo y DNI/CE
+  - Parentesco o relación
+end note
+
+note bottom of CUS08
+  <b>RF-08:</b>
+  Causales de incidencia:
+  Retraso, Pérdida o Daño.
+end note
+
+note bottom of CUS09
+  <b>RF-09:</b>
+  Logística inversa condicional
+  cuando el bulto físico está presente
+  (no aplica para robo/pérdida).
+end note
+
+note bottom of SubSync
+  <b>RF-10 / RNF-01 / RNF-04:</b>
+  Transmisión batch asíncrona hacia
+  Salesforce y Portal Web (desfase ~2h).
+end note
+
+note bottom of CUS11
+  <b>RF-11:</b>
+  Búsqueda multicriterio:
+  - N° de Pedido
+  - Código de Consultora/Cliente
+end note
+
+@enduml

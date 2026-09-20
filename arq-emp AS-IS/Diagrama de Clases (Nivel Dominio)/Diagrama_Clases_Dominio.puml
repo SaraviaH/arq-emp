@@ -1,0 +1,84 @@
+@startuml Diagrama_Clases_Dominio_Yanbal
+
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor White
+    BorderColor #455A64
+    ArrowColor #37474F
+    FontSize 12
+    FontStyle bold
+}
+
+title Diagrama de Clases de Dominio (Nivel Dominio) - Proceso Logístico AS-IS
+
+' =========================================================
+' CLASES DEL DOMINIO
+' =========================================================
+
+class Pedido
+class Bulto
+class RegistroDespacho
+
+class Consultora
+class DireccionEntrega
+
+class SocioLogistico
+abstract class ModalidadTransporte
+class TransporteTerrestre
+class TransporteBimodal
+class TransporteAereo
+
+class RegistroEntrega
+abstract class Receptor
+class ConsultoraTitular
+class PersonalAutorizado
+
+class IncidenciaEntrega
+class OrdenRetorno
+
+
+' =========================================================
+' ASOCIACIONES DEL DOMINIO
+' =========================================================
+
+Consultora "1" -- "1..*" Pedido
+
+Pedido "1" *-- "1..*" Bulto
+
+Pedido "1" -- "1" RegistroDespacho
+
+Pedido "1" -- "1" DireccionEntrega
+
+SocioLogistico "1" -- "1..*" Pedido
+
+Pedido "1" -- "1" ModalidadTransporte
+
+Pedido "1" -- "0..1" RegistroEntrega
+
+RegistroEntrega "1" -- "1" Receptor
+
+Pedido "1" -- "0..1" IncidenciaEntrega
+
+IncidenciaEntrega "1" -- "0..1" OrdenRetorno
+
+
+' =========================================================
+' GENERALIZACIONES
+' =========================================================
+
+ModalidadTransporte <|-- TransporteTerrestre
+ModalidadTransporte <|-- TransporteBimodal
+ModalidadTransporte <|-- TransporteAereo
+
+Receptor <|-- ConsultoraTitular
+Receptor <|-- PersonalAutorizado
+
+
+@enduml

@@ -46,7 +46,7 @@
 2. Realiza el traslado físico según la modalidad asignada (terrestre, bimodal o aérea).
 3. Entrega el pedido al receptor físico en destino.
 4. Registra la entrega completada (estado *"Entregado"*).
-5. Captura quién recibió el paquete (si fue la consultora titular o un familiar autorizado).
+5. Captura quién recibió el paquete (si fue la consultora titular o una persona autorizada).
 6. Registra la incidencia si la entrega no se concreta por retraso, pérdida o daño (estado *"Entrega Fallida"*).
 7. Inicia el registro de retorno físico del pedido no entregado al almacén (logística inversa).
 
@@ -73,13 +73,13 @@
 
 ---
 
-### Actor 4: Familiar Autorizado / Receptor en Domicilio
+### Actor 4: Persona Autorizada / Receptor en Domicilio
 
 | Campo | Detalle |
 |---|---|
-| **Elemento** | Persona autorizada o familiar presente en el domicilio de entrega |
+| **Elemento** | Persona autorizada presente en el domicilio de entrega |
 | **Por qué pertenece al AS-IS** | Es quien **recibe físicamente el paquete** cuando la consultora titular no se encuentra presente en el domicilio. La falta de visibilidad sobre su identidad como receptor en los sistemas de consulta es la causa directa del problema **PR-05** (reclamos falsos por supuesta pérdida). |
-| **Fuente / Evidencia** | Entrevista min 24:45–25:01: *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser algún familiar autorizado y el cliente final, al hacer la trazabilidad a través de nuestro sistema, no necesariamente tiene esa información"*. |
+| **Fuente / Evidencia** | Entrevista min 24:45–25:01: *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser alguna persona autorizada y el cliente final, al hacer la trazabilidad a través de nuestro sistema, no necesariamente tiene esa información"*. |
 | **Parte del proceso donde interviene** | **Entrega** — Recepción física en domicilio. |
 | **Correspondencia con Requerimientos** | [[02 - Especificación de Requerimientos Funcionales#RF-07\|RF-07]], [[02 - Especificación de Requerimientos Funcionales#RF-12\|RF-12]]. |
 
@@ -102,7 +102,7 @@
 **Actividades actuales que realiza en el proceso de trazabilidad:**
 1. Recibe consultas de consultoras sobre la situación de sus despachos.
 2. Consulta el estado del pedido y la promesa de entrega mediante Número de Pedido o Código de Consultora.
-3. Verifica la información registrada sobre la persona receptora para aclarar consultas sobre entregas a familiares.
+3. Verifica la información registrada sobre la persona receptora para aclarar consultas sobre entregas a personas autorizadas.
 
 > [!NOTE]
 > La gestión interna de tickets de quejas y reclamos comerciales pertenece al proceso de CRM/Mesa de Ayuda, externo al alcance de la trazabilidad logística de distribución.

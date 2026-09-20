@@ -1,0 +1,23 @@
+@startuml CUN_01_Despachar
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+title Diagrama de Actividades AS-IS: CUN-01 Despachar Pedidos desde Centro de Distribución
+
+|Supervisor de Zona de Despacho|
+start
+:Recibir pedidos empacados desde la línea de picking (ACT-01);
+:Clasificar pedidos por destino geográfico (24 departamentos) (ACT-02);
+:Asignar socio logístico y modalidad de transporte (ACT-03);
+:Asociar promesa estimada de entrega según destino (ACT-04);
+:Registrar salida de despacho y entrega formal de carga (ACT-05);
+:Transferir custodia física de la carga consolidada;
+
+|Socio Logístico / Transportista|
+:Asumir custodia física de la carga en muelle (ACT-05);
+stop
+
+@enduml

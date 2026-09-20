@@ -1,0 +1,26 @@
+@startuml CUN_05_Consultar_Trazabilidad
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+title Diagrama de Actividades AS-IS: CUN-05 Consultar Trazabilidad y Situación del Pedido
+
+|Consultora / Consultor|
+start
+if (¿Actor que realiza la consulta?) then ([Consultora / Consultor])
+  :Ingresar Número de Pedido o Código de Consultora en portal web;
+  :Consultar situación y promesa de entrega del pedido (ACT-13);
+  :Visualizar estado actual de distribución y promesa estimada (ACT-13);
+  :Visualizar datos del receptor real disponibles (ACT-14);
+else ([Agente de Servicio al Cliente])
+  |Agente de Servicio al Cliente|
+  :Ingresar Número de Pedido o Código de Consultora en Salesforce;
+  :Consultar situación y promesa de entrega del pedido (ACT-13);
+  :Visualizar estado actual de distribución y promesa estimada (ACT-13);
+  :Visualizar datos del receptor real disponibles (ACT-14);
+endif
+stop
+
+@enduml

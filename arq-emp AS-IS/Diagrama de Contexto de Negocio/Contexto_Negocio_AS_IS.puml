@@ -1,0 +1,89 @@
+@startuml Contexto_Negocio_AS_IS
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+
+' Paleta de Colores de Negocio
+skinparam rectangle {
+    BackgroundColor<<Central>> #FFF8E1
+    BorderColor<<Central>> #FF8F00
+    FontColor<<Central>> #E65100
+    FontStyle<<Central>> bold
+    BorderThickness<<Central>> 2.5
+    
+    BackgroundColor<<Area>> #E8EAF6
+    BorderColor<<Area>> #3F51B5
+    FontColor<<Area>> #1A237E
+    BorderThickness<<Area>> 1.5
+}
+
+skinparam actor {
+    BackgroundColor #E1F5FE
+    BorderColor #0288D1
+    FontColor #01579B
+}
+
+skinparam arrow {
+    Color #37474F
+    FontColor #263238
+    FontSize 10
+}
+
+header Universidad Tecnológica del Perú (UTP) - Arquitectura Empresarial (APF1)
+title Diagrama de Contexto del Negocio — Estado Actual (AS-IS)\nMacroproceso de Distribución y Transporte de Pedidos (Yanbal Perú)
+
+' =======================================================
+' PROCESO CENTRAL DE NEGOCIO (NÚCLEO CAJA NEGRA)
+' =======================================================
+rectangle "== PROCESO DE NEGOCIO CENTRAL ==\n\n**Distribución y Transporte de Pedidos**\nYanbal Perú (AS-IS)" as ProcesoCentral <<Central>>
+
+' =======================================================
+' ÁREAS ORGANIZACIONALES LIMÍTROFES (UNIDADES INTERNAS)
+' =======================================================
+rectangle "Área Comercial" as AreaComercial <<Area>>
+rectangle "Área de Almacén y Preparación\n(Centro de Distribución Lurín)" as AreaAlmacen <<Area>>
+rectangle "Área de Servicio al Cliente\n(Atención de Reclamos)" as AreaSAC <<Area>>
+rectangle "Área de Control de Calidad\ny Seguridad Patrimonial" as AreaCalidad <<Area>>
+
+' =======================================================
+' ACTORES EXTERNOS DEL NEGOCIO («BUSINESS ACTORS»)
+' =======================================================
+actor "Socio Logístico /\nTransportista" as Socio
+actor "Consultora / Consultor\n(Cliente Primario)" as Consultora
+actor "Persona Autorizada\n(Receptor en Domicilio)" as PersonaAut
+
+' =======================================================
+' INTERCAMBIOS DE NEGOCIO (ENTRADAS Y SALIDAS)
+' =======================================================
+
+' 1. Con el Área Comercial
+AreaComercial --> ProcesoCentral : Órdenes comerciales facturadas y datos de entrega
+ProcesoCentral --> AreaComercial : Confirmación de entrega del pedido para cierre comercial
+
+' 2. Con el Área de Almacén y Preparación
+AreaAlmacen --> ProcesoCentral : Bultos preparados y rotulados en muelle
+ProcesoCentral --> AreaAlmacen : Bultos físicos devueltos por logística inversa
+
+' 3. Con el Socio Logístico / Transportista
+ProcesoCentral --> Socio : Carga física y ruta para distribución
+Socio --> ProcesoCentral : Inicio de traslado, reporte de entrega o incidencia en ruta
+
+' 4. Con la Consultora / Consultor
+Consultora --> ProcesoCentral : Consulta sobre el estado de su pedido
+ProcesoCentral --> Consultora : Estado e información de entrega
+
+' 5. Con la Persona Autorizada
+PersonaAut --> ProcesoCentral : Datos de recepción en domicilio
+ProcesoCentral --> PersonaAut : Pedido entregado
+
+' 6. Con el Área de Servicio al Cliente
+AreaSAC --> ProcesoCentral : Consulta de estado por atención a consultoras
+ProcesoCentral --> AreaSAC : Información de estado y receptor del pedido
+
+' 7. Con Control de Calidad y Seguridad Patrimonial
+ProcesoCentral --> AreaCalidad : Pedidos devueltos por siniestro, pérdida o daño
+AreaCalidad --> ProcesoCentral : Disposición técnica de reposición o activación de póliza
+
+@enduml

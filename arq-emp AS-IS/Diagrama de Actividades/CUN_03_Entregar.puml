@@ -1,0 +1,31 @@
+@startuml CUN_03_Entregar
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+title Diagrama de Actividades AS-IS: CUN-03 Entregar Pedido en Domicilio
+
+|Socio Logístico / Transportista|
+start
+:Arribar al domicilio de entrega;
+if (¿Quién se encuentra en el domicilio?) then ([Consultora titular])
+  |Consultora / Consultor|
+  :Identificarse como receptora titular;
+  |Socio Logístico / Transportista|
+  :Entregar físicamente el paquete a la titular;
+  :Registrar datos de la persona que recibe el paquete (titular) (ACT-09);
+else ([Persona autorizada])
+  |Persona Autorizada|
+  :Identificarse como persona autorizada en domicilio;
+  |Socio Logístico / Transportista|
+  :Entregar físicamente el paquete a la persona autorizada;
+  :Registrar datos de la persona que recibe el paquete (persona autorizada) (ACT-09);
+endif
+
+|Socio Logístico / Transportista|
+:Registrar confirmación de entrega física en destino (ACT-08);
+stop
+
+@enduml

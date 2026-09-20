@@ -33,7 +33,7 @@ flowchart LR
 ### Clasificación de Actores del Negocio
 1. **Actores del Negocio (*Business Actors*):** Entidades externas que interactúan con el negocio, demandando o ejecutando servicios:
    - **Consultora / Consultor de Yanbal:** Cliente primario que recibe el pedido en su domicilio y realiza el seguimiento de su entrega.
-   - **Familiar Autorizado:** Receptor presencial en el domicilio cuando la consultora titular se encuentra ausente.
+   - **Persona Autorizada:** Receptor presencial en el domicilio cuando la consultora titular se encuentra ausente.
    - **Socio Logístico / Transportista:** Proveedor externo asociado (contratista) que asume la custodia física, traslada la mercancía, ejecuta la entrega en destino y gestiona las contingencias de retorno.
 2. **Trabajadores del Negocio (*Business Workers*):** Roles internos de Yanbal que ejecutan tareas dentro del proceso:
    - **Supervisor de Despacho:** Operador interno responsable de clasificar los pedidos por destino geográfico, asociar transportista/modalidad y formalizar el egreso de carga en muelle.
@@ -103,7 +103,7 @@ El módulo se estructura en **exactamente 5 Casos de Uso del Negocio**, correspo
 |:---:|:---|:---|:---:|:---:|
 | **CUN-01** | **Despachar Pedidos desde Centro de Distribución** | Supervisor de Zona de Despacho *(Worker)*<br/>Socio Logístico *(Actor)* | **RF-01, RF-02, RF-03, RF-04** | `ACT-01`, `ACT-02`, `ACT-03`, `ACT-04`, `ACT-05` |
 | **CUN-02** | **Trasladar Pedidos hacia Destino Nacional** | Socio Logístico *(Actor)* | **RF-05** | `ACT-06`, `ACT-07` |
-| **CUN-03** | **Entregar Pedido en Domicilio** | Socio Logístico *(Actor)*<br/>Consultora *(Actor)*<br/>Familiar Autorizado *(Actor)* | **RF-06, RF-07** | `ACT-08`, `ACT-09` |
+| **CUN-03** | **Entregar Pedido en Domicilio** | Socio Logístico *(Actor)*<br/>Consultora *(Actor)*<br/>Persona Autorizada *(Actor)* | **RF-06, RF-07** | `ACT-08`, `ACT-09` |
 | **CUN-04** | **Gestionar Entrega Fallida y Retorno por Logística Inversa** | Socio Logístico *(Actor)* | **RF-08, RF-09** | `ACT-10`, `ACT-11` |
 | **CUN-05** | **Consultar Trazabilidad y Situación del Pedido** | Consultora *(Actor)*<br/>Agente de Servicio al Cliente *(Worker)* | **RF-11, RF-12** | `ACT-13`, `ACT-14` |
 
@@ -121,7 +121,7 @@ flowchart TD
     subgraph ACTORES_EXTERNOS ["«Business Actors» (Actores del Negocio)"]
         direction TB
         CONS["👤 Consultora / Consultor<br/>«Business Actor»"]
-        FAM["👤 Familiar Autorizado<br/>«Business Actor»"]
+        FAM["👤 Persona Autorizada<br/>«Business Actor»"]
         SOCIO["🚚 Socio Logístico / Transportista<br/>«Business Actor»"]
     end
 
@@ -223,7 +223,7 @@ title Diagrama de Casos de Uso del Negocio (CUN) - Estado Actual (AS-IS)\nProces
 ' =======================================================
 package "Actores del Negocio («Business Actors»)" as PkgActores {
     actor "Consultora / Consultor\n(Cliente Primario)" as ActorConsultora <<Business Actor>>
-    actor "Familiar Autorizado\n(Receptor en Domicilio)" as ActorFamiliar <<Business Actor>>
+    actor "Persona Autorizada\n(Receptor en Domicilio)" as ActorPersonaAutorizada <<Business Actor>>
     actor "Socio Logístico / Transportista\n(Proveedor Contratado)" as ActorSocio <<Business Actor>>
 }
 
@@ -263,7 +263,7 @@ ActorSocio -- CUN02
 
 ActorSocio -- CUN03
 ActorConsultora -- CUN03
-ActorFamiliar -- CUN03
+ActorPersonaAutorizada -- CUN03
 
 ActorSocio -- CUN04
 

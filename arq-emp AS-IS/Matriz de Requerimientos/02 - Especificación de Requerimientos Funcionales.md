@@ -245,40 +245,40 @@ Verificar que al confirmarse la entrega, el pedido cambie a estado "Entregado" e
 | Atributo | Detalle |
 |---|---|
 | **ID** | **RF-07** |
-| **Nombre** | Registro de la identidad del receptor real (titular o familiar autorizado) |
+| **Nombre** | Registro de la identidad del receptor real (titular o persona autorizada) |
 | **Actor Responsable** | Socio Logístico / Transportista |
 | **Etapa del Proceso** | Entrega |
 | **Prioridad** | **Alta (Crítico)** |
 | **Sustento Metodológico** | `[Derivado de una necesidad expresada]` |
-| **Problema / Necesidad** | **PR-05:** Desconocimiento de recepción cuando entrega un familiar y reclamos prematuros |
+| **Problema / Necesidad** | **PR-05:** Desconocimiento de recepción cuando entrega una persona autorizada y reclamos prematuros |
 | **Fuente Primaria** | `trascrito.text` (min 24:45–25:01). Documento [[05 - Problemas y desfases]] §PR-05. |
 
 #### Descripción Funcional
-El sistema debe permitir capturar y registrar la identidad de la persona que recibe físicamente el paquete en el domicilio de destino, permitiendo consignar si la entrega fue recibida directamente por la consultora titular o por un familiar autorizado.
+El sistema debe permitir capturar y registrar la identidad de la persona que recibe físicamente el paquete en el domicilio de destino, permitiendo consignar si la entrega fue recibida directamente por la consultora titular o por una persona autorizada.
 
 > [!IMPORTANT]
 > **Aclaraciones de auditoría:**
-> - La fuente **confirma expresamente la necesidad de negocio**: *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser algún familiar autorizado y el cliente final, al hacer la trazabilidad... no necesariamente tiene esa información. Entonces es ahí donde está nuestro reto"* (`min 24:45–25:01`).
+> - La fuente **confirma expresamente la necesidad de negocio**: *"No necesariamente el cliente final es el que recibe la entrega del pedido, sino puede ser alguna persona autorizada y el cliente final, al hacer la trazabilidad... no necesariamente tiene esa información. Entonces es ahí donde está nuestro reto"* (`min 24:45–25:01`).
 > - Se **retiran o clasifican como derivados** los detalles técnicos no sustentados textualmente:
 >   - Exigencia obligatoria de DNI/CE (*derivado*).
 >   - Catálogo cerrado de parentescos (*derivado*).
 >   - Bloqueo duro del software que impida cerrar la entrega sin dichos datos (*regla de diseño propuesta, no hecho confirmado*).
 
 #### Entradas
-- Condición de recepción: `Consultora Titular` o `Familiar Autorizado / Tercero`.
+- Condición de recepción: `Consultora Titular` o `Persona Autorizada / Tercero`.
 - Nombre de la persona que recibe el paquete.
 - Datos complementarios de filiación o vínculo (*campos propuestos derivados*).
 
 #### Comportamiento del Sistema
 1. Al momento de reportar la entrega, el sistema habilita campos para ingresar quién recibe el paquete.
-2. Si la entrega se efectúa a un familiar autorizado, el sistema registra el nombre y condición declarada.
+2. Si la entrega se efectúa a una persona autorizada, el sistema registra el nombre y condición declarada.
 3. Asocia estos datos al registro de la entrega del pedido.
 
 #### Salidas
 - Datos del receptor real registrados y vinculados al pedido entregado.
 
 #### Criterio de Validación
-Comprobar que el sistema permita registrar el nombre de un familiar autorizado como receptor del pedido en lugar de la consultora titular.
+Comprobar que el sistema permita registrar el nombre de una persona autorizada como receptor del pedido en lugar de la consultora titular.
 
 ---
 
@@ -445,20 +445,20 @@ Realizar consultas de prueba ingresando un número de pedido y un código de con
 | **Fuente Primaria** | `trascrito.text` (min 24:29–25:01). Documento [[05 - Problemas y desfases]] §PR-04, §PR-05. |
 
 #### Descripción Funcional
-El sistema debe exhibir en los canales de consulta de pedidos entregados la información del receptor real capturada en campo (distinguiendo si fue recibido por la consultora titular o por un familiar autorizado), permitiendo a la consultora y al agente de atención verificar quién recibió el paquete para mitigar reclamos prematuros por supuesta no-entrega.
+El sistema debe exhibir en los canales de consulta de pedidos entregados la información del receptor real capturada en campo (distinguiendo si fue recibido por la consultora titular o por una persona autorizada), permitiendo a la consultora y al agente de atención verificar quién recibió el paquete para mitigar reclamos prematuros por supuesta no-entrega.
 
 > [!NOTE]
-> **Aclaración metodológica:** Responde directamente a la brecha documentada en la entrevista: cuando un familiar recibe el paquete, la consultora no dispone de esa información al consultar el sistema y reporta que no recibió su pedido (`min 24:45–25:01`). No se añaden campos obligatorios no sustentados (como "hora exacta" o documentos específicos) salvo que se consideren propuestas derivadas de diseño.
+> **Aclaración metodológica:** Responde directamente a la brecha documentada en la entrevista: cuando una persona autorizada recibe el paquete, la consultora no dispone de esa información al consultar el sistema y reporta que no recibió su pedido (`min 24:45–25:01`). No se añaden campos obligatorios no sustentados (como "hora exacta" o documentos específicos) salvo que se consideren propuestas derivadas de diseño.
 
 #### Entradas
 - Consulta de un pedido que se encuentra en estado "Entregado".
 
 #### Comportamiento del Sistema
 1. Al desplegar los datos de un pedido entregado, el sistema muestra la información registrada sobre la persona que recibió físicamente el paquete.
-2. Identifica si la recepción fue titular o por familiar autorizado.
+2. Identifica si la recepción fue titular o por persona autorizada.
 
 #### Salidas
 - Detalle de la persona receptora visible en la interfaz de consulta.
 
 #### Criterio de Validación
-Consultar un pedido entregado a un familiar autorizado; comprobar que la pantalla de consulta muestre quién recibió el paquete, permitiendo confirmar la entrega.
+Consultar un pedido entregado a una persona autorizada; comprobar que la pantalla de consulta muestre quién recibió el paquete, permitiendo confirmar la entrega.

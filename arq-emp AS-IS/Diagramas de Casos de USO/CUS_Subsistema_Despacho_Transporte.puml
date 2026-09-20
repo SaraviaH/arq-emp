@@ -1,0 +1,89 @@
+@startuml CUS_Subsistema_Despacho_Transporte
+!theme plain
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 12
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #78909C
+    FontColor #263238
+    FontStyle bold
+}
+
+skinparam actor {
+    BackgroundColor #E1F5FE
+    BorderColor #0288D1
+    FontColor #01579B
+}
+
+skinparam usecase {
+    BackgroundColor #FFFFFF
+    BorderColor #455A64
+    ArrowColor #37474F
+    FontColor #212121
+}
+
+skinparam note {
+    BackgroundColor #FFFDE7
+    BorderColor #FBC02D
+    FontColor #212121
+}
+
+left to right direction
+
+header Universidad Tecnológica del Perú (UTP) - APF1
+title CUS — Subsistemas de Despacho y Transporte en Ruta (AS-IS)\nSistemas: Driving / NSDG Desktop y NSDG Móvil
+
+' Actores
+actor "Supervisor de Despacho\n(Driving / NSDG Desktop)" as ActSupervisor
+actor "Conductor / Transportista\n(NSDG Móvil)" as ActTransportista
+
+' Subsistema 1: Despacho
+package "1. Subsistema de Despacho (Driving / NSDG CD)" as SubDespacho {
+    usecase "CUS-01: Clasificar Pedidos\nGeográficamente" as CUS01
+    usecase "CUS-02: Asignar Transportista\ny Modalidad" as CUS02
+    usecase "CUS-03: Registrar Salida\nde Despacho" as CUS03
+    usecase "CUS-04: Asociar Promesa\nEstimada de Entrega" as CUS04
+}
+
+' Subsistema 2: Tránsito y Ruta
+package "2. Subsistema de Tránsito y Ruta (NSDG Móvil)" as SubRuta {
+    usecase "CUS-05: Registrar Inicio\nde Traslado" as CUS05
+}
+
+' Asociaciones
+ActSupervisor --> CUS01
+ActSupervisor --> CUS02
+ActSupervisor --> CUS03
+ActSupervisor --> CUS04
+
+ActTransportista --> CUS05
+
+note right of CUS01
+  <b>RF-01 / RNF-02:</b>
+  Zonificación territorial cubriendo
+  los 24 departamentos del Perú.
+end note
+
+note right of CUS02
+  <b>RF-02 / RNF-02:</b>
+  Modalidades de envío:
+  Terrestre, Bimodal y Aérea.
+end note
+
+note right of CUS04
+  <b>RF-04:</b>
+  Estándar de promesa:
+  - 24 horas (Lima Metropolitana)
+  - Hasta 7 días (Provincias)
+end note
+
+note bottom of CUS05
+  <b>RF-05:</b>
+  Transición al estado "En Ruta"
+  al iniciar el reparto en campo.
+end note
+
+@enduml

@@ -120,7 +120,7 @@ En esta ocasión entrevistaremos al ingeniero Joao Condorpusa *(0:21)* Mendoza, 
 
 *(23:53)* O sea, en dos horas se puede actualizar el estatus de un pedido. Si es que, *(24:01)* digamos, el pedido ya fue entregado, el sistema todavía se actualiza hasta en un lapso de dos *(24:09)* horas. Entonces eso nos da un margen de desconocimiento, se podría decir, acerca de la *(24:18)* situación del pedido y también nos incurre en otros aspectos como para poder responder ante algún *(24:29)* reclamo o ante la consulta del mismo cliente final a través de nuestro servicio al cliente acerca del *(24:36)* estatus de su pedido.
 
-*(24:40)* No necesariamente el cliente final es el que recibe la entrega del pedido, *(24:45)* sino puede ser algún familiar autorizado y el cliente final, al hacer la trazabilidad a través *(24:52)* de nuestro sistema, no necesariamente tiene esa información. Entonces es ahí donde está nuestro *(25:01)* reto, a aminorar ese desfase en la actualización de los estatus de los pedidos. *(25:10)* Entiendo.
+*(24:40)* No necesariamente el cliente final es el que recibe la entrega del pedido, *(24:45)* sino puede ser alguna persona autorizada y el cliente final, al hacer la trazabilidad a través *(24:52)* de nuestro sistema, no necesariamente tiene esa información. Entonces es ahí donde está nuestro *(25:01)* reto, a aminorar ese desfase en la actualización de los estatus de los pedidos. *(25:10)* Entiendo.
 
 *(25:12)* Muchas gracias. Le doy pase a mi compañera para que pueda seguir con la entrevista. *(25:17)* De acuerdo.
 

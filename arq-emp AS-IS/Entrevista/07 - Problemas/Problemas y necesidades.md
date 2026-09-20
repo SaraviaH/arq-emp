@@ -16,7 +16,7 @@ A partir del análisis exhaustivo del testimonio del Ing. Joao Condorpusa Mendoz
 | **PR-02** | **Riesgo de Quiebre de Stock y Venta Perdida** | Comercialización y Facturación | [[Sistemas y tecnología#Maya\|Maya]], [[Sistemas y tecnología#SAP Commerce\|SAP Commerce]], SAP R3 | En SKUs con inventario ajustado, el sistema comercial confirma ventas de existencias destruidas. Al no poder atenderse, se generan pedidos incompletos y pérdida neta de ventas. |
 | **PR-03** | **Desfase de 2 horas en el sistema de tracking de pedidos** | Transporte, Despacho y Última milla | [[Sistemas y tecnología#NSDG\|NSDG]], [[Sistemas y tecnología#Driving\|Driving]], [[Sistemas y tecnología#Salesforce (Cellforce)\|Salesforce]] | Latencia severa entre el momento de entrega en campo y la actualización digital en la plataforma central. |
 | **PR-04** | **Margen de desconocimiento de la situación del pedido** | Atención al cliente y Monitoreo logístico | Salesforce, Maya | Los operadores de Servicio al Cliente no cuentan con datos frescos para resolver consultas o calmar la incertidumbre de la consultora. |
-| **PR-05** | **Falta de visibilidad sobre el receptor real (familiar autorizado)** | Entrega y Confirmación | NSDG, Salesforce | Si el paquete lo recibe un familiar, la consultora titular desconoce la entrega y levanta un reclamo por "pedido no recibido" cuando el producto ya está en su casa. |
+| **PR-05** | **Falta de visibilidad sobre el receptor real (persona autorizada)** | Entrega y Confirmación | NSDG, Salesforce | Si el paquete lo recibe una persona autorizada, la consultora titular desconoce la entrega y levanta un reclamo por "pedido no recibido" cuando el producto ya está en su casa. |
 | **PR-06** | **Cuello de botella en la evaluación de retornos por siniestro** | Logística Inversa y Reposición | SAP R3, Almacén central | Requiere doble peritaje físico presencial (Control de Calidad + Seguridad Patrimonial) para determinar cobertura de seguro o reingreso a stock. |
 
 ---
@@ -55,7 +55,7 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    A["Socio Logístico entrega pedido a familiar autorizado (10:00 AM)"] 
+    A["Socio Logístico entrega pedido a persona autorizada (10:00 AM)"] 
     --> B["Desfase en sincronización (Hasta 2 Horas)"]
     --> C["Consultora llama a Servicio al Cliente (11:00 AM)"]
     --> D["Operador en Salesforce ve estado: 'En Ruta'"]
