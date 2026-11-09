@@ -1,0 +1,171 @@
+@startuml DIAG-07_Despliegue_Arquitectura_Tecnologica_TO_BE
+' ============================================================================
+' ID: DIAG-07
+' Título: Diagrama UML de Despliegue de la Arquitectura Tecnológica Objetivo (TO-BE)
+' Proyecto: Arquitectura de Integración para la Trazabilidad y Distribución en Yanbal Perú
+' Estándar: OMG UML 2.5.1 — Deployment Diagram
+' Reglas metodológicas aplicadas:
+'   1. La solución se modela como PROPUESTA ARQUITECTÓNICA (DEC-02) neutral y desacoplada.
+'   2. Distingue rigurosamente la infraestructura existente frente a la propuesta [Propuesto].
+'   3. Prohibición estricta de interfaces de escritura directa desde MTD hacia SAP R3 (REQ-RES-002).
+'   4. Transporte ejecutado por socios logísticos externos (ACT-07) sin flota propia ni GPS continuo (REQ-RES-004, ASM-05).
+'   5. Mecanismo asíncrono Store-and-Forward ante intermitencia celular en ruta (ASM-16, RSK-06).
+'   6. Seguridad perimetral con TLS 1.3, autenticación mTLS/OAuth2 y validación corporativa (REQ-RNF-003, OBJ-07).
+' Apartado de referencia: Fase D — Sección 5.6
+' ============================================================================
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam node {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    FontColor #1D2A44
+    FontStyle bold
+}
+skinparam artifact {
+    BackgroundColor #EDF2F4
+    BorderColor #8D99AE
+    FontColor #2B2D42
+    FontSize 11
+}
+skinparam database {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #174EA6
+    FontStyle bold
+}
+skinparam queue {
+    BackgroundColor #FEF7E0
+    BorderColor #F9AB00
+    FontColor #B06000
+}
+
+title DIAG-07 — Diagrama UML de Despliegue TO-BE (Arquitectura Tecnológica Objetivo)\n[Plataforma Híbrida: On-Premise Lurín, Nube Corporativa / Integración, Red Logística Externa y Destinos B2B]\nFase D — Apartado 5.6 | Rigor TOGAF ADM | REQ-RES-002: Sin escritura MTD -> SAP R3 | REQ-RES-004: Sin GPS continuo
+
+' ============================================================================
+' NODO 1: ON-PREMISE LURÍN (INSTALACIONES INDUSTRIALES Y ALMACÉN)
+' ============================================================================
+node "<<datacenter: On-Premise>>\nInstalaciones Industriales y Almacén Lurín\n[ACT-03: Almacén | ACT-04: Picking CD | ACT-05: Despacho]" as Node_Lurin {
+    
+    node "<<server: On-Premise>>\nServidor ERP Corporativo Lurín\n[Entorno Productivo Crítico]" as Srv_SAP {
+        artifact "<<system: SoR>>\nSIS-01: SAP R3\n[Inventario, Facturación y Stock PT]\nOperado exclusivamente por ACT-03 (REQ-RES-002)" as Art_SAP
+        artifact "<<adapter>>\nADP-SAP: Conector RFC SAP\n[Consulta solo lectura metadatos]\n(Sin escritura directa REQ-RES-002)" as Art_ADPSAP
+    }
+    
+    node "<<server: On-Premise>>\nServidor BWMS Lurín (Centro de Distribución)" as Srv_SPY {
+        artifact "<<system: SoR>>\nSIS-02: SPY (BWMS In-House)\n[Líneas de Picking, Pesos/Volúmenes y Cajas 1 a 8]" as Art_SPY
+        artifact "<<adapter: proposed>>\nADP-SPY: Agente Emisor de Eventos\n[Captura Estado 2 y marca local T0]" as Art_ADPSPY
+    }
+    
+    node "<<device: industrial>>\nTerminales Móviles de Almacén" as Dev_RF {
+        artifact "<<client>>\nSIS-10: Terminales RF\n[Lectura Código UA en Pallets y Cajas Master]" as Art_RF
+    }
+    
+    node "<<workstation>>\nEstación de Control de Despacho" as WS_Despacho {
+        artifact "<<client>>\nTerminal Zona de Despacho\n[ACT-05: Zonificación hacia 24 Dptos]" as Art_DespachoWS
+    }
+}
+
+' ============================================================================
+' NODO 2: NUBE CORPORATIVA / DATA CENTER INTEGRACIÓN Y SERVICIOS MTD
+' ============================================================================
+node "<<cloud: hybrid / enterprise>>\nNube Corporativa Yanbal - Plataforma de Integración y MTD\n[TI y Arquitectura: ACT-12 | Seguridad: ACT-11]" as Node_Cloud {
+    
+    node "<<dmz: security>>\nPerímetro Seguro de Ingesta y API Gateway" as Node_DMZ {
+        artifact "<<gateway: proposed>>\nAPI Gateway Corporativo\n[Terminación TLS 1.3 | WAF | Rate Limiting]\n[Autenticación mTLS / OAuth 2.0 Token Check]" as Art_APIGW
+    }
+    
+    node "<<cluster: integration>>\nMiddleware Corporativo de Mensajería" as Node_Middleware {
+        artifact "<<middleware: SoR>>\nSIS-05: Bus de Integración Corporativo\n[Tópicos Pub/Sub de Eventos de Despacho B2B]\n[Colas dedicadas y Dead Letter Queue (DLQ)]" as Art_Bus
+    }
+    
+    node "<<cluster: compute>>\nClúster de Microservicios / Componentes MTD\n[Capacidad Lógica de Integración Propuesta (DEC-02)]" as Node_MTD {
+        artifact "<<service: proposed>>\nCMP-ING-01: Ingesta y Normalización\n[Idempotencia SHA-256 | Filtro Duplicados]" as Art_ING01
+        artifact "<<mediator: proposed>>\nCMP-COR-02: Correlación Lógica\n[Enlace Código UA - Picking - Número Pedido]" as Art_COR02
+        artifact "<<rule-engine: proposed>>\nCMP-VAL-03: Validación Semántica\n[Secuencia de 5 Estados Canónicos]" as Art_VAL03
+        artifact "<<telemetry: proposed>>\nCMP-AUD-04: Auditoría y SLA\n[Sello T1 | Medición Delta T = T1 - T0 <= 30 min]" as Art_AUD04
+        artifact "<<dispatcher: proposed>>\nCMP-PUB-05: Publicación Desacoplada\n[Difusión de Estados Consolidados]" as Art_PUB05
+        artifact "<<event-handler: proposed>>\nCMP-NOT-06: Gestión de Incidencias\n[Notificación Retorno a ACT-03 (Sin tocar SAP)]" as Art_NOT06
+    }
+    
+    database "<<storage: high-availability>>\nPersistencia de Trazabilidad Canónica" as DB_MTD {
+        artifact "<<event-store: proposed>>\nRepositorio de Eventos Inmutables (ENT-07)\n[Partición Operativa < 90 días Hot Data]\n[Partición Histórica 5 años Cold Archive]" as Art_EventStore
+    }
+    
+    node "<<server: enterprise-apps>>\nServidores de Aplicaciones Corporativas Yanbal" as Node_CorpApps {
+        artifact "<<system: SoR>>\nSIS-03: Maya (Portal Comercial)\n[Ingreso de Pedidos Consultoras/Directoras]" as Art_Maya
+        artifact "<<system: SoR>>\nSIS-04: ZapCommerce\n[Motor Transaccional Pedidos (ASM-08)]" as Art_Zap
+        artifact "<<system: SoR>>\nSIS-07: ENSDY\n[Sistema de Trackeo y Seguimiento (ASM-02)]" as Art_ENSDY
+        artifact "<<system: SoR>>\nSIS-09: CELLFORCE\n[CRM Atención Consultas y Reclamos (ASM-06)]" as Art_CRM
+        artifact "<<adapter: proposed>>\nADP-CRM: Conector de Eventos CRM" as Art_ADPCRM
+    }
+}
+
+' ============================================================================
+' NODO 3: SOCIOS LOGÍSTICOS EXTERNOS (TRANSPORTE MULTIMODAL TERCERIZADO)
+' ============================================================================
+node "<<external: third-party logistics>>\nInfraestructura de Socios Logísticos de Transporte (ACT-07)\n[Transporte Terrestre, Bimodal y Aéreo a 24 Departamentos (REQ-RES-004)]" as Node_Logistics {
+    
+    node "<<server: partner>>\nSistemas Centrales de Socios Logísticos" as Srv_Partner {
+        artifact "<<system: partner>>\nSIS-08: DRIVING (TMS Externo)\n[Despacho y Monitoreo de Viajes (ASM-07)]" as Art_DRIVING
+        artifact "<<system: partner>>\nSIS-06: NSDG (Sistema Transporte)\n[Desarrollo por Contratista (ASM-02)]" as Art_NSDG
+        artifact "<<adapter: proposed>>\nADP-LOG: Agente Cliente HTTPS\n[Publicación Webhook hacia API Gateway Yanbal]" as Art_ADPLOG
+    }
+    
+    node "<<device: mobile>>\nDispositivos Móviles en Ruta\n[Conductores y Transportistas en Tránsito Nacional]" as Dev_CarrierMobile {
+        artifact "<<mobile-app: partner>>\nAplicativo Móvil de Transporte\n[Captura Evento y Marca T0 Local]" as Art_MobileApp
+        database "<<local-storage>>\nBuffer Local Cifrado\n[Store-and-Forward Offline (ASM-16)]" as DB_LocalBuffer
+    }
+}
+
+' ============================================================================
+' NODO 4: DESTINATARIOS EMPRESARIALES B2B
+' ============================================================================
+node "<<client: endpoint>>\nDestinatarios Empresariales B2B (ACT-09)\n[Distribuidoras y Sedes Empresariales en 24 Departamentos]" as Node_Destinos {
+    artifact "<<browser / app>>\nPortal Comercial / Consulta Web\n[Visibilidad de Estado y Lead Time en <= 30 min]" as Art_ClientPortal
+}
+
+' ============================================================================
+' RELACIONES Y PROTOCOLOS DE COMUNICACIÓN (INTERFACES FÍSICAS Y LÓGICAS)
+' ============================================================================
+
+' Comunicaciones dentro de Lurín
+Art_RF --> Art_SAP : WiFi Industrial WPA3 / Telnet Emulation\n[Registro Código UA en vivo]
+Art_DespachoWS --> Art_SPY : LAN Corporativa (TCP/IP)\n[Consulta de Pedidos y Zonificación]
+Art_SAP ..> Art_SPY : LAN Gigabit Lurín\n[Sincronización Stock PT Liberado]
+
+' Enlace Lurín <-> Nube Corporativa
+Srv_SPY --> Art_Bus : Enlace Seguro VPN IPsec (TLS 1.3)\n[Descenso órdenes Maya->SPY / Evento Estado 2 T0]
+Art_ADPSAP ..> Art_COR02 : VPN IPsec / RFC Solo Lectura\n[Consulta metadatos UA / Sin escritura REQ-RES-002]
+
+' Comunicaciones en Nube Corporativa
+Art_APIGW --> Art_ING01 : Enrutamiento Interno (HTTP/2 / gRPC)\n[Evento normalizado con T0 y firma hash]
+Art_ING01 --> Art_AUD04 : In-Process Call\n[Estampado T1 y cálculo Delta T = T1 - T0]
+Art_ING01 --> Art_VAL03 : Cola Asíncrona Interna (AMQP)\n[Validación semántica y de secuencia]
+Art_VAL03 --> Art_COR02 : Llamada Interna / Caché Memoria\n[Correlación Pedido - Bulto - UA]
+Art_VAL03 --> DB_MTD : Pool JDBC Cifrado (TLS 1.3)\n[Persistencia inmutable ENT-07]
+Art_VAL03 --> Art_PUB05 : Event Dispatcher\n[Evento canónico validado]
+Art_PUB05 --> Art_Bus : AMQP / Pub-Sub (TLS 1.3)\n[Publicación en tópico de eventos consolidados]
+
+' Flujo hacia aplicaciones corporativas
+Art_Bus --> Art_ENSDY : Suscriptor de Tópico (Pub/Sub)\n[Actualización de estatus de trackeo]
+Art_Bus --> Art_ADPCRM : Suscriptor de Tópico (Pub/Sub)\n[Notificación para actualizar CELLFORCE]
+Art_ADPCRM --> Art_CRM : HTTPS REST API (TLS 1.3)\n[Disponibilidad de estado en <= 30 min (REQ-NEG-003)]
+Art_Maya --> Art_Zap : Integración Interna Comercial\n[Estado 1: Pedido facturado]
+Art_Zap --> Art_Bus : HTTPS REST / AMQP\n[Publicación de orden aprobada]
+
+' Flujo de Notificación de Retornos (Logística Inversa)
+Art_VAL03 ..> Art_NOT06 : Canal de Excepciones\n[Incidencia en ruta / Retorno iniciado]
+Art_NOT06 --> Art_Bus : Mensaje Asíncrono de Alerta\n[Canal exclusivo de Almacén Lurín]
+Art_Bus ..> Node_Lurin : Notificación Asíncrona a ACT-03\n[Aviso de retorno físico | ACT-03 registra en SAP]
+
+' Comunicaciones con Socios Logísticos Externos
+Dev_CarrierMobile --> Srv_Partner : Red Celular 4G/5G (HTTPS)\n[Reporte de eventos en ruta y entrega]
+Dev_CarrierMobile ..> DB_LocalBuffer : Almacenamiento Local Offline\n[Buffer Store-and-Forward ante pérdida de señal (ASM-16)]
+Srv_Partner --> Art_APIGW : Internet Seguro / HTTPS (TLS 1.3)\n[Autenticación mTLS / OAuth 2.0 (REQ-RNF-003)]\n[Ingesta eventos Estado 4 y 5 en <= 30 min]
+
+' Consulta de Destinatarios B2B
+Art_ClientPortal --> Art_APIGW : HTTPS (TLS 1.3 / Navegador Seguro)\n[Consulta por Número de Pedido / Lead Time (REQ-FUN-002)]
+Art_APIGW --> Art_ENSDY : Proxy Reverso Seguro\n[Respuesta de estatus consolidado]
+
+@enduml

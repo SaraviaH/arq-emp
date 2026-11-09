@@ -1,0 +1,80 @@
+@startuml DIAG-02_Casos_Uso_Negocio
+' ============================================================================
+' ID: DIAG-02
+' Título: Diagrama UML de Casos de Uso del Negocio: Preparación, Despacho y Trazabilidad B2B (CUN-01 a CUN-06)
+' Estándar: OMG UML 2.5.1 — Use Case Diagram
+' Reglas aplicadas:
+'   1. Única versión canónica en el repositorio.
+'   2. Solo asociaciones simples (--) entre Actores y Casos de Uso (cero <<include>> o <<extend>> hacia Actores).
+'   3. Estereotipo <<extend>> utilizado exclusivamente entre Casos de Uso (CUN-06 extiende a CUN-03 y CUN-04).
+'   4. Identificadores canónicos ACT-XX, SIS-XX y CUN-XX; condición B2B pendiente marcada con ASM-01.
+' Apartado de referencia: Fase B — Sección 3.3.4 (y evolución propuesta en Sección 3.4)
+' ============================================================================
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title DIAG-02 — Diagrama UML de Casos de Uso del Negocio: Preparación, Despacho y Trazabilidad B2B (CUN-01 a CUN-06)\n[Apartado 3.3.4 | Alcance estricto B2B: DEC-04 / REQ-RES-001]
+
+' Actores internos (Yanbal Perú — Lurín / Lima)
+actor "ACT-03: Área de Almacén de PT\n[SAP R3 SIS-01 exclusivo: REQ-RES-002]" as ACT03 #FFF8E1
+actor "ACT-04: CD - Línea de\nPicking y Packing" as ACT04 #FFF8E1
+actor "ACT-05: Zona de\nDespacho" as ACT05 #FFF8E1
+actor "ACT-06: Área de\nDistribución" as ACT06 #FFF8E1
+actor "ACT-08: Área de Servicio al Cliente\n[Opera CELLFORCE SIS-09]" as ACT08 #FFF8E1
+
+' Frontera del proceso de negocio B2B
+rectangle "Frontera del Negocio B2B: Preparación, Despacho y Trazabilidad Nacional — Yanbal Perú (Lima -> 24 Departamentos | Excluye reparto B2C)" {
+  usecase "CUN-01: Preparar y empacar pedido B2B\nen Centro de Distribución\n(PROC-02 | Estado 1 -> Estado 2)" as CUN01 #E3F2FD
+  usecase "CUN-02: Zonificar y despachar pedido\nhacia socio logístico nacional\n(PROC-03 | Estado 2 -> Estado 3)" as CUN02 #E3F2FD
+  usecase "CUN-03: Ejecutar transporte multimodal y\nactualizar eventos de tránsito B2B\n(PROC-04 | Estado 3 -> Estado 4)" as CUN03 #E3F2FD
+  usecase "CUN-04: Entregar y confirmar recepción del\ndespacho en destino empresarial\n(PROC-04 | Estado 4 -> Estado 5)" as CUN04 #E3F2FD
+  usecase "CUN-05: Consultar trazabilidad, promesa de\nentrega y atender reclamos del despacho\n(PROC-05 | 24 h Lima / hasta 7 días provincias)" as CUN05 #E3F2FD
+  usecase "CUN-06: Registrar incidencia de transporte y\ngestionar retorno en logística inversa hacia Almacén\n(PROC-05 | Propuesta TO-BE: notificación MTD-R06)" as CUN06 #E8F5E9
+}
+
+' Actores externos y receptores en destino
+actor "ACT-07: Socio Logístico /\nProveedor de Transporte" as ACT07 #FFF8E1
+actor "ACT-09: Destinatario Empresarial\n(Distribuidora / Sede B2B - AC, ASM-01)" as ACT09 #FFF8E1
+actor "ACT-10: Persona Autorizada en Destino\n[Pendiente de validación B2B: ASM-01]" as ACT10 #FCE4EC
+
+' Asociaciones UML Actor -- Caso de Uso (sin <<include>> ni <<extend>> hacia actores)
+ACT03 -- CUN01 : Abastece cajas master selladas\n(PROC-01, REQ-RES-003)
+ACT04 -- CUN01
+ACT05 -- CUN02
+ACT06 -- CUN02
+ACT06 -- CUN03
+ACT06 -- CUN04
+ACT06 -- CUN05
+ACT06 -- CUN06
+ACT08 -- CUN05
+ACT08 -- CUN06 : Informado / corroboración\nsujeta a ASM-15
+
+CUN02 -- ACT07
+CUN03 -- ACT07
+CUN04 -- ACT07
+CUN04 -- ACT09
+CUN04 -- ACT10
+CUN05 -- ACT09
+CUN06 -- ACT07
+CUN06 -- ACT09 : Corroboración si llegó\nal punto de destino [TO 20:18]
+CUN06 -- ACT03 : Retorno físico [Confirmado] y\nnotificación previa [Propuesto MTD-R06]\n(SIN escritura en SAP R3: REQ-RES-002)
+
+' Relaciones UML <<extend>> exclusivamente entre Casos de Uso
+CUN03 <.. CUN06 : <<extend>>\n[Condición: incidencia en tránsito\nantes de llegar a destino]
+CUN04 <.. CUN06 : <<extend>>\n[Condición: incidencia detectada\nal llegar al punto de destino]
+
+note bottom of ACT10
+  Participación NO confirmada en alcance B2B (ASM-01 / REQ-FUN-003):
+  En [TO 24:40-25:01] se mencionó respecto del "cliente final".
+  Solo interviene en CUN-04 si ACT-06 valida que en distribuidoras
+  o sedes empresariales B2B existe recepción delegada.
+end note
+
+legend bottom
+  |= Color |= Clasificación Epistémica |
+  | <#FFF8E1> / <#E3F2FD> | Elementos confirmados en fuentes primarias ([TO] / [AC]) |
+  | <#E8F5E9> | Flujo confirmado enriquecido en TO-BE con notificación propuesta MTD-R06 (sin escritura en SAP R3) |
+  | <#FCE4EC> | Actor condicionado pendiente de validación externa en el alcance B2B (ASM-01) |
+endlegend
+@enduml

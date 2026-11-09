@@ -1,0 +1,90 @@
+@startuml DIAG-04_Actividades_TO_BE
+' ============================================================================
+' ID: DIAG-04
+' Título: Diagrama UML de Actividades del Proceso de Negocio Objetivo Propuesto (TO-BE): Despacho B2B con Capacidad Propuesta MTD (Delta T <= 30 min)
+' Estándar: OMG UML 2.5.1 — Activity Diagram with Partitions (Swimlanes)
+' Reglas aplicadas:
+'   1. El TO-BE se presenta expresamente como PROPUESTA ARQUITECTÓNICA (DEC-02), NO como arquitectura ya aprobada.
+'   2. Distingue taxativamente operaciones e integraciones [Confirmado] frente a mejoras [Propuesto MTD-R01..R06] y condiciones [Condicionado ASM-01].
+'   3. Muestra la captura estandarizada (T0), correlación, homologación, sello T1 (Delta T <= 30 min) y propagación vía Bus de Integración (SIS-05) en los Estados 2, 3, 4, 5 y en logística inversa.
+'   4. Respeta la frontera REQ-RES-002: MTD-R06 emite SOLO notificación operativa a ACT-03, SIN escritura directa en SAP R3 (SIS-01).
+' Apartado de referencia: Fase B — Secciones 3.4 y 3.5.2
+' ============================================================================
+skinparam shadowing false
+
+title DIAG-04 — Diagrama UML de Actividades TO-BE (PROPUESTA): Despacho B2B con Capacidad Propuesta MTD (Delta T <= 30 min)\n[Apartados 3.4 y 3.5.2 | Propuesta sujeta a validación DEC-02 | Sin escritura MTD -> SAP R3 REQ-RES-002]
+
+|ACT-03: Área de Almacén de PT (SAP R3 SIS-01 exclusivo)|
+start
+fork
+  :Precondición PROC-01 [Confirmado]: Capturar Código UA (SIS-10), registrar\nen vivo en SAP R3 (SIS-01, exclusivo ACT-03, REQ-RES-002), sincronizar\nstock liberado con SPY (SIS-02) y abastecer cajas master selladas sin saldos (REQ-RES-003);
+fork again
+  |ACT-09: Destinatario Empresarial B2B / Canal Comercial (SIS-03, SIS-04)|
+  :[Confirmado] Generar orden en Maya (SIS-03) -> ZapCommerce (SIS-04, ASM-08)\n**Estado 1: Pedido facturado** y descenso vía Bus de Integración (SIS-05) hacia SPY (SIS-02);
+end fork
+
+|ACT-04: CD - Línea de Picking y Packing (SPY SIS-02)|
+:[Confirmado] Asignar 1 de 8 tipos de caja por peso/volumetría,\nabrir cajas master mono SKU y ejecutar picking/packing unitario por Número de Pedido;
+:[Propuesto MTD-R01] Emitir desde SPY vía SIS-05 (sin doble digitación REQ-RNF-004)\nevento **Estado 2: Elaboración o en preparación** con marca T0 [emisor sujeto a ASM-15];
+
+|Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+#E8F5E9:[Propuesto MTD-R02 / MTD-R03 / MTD-R04] Preservar trazabilidad lógica\nCódigo UA - líneas picking - Número de Pedido (cardinalidad pendiente ASM-08/11),\nhomologar Estado 2 y sellar disponibilidad T1;
+
+|ACT-05: Zona de Despacho|
+:[Confirmado] Zonificar pedido hacia los 24 departamentos\ny entregar físicamente la carga consolidada a ACT-07;
+:[Propuesto MTD-R01] Emitir evento **Estado 3: Pedido despachado** con T0\ny atributos completos (caja 1..8, geografía, ACT-07, modalidad REQ-FUN-004) [ASM-02, ASM-07, ASM-11, ASM-15];
+
+|Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+#E8F5E9:[Propuesto MTD-R02 / MTD-R04 / MTD-R05] Validar secuencia (regla propuesta sujeta a ACT-06 REQ-FUN-001),\nsellar T1 (Delta T = T1 - T0 <= 30 min) y propagar Estado 3 vía SIS-05;
+
+|ACT-07: Socio Logístico / Proveedor de Transporte|
+:[Confirmado] Ejecutar transporte multimodal (terrestre, bimodal o aéreo; sin GPS propio REQ-RES-004);
+:[Propuesto MTD-R01] Reportar evento discreto **Estado 4: Pedido en ruta** con T0\n[Interfaz sujeta a ASM-07 y ACT-11; store-and-forward propuesto si aplica ASM-16];
+
+|Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+#E8F5E9:[Propuesto MTD-R02 / MTD-R04 / MTD-R05] Homologar Estado 4, sellar T1 (Delta T <= 30 min)\ny propagar vía SIS-05 hacia seguimiento (ACT-06), CELLFORCE (SIS-09, ACT-08) y consulta B2B;
+
+|ACT-07: Socio Logístico / Proveedor de Transporte|
+if (¿Entrega física exitosa en destino empresarial B2B? [AC]) then (Sí: Entrega ordinaria)
+  if (¿Aplica y ocurre recepción por Persona Autorizada ACT-10?\n[Condicionado estrictamente a validar ASM-01]) then (No: Recibe titular empresarial ACT-09)
+    :[Confirmado + T0 Propuesto MTD-R01] Entregar despacho en ACT-09\ny emitir **Estado 5: Pedido entregado** con marca T0;
+  else (Sí: Solo si ACT-06 valida ASM-01)
+    #FCE4EC:[Propuesto Condicionado REQ-FUN-003 / ASM-01] Capturar identificación\nde Persona Autorizada (ACT-10) junto con **Estado 5: Pedido entregado** y T0;
+  endif
+  |Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+  #E8F5E9:[Propuesto MTD-R02 / MTD-R04 / MTD-R05] Homologar Estado 5, verificar secuencia,\ncalcular Delta T = T1 - T0 <= 30 min y propagar vía Bus de Integración (SIS-05);
+  |ACT-06 (Distribución) / ACT-08 (CELLFORCE SIS-09) / ACT-09 (Destinatario B2B)|
+  :[Propuesto] Consultar por Número de Pedido y código cliente (estatus, etapa, promesa 24h/7d)\ny atender reclamos en CELLFORCE (SIS-09, ASM-06) con datos actualizados en <= 30 min;
+  stop
+else (No: Incidencia en transporte [TO 20:18-21:35])
+  if (¿El envío llegó al punto de destino empresarial? [Confirmado TO 20:18-20:30]) then (Sí)
+    |ACT-06 (Distribución) / ACT-08 (CELLFORCE SIS-09) / ACT-09 (Destinatario B2B)|
+    :[Confirmado] Corroborar incidencia con destinatario afectado ACT-09 [ASM-15];
+  else (No: En tránsito)
+    |ACT-07: Socio Logístico / Proveedor de Transporte|
+    :[Confirmado] Identificar incidencia en ruta bajo supervisión de ACT-06;
+  endif
+  |ACT-07: Socio Logístico / Proveedor de Transporte|
+  :[Confirmado + T0 Propuesto] Registrar causal e inicio de logística inversa con marca T0 [ASM-02, ASM-07];
+  fork
+    |Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+    #E8F5E9:[Propuesto MTD-R06] Capturar y correlacionar evento de incidencia/retorno (T0/T1, <= 30 min),\nactualizar visibilidad vía SIS-05 para ACT-06 y ACT-08 (CELLFORCE SIS-09)\ny emitir vía SIS-05 **SOLO NOTIFICACIÓN OPERATIVA PREVIA** a ACT-03\n(**SIN escritura directa en SAP R3 SIS-01 — REQ-RES-002**);
+  fork again
+    |ACT-06 (Distribución) / ACT-08 (CELLFORCE SIS-09) / ACT-09 (Destinatario B2B)|
+    :[Confirmado — Fuera del MTD] Activar por canales vigentes\nreposición del pedido para no afectar a ACT-09 [TO 20:30-20:45];
+  fork again
+    |ACT-07: Socio Logístico / Proveedor de Transporte|
+    :[Confirmado] Retornar físicamente el pedido afectado al Almacén de Lurín [TO 20:48-20:55];
+    |ACT-03: Área de Almacén de PT (SAP R3 SIS-01 exclusivo)|
+    :[Confirmado — Fuera del MTD] Recibir notificación previa (MTD-R06) y pedido físico;\nevaluar por calidad y seguridad patrimonial operando SAP R3 (SIS-01) en exclusividad\n(reingreso a pedidos si procede o activación de seguro/siniestro si no procede) [TO 20:55-21:25];
+  end fork
+  stop
+endif
+
+legend bottom
+  |= Color / Etiqueta |= Naturaleza Epistémica |
+  | [Confirmado] | Operación o integración actual respaldada en [TO] / [AC] que se preserva |
+  | <#E8F5E9> [Propuesto MTD-R01..R06] | Mejora propuesta pendiente de validación y selección técnica en Fases C-E (DEC-02) |
+  | <#FCE4EC> [Condicionado ASM-01] | Escenario incluido solo si se valida su aplicabilidad en destinos empresariales B2B |
+endlegend
+@enduml

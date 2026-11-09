@@ -1,0 +1,87 @@
+@startuml DIAG-11_Gestion_del_Cambio_y_Ciclo_Evolutivo_ADM
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam roundCorner 8
+skinparam shadowing false
+skinparam ArrowColor #2C3E50
+skinparam ArrowThickness 1.5
+
+skinparam rectangle {
+    BackgroundColor #F8F9FA
+    BorderColor #BDC3C7
+    FontColor #2C3E50
+}
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #7F8C8D
+    FontColor #2C3E50
+    FontStyle bold
+}
+
+header
+<b>PROYECTO:</b> Plan de Mejora Arquitectónica de Trazabilidad B2B — Yanbal Perú (Unique S.A.)
+<b>FASE H:</b> Gestión del Cambio de Arquitectura (TOGAF ADM)
+endheader
+
+title <b>DIAG-11: MARCO DE GESTIÓN CONTINUA DEL CAMBIO DE ARQUITECTURA Y CICLO EVOLUTIVO ADM</b>
+
+package "1. MONITOREO CONTINUO Y SENSORES DE ARQUITECTURA" as SEC_MONITOREO #EBF5FB {
+    rectangle "**Telemetría de SLAs y Latencia**\n--\n• CMP-AUD-04: Cálculo en vivo de ΔT = T1 - T0\n• Alertas tempranas si latencia > 25 min\n• Prometheus / Grafana Dashboard" as MON_SLA #D4E6F1
+    
+    rectangle "**Auditoría Transaccional y Seguridad**\n--\n• ACT-03 / ACT-11: Cero escrituras en SAP R3\n• Inspección de permisos de ADP-SAP en DB\n• Monitoreo de tráfico perimetral TLS 1.3 / mTLS" as MON_SEC #D4E6F1
+
+    rectangle "**Calidad de Eventos y Call Center**\n--\n• CMP-VAL-03: Integridad de secuencia causal\n• CMP-ING-01: Tasa de eventos duplicados (< 1%)\n• SIS-09 (CELLFORCE): Tickets por desconocimiento" as MON_BIZ #D4E6F1
+
+    rectangle "**Evolución del Ecosistema de Transporte**\n--\n• Nuevos operadores logísticos asociados (ACT-07)\n• Cambios en plataformas de terceros (SIS-06/08)\n• Solicitudes operativas de Distribución (ACT-06)" as MON_EXT #D4E6F1
+}
+
+package "2. CIRCUITO DE SOLICITUDES DE CAMBIO (RFC - REQUEST FOR ARCHITECTURE CHANGE)" as SEC_RFC #FEF9E7 {
+    rectangle "**Recepción y Registro Formal de RFC**\n--\n• Identificador único: RFC-ARCH-XXXX\n• Registro de origen, justificación y alcance preliminar\n• Custodia por la PMO / Secretaría Técnica (ACT-12 / ACT-15)" as RFC_REG #FCF3CF
+
+    rectangle "**Evaluación de Impacto Arquitectónico Multidimensional**\n--\n• Negocio: Flujos B2B en Lurín, lead times y actores (ACT-01..10)\n• Datos y Apps: Esquemas CloudEvents, microservicios MTD y adaptadores\n• Tecnología y Seguridad: Cómputo, redes, cifrado y blindaje SAP R3\n• Gobernanza: Contratos de Arquitectura (AC-PKG-XX) y SLAs (<= 30 min)" as RFC_EVAL #FCF3CF
+}
+
+package "3. CLASIFICACIÓN TRIPARTITA Y RUTAS DE DECISIÓN ARQUITECTÓNICA" as SEC_DECISION #EAFAF1 {
+    rectangle "**RFC TIPO 1: Mantenimiento Operativo y Menor**\n--\n• <i>Alcance:</i> Parches de microservicios, optimización de queries, ajustes de dashboards\n• <i>Autoridad:</i> Comité Técnico de Cambios (ACT-12, ACT-14, ACT-15)\n• <i>Impacto:</i> Sin alteración de contratos ni esquemas públicos\n• <i>Ejecución:</i> Sprint operativo / CI/CD pipeline" as TIPO_1 #D5F5E3
+
+    rectangle "**RFC TIPO 2: Modificación Incremental**\n--\n• <i>Alcance:</i> Incorporación de nuevo socio ACT-07, nuevo endpoint retrocompatible, ajuste de conector ADP-SPY/CRM\n• <i>Autoridad:</i> Architecture Board (ACT-13, ACT-12, ACT-11, ACT-06, ACT-03)\n• <i>Impacto:</i> Enmienda a Contratos AC-PKG-XX y homologación Sandbox\n• <i>Ejecución:</i> Release controlado / Actualización Línea Base v1.x" as TIPO_2 #FCF3CF
+
+    rectangle "**RFC TIPO 3: Cambio Fundamental / Re-arquitectura**\n--\n• <i>Alcance:</i> Migración SAP S/4HANA, ampliación a B2C última milla, flota propia con IoT/GPS masivo, cambio de Bus\n• <i>Autoridad:</i> Dirección Corporativa (ACT-13) + Architecture Board\n• <i>Impacto:</i> Ruptura de supuestos fundacionales (REQ-RES-001..004)\n• <i>Acción:</i> Disparo formal de NUEVO CICLO TOGAF ADM" as TIPO_3 #FADBD8
+}
+
+package "4. REPOSITORIO DE ARQUITECTURA EMPRESARIAL (EAR) Y GOBERNANZA" as SEC_REPO #E8DAEF {
+    rectangle "**Sincronización del Repositorio de Arquitectura**\n--\n• Actualización de Glosario (00_1), Catálogos (00_2) y Supuestos (00_3)\n• Ajuste de Matriz de Requerimientos (REQ-01..24) y Decisiones (DEC-XX)\n• Versionado formal de Modelos UML / PlantUML (DIAG-01..11)\n• Registro de Trazabilidad y Gestión de Versiones de Arquitectura" as REPO_EA #D2B4DE
+}
+
+package "5. ACTIVACIÓN DE NUEVO CICLO TOGAF ADM" as SEC_NUEVO_CICLO #FADBD8 {
+    rectangle "**Emisión de Request for Architecture Work (RAW)**\n--\n• Aprobación ejecutiva de nuevo mandato de arquitectura\n• Re-entrada formal a Fase Preliminar y Fase A (Visión de Arquitectura)\n• Re-evaluación integral de capacidades y requerimientos" as ADM_RESTART #F5B7B1
+}
+
+' Flujos y conexiones
+MON_SLA -down-> RFC_REG : "Degradación de métricas"
+MON_SEC -down-> RFC_REG : "Auditoría de seguridad"
+MON_BIZ -down-> RFC_REG : "Anomalías operativas"
+MON_EXT -down-> RFC_REG : "Solicitud de nuevo socio"
+
+RFC_REG -down-> RFC_EVAL : "Pasa a dictamen de impacto"
+
+RFC_EVAL -down-> TIPO_1 : "Impacto bajo / Sin cambio de contrato"
+RFC_EVAL -down-> TIPO_2 : "Impacto medio / Enmienda de contrato"
+RFC_EVAL -down-> TIPO_3 : "Impacto estructural / Ruptura de alcance"
+
+TIPO_1 -down-> REPO_EA : "Registro de cambios operativos"
+TIPO_2 -down-> REPO_EA : "Publicación de versión v1.x del EAR"
+
+TIPO_3 -down-> ADM_RESTART : "Invoca nuevo ciclo ADM"
+ADM_RESTART -up-> SEC_MONITOREO : "Define nueva línea base y objetivos"
+
+footer
+TOGAF ADM Fase H — Gestión del Cambio de Arquitectura — Yanbal Perú / Unique S.A.
+Diagrama canónico oficial: DIAG-11 (UML 2.5 / Ciclo Evolutivo ADM)
+endfooter
+
+@enduml
+
