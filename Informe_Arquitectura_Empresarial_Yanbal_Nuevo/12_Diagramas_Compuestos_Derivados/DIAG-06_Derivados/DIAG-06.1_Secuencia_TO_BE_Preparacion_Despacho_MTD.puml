@@ -1,0 +1,61 @@
+@startuml DIAG-06_1_Secuencia_TO_BE_Preparacion_Despacho_MTD
+' ============================================================================
+' ID Diagrama Derivado: DIAG-06.1
+' Nombre: Secuencia TO-BE (Parte 1): Preparación Trazable en CD y Salida Formalizada desde Despacho vía SIS-05 y MTD (PROC-01 a PROC-03 — Estados 1 al 3)
+' Tipo de Diagrama UML: Diagrama de Secuencia (OMG UML 2.5.1 — Sequence Diagram | Categoría: Interacción)
+' Diagrama General del que Procede: DIAG-06 — Diagrama UML de Secuencia del Flujo Objetivo Propuesto (TO-BE): Captura, Correlación, Propagación (Delta T <= 30 min) y Notificación de Retorno mediante Capacidad Propuesta MTD
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-06_Secuencia_TO_BE.puml
+' ============================================================================
+skinparam shadowing false
+autonumber 1
+
+title DIAG-06.1 — Diagrama UML de Secuencia TO-BE (Parte 1 - PROPUESTA): Preparación en CD y Salida de Despacho vía SIS-05 y MTD (Estados 1 a 3)\n[Derivado de DIAG-06 | Tipo UML: Secuencia | Apartados 3.4 y 3.6.2 | Mensajes 1 al 19]
+
+actor "ACT-03: Área de\nAlmacén PT" as ACT03 #FFF8E1
+participant "SIS-01: SAP R3\n[Exclusivo ACT-03]" as SIS01 #E3F2FD
+participant "SIS-03: Maya" as SIS03 #E3F2FD
+participant "SIS-04: ZapCommerce\n[ASM-08]" as SIS04 #E3F2FD
+participant "SIS-05: Bus de\nIntegración [ASM-08]" as SIS05 #E3F2FD
+participant "Capacidad Propuesta MTD\n(DEC-02: MTD-R01 a MTD-R06)" as MTD #E8F5E9
+participant "SIS-02: SPY\n(BWMS)" as SIS02 #E3F2FD
+actor "ACT-04: CD Picking\ny Packing" as ACT04 #FFF8E1
+actor "ACT-05: Zona de\nDespacho" as ACT05 #FFF8E1
+actor "ACT-07: Socio\nLogístico" as ACT07 #FFF8E1
+
+box "Sistemas de Transporte y Trackeo [Sujetos a validación ASM-02 / ASM-07]" #FFF3E0
+  participant "SIS-07: ENSDY\n[ASM-02]" as SIS07 #FFF8E1
+end box
+
+participant "SIS-09: CELLFORCE\n[ASM-06]" as SIS09 #E3F2FD
+actor "ACT-09: Destinatario\nEmpresarial B2B [AC]" as ACT09 #FFF8E1
+
+note over MTD #E8F5E9
+  Neutralidad tecnológica (DEC-02 / REQ-ARQ-001):
+  Capacidad arquitectónica lógica propuesta e integrada vía SIS-05 (ASM-08),
+  NO aplicación autónoma aprobada ni protocolos técnicos prefijados (Fases C-E).
+end note
+
+== Base Operativa Preservada y Preparación Trazable en CD (PROC-01 y PROC-02) ==
+ACT03 -> SIS01 : [Confirmado] Ingreso en vivo de cajas mono SKU con Código UA (vía SIS-10; exclusivo ACT-03 REQ-RES-002)
+SIS01 -> SIS02 : [Confirmado] Sincronización de stock en libre disposición [ASM-08, ASM-11]
+ACT03 -> ACT04 : [Confirmado] Abastecimiento de cajas master mono SKU selladas sin saldos (REQ-RES-003)
+ACT09 -> SIS03 : [Confirmado] Generación de pedido comercial B2B [AC, ASM-01]
+SIS03 -> SIS04 : [Confirmado] Facturación comercial (Estado 1: Pedido facturado) [ASM-08]
+SIS04 -> SIS05 : [Confirmado] Publicación de orden comercial con Número de Pedido
+SIS05 -> SIS02 : [Confirmado] Recepción en SPY y asignación de 1 de 8 tipos de caja [ASM-08, ASM-11]
+SIS02 -> ACT04 : [Confirmado] Tareas unitarias de picking por Número de Pedido
+ACT04 -> SIS02 : [Confirmado] Apertura de cajas master y empaque del pedido (sin doble digitación REQ-RNF-004)
+SIS02 --> SIS05 : [Propuesto MTD-R01/R03] Emisión de evento Estado 2: Elaboración o en preparación (T0, trazabilidad lógica UA-picking-Pedido ASM-08/11, ASM-15)
+SIS05 --> MTD : [Propuesto] Entrega de evento Estado 2 para correlación y homologación
+MTD --> SIS05 : [Propuesto MTD-R02/R04/R05] Estado 2 homologado con sello de disponibilidad T1
+
+== Zonificación Nacional y Salida Formalizada desde Zona de Despacho (PROC-03) ==
+ACT04 -> ACT05 : [Confirmado] Transferencia de pedido cerrado para zonificación a 24 departamentos
+ACT05 -> ACT07 : [Confirmado] Entrega física de carga zonificada a socio logístico asociado
+SIS02 --> SIS05 : [Propuesto MTD-R01] Evento Estado 3: Pedido despachado (T0, caja 1..8, destino, ACT-07, modalidad) [Emisor entre SIS-02/06/08 sujeto a ASM-02, ASM-07, ASM-11, ASM-15]
+SIS05 --> MTD : [Propuesto] Entrega de evento Estado 3 a capacidad MTD
+MTD --> SIS05 : [Propuesto MTD-R02/R04/R05] Validación secuencial propuesta (REQ-FUN-001) y sello T1 (Delta T = T1 - T0 <= 30 min)
+SIS05 --> SIS07 : [Propuesto MTD-R05] Actualización oportuna (<= 30 min) en seguimiento para ACT-06 [ASM-02]
+SIS05 --> SIS09 : [Propuesto MTD-R05] Sincronización oportuna (<= 30 min) hacia CELLFORCE para ACT-08 [ASM-06]
+@enduml
+

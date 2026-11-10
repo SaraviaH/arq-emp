@@ -1,0 +1,40 @@
+@startuml DIAG-08_2_Paquetes_Mapa_Trabajo_PKG01_PKG05
+' ============================================================================
+' ID Diagrama Derivado: DIAG-08.2
+' Nombre: Mapa de Alineación y Dependencias de Paquetes de Trabajo (PKG-01 a PKG-05)
+' Tipo de Diagrama UML: Diagrama de Paquetes (OMG UML 2.5.1 — Package Diagram | Categoría: Estructural)
+' Diagrama General del que Procede: DIAG-08 — Diagrama de Arquitectura de Solución Seleccionada y Mapa de Paquetes de Trabajo (Fase E)
+' Archivo Original de Origen: 06_Fase_E_Oportunidades_y_Soluciones/diagramas/DIAG-08_Arquitectura_Solucion_y_Paquetes_Trabajo.puml
+' ============================================================================
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam packageStyle rectangle
+
+skinparam rectangle {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    FontColor #1D2A44
+}
+
+title DIAG-08.2 — Diagrama UML de Paquetes: Alineación y Dependencias de Paquetes de Trabajo (PKG-01 a PKG-05)\n[Derivado de DIAG-08 | Tipo UML: Paquetes | Fase E — Apartado 6.3]
+
+' ============================================================================
+' RELACIÓN CON LOS PAQUETES DE TRABAJO (ROADMAP PKG-01 A PKG-05)
+' ============================================================================
+package "Alineación de Paquetes de Trabajo (Work Packages - Fase E)" as Pkg_WP {
+    rectangle "**PKG-01: Gobernanza y API Gateway**\n* Contratos JSON INT-DAT-01..08\n* Despliegue API Gateway en DMZ\n* Seguridad TLS 1.3 y mTLS" as WP1
+    rectangle "**PKG-02: Microservicios MTD**\n* Ingesta e Idempotencia (CMP-ING-01)\n* Validación de 5 Estados (CMP-VAL-03)\n* Correlación Lógica (CMP-COR-02)\n* Repositorio DB-EVENTSTORE" as WP2
+    rectangle "**PKG-03: Adaptadores y Bus SIS-05**\n* Conector ADP-SPY y ADP-CRM\n* Tópicos Pub/Sub en Bus SIS-05\n* Aislamiento estricto de SAP R3" as WP3
+    rectangle "**PKG-04: Socios y Store-and-Forward**\n* Conector ADP-LOG para TMS\n* Buffer offline SQLite en App Móvil\n* Captura T0 en 24 Departamentos" as WP4
+    rectangle "**PKG-05: SLA, Retornos y Seguridad**\n* Telemetría SLA Delta T <= 30 min\n* Notificación retornos a ACT-03\n* Validación Seguridad Informática" as WP5
+    
+    WP1 -down-> WP2
+    WP1 -down-> WP3
+    WP2 -down-> WP4
+    WP3 -down-> WP5
+    WP4 -down-> WP5
+}
+
+@enduml
+

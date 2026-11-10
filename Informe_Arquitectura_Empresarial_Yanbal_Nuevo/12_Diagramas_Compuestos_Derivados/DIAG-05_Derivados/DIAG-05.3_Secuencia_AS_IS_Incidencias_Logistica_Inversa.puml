@@ -1,0 +1,39 @@
+@startuml DIAG-05_3_Secuencia_AS_IS_Incidencias_Logistica_Inversa
+' ============================================================================
+' ID Diagrama Derivado: DIAG-05.3
+' Nombre: Secuencia AS-IS (Parte 3): Excepción Documentada de Incidencia en Transporte y Logística Inversa (PROC-05)
+' Tipo de Diagrama UML: Diagrama de Secuencia (OMG UML 2.5.1 — Sequence Diagram | Categoría: Interacción)
+' Diagrama General del que Procede: DIAG-05 — Diagrama UML de Secuencia del Flujo Actual (AS-IS): Despacho, Actualización Diferida de Estados (~2 h) y Consulta
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-05_Secuencia_AS_IS.puml
+' ============================================================================
+skinparam shadowing false
+autonumber 22
+
+title DIAG-05.3 — Diagrama UML de Secuencia AS-IS (Parte 3): Excepción Documentada de Incidencia en Transporte y Logística Inversa (PROC-05)\n[Derivado de DIAG-05 | Tipo UML: Secuencia | Apartados 3.3 y 3.6.1 | Mensajes 22 al 25]
+
+actor "ACT-03: Área de\nAlmacén PT" as ACT03 #FFF8E1
+participant "SIS-01: SAP R3\n[Exclusivo ACT-03]" as SIS01 #E3F2FD
+actor "ACT-06: Área de\nDistribución" as ACT06 #FFF8E1
+actor "ACT-07: Socio\nLogístico" as ACT07 #FFF8E1
+
+box "Sistemas de Transporte y Trackeo [Separados bajo ASM-02 / ASM-07]" #FFF3E0
+  participant "SIS-08: DRIVING\n[ASM-07]" as SIS08 #FFF8E1
+end box
+
+actor "ACT-09: Destinatario\nEmpresarial B2B [AC]" as ACT09 #FFF8E1
+
+== Transporte Multimodal, Pérdida de Visibilidad (~2 h), Consulta e Incidencias (PROC-04 y PROC-05) ==
+group Excepción Documentada: Incidencia en Transporte y Logística Inversa [Confirmado TO 20:03-21:35]
+  opt Si el envío llegó hasta el punto de destino empresarial [Confirmado TO 20:18-20:25]
+    ACT06 -> ACT09 : Corroboración de incidencia con el destinatario afectado [Rol interno ejecutor ACT-06 vs ACT-08 pendiente ASM-15]
+  end
+  ACT07 --> SIS08 : Registro para iniciar proceso de logística inversa [Confirmado hecho TO 20:25-20:30; sistema exacto SIS-06/07/08 pendiente ASM-02, ASM-07]
+  note over ACT06
+    Activación paralela por canales vigentes de reposición /
+    nueva preparación del pedido para no afectar a ACT-09 [Confirmado TO 20:30-20:45, 21:25-21:35]
+  end note
+  ACT07 -> ACT03 : Retorno físico del pedido afectado al Almacén de Lurín [Confirmado TO 20:48-20:55]
+  ACT03 -> SIS01 : Evaluación por calidad y seguridad patrimonial en exclusividad (si procede reingresa a línea de pedidos; si no procede se activa seguro/garantía por siniestro) [Confirmado TO 8:50, 20:55-21:25]
+end
+@enduml
+

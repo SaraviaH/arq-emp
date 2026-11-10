@@ -1,0 +1,37 @@
+@startuml DIAG-03_2_Actividades_AS_IS_Transporte_Entrega_Desfase_2h
+' ============================================================================
+' ID Diagrama Derivado: DIAG-03.2
+' Nombre: Actividades AS-IS (Parte 2): Transporte Multimodal Ordinario, Entrega B2B y Pérdida de Visibilidad (~2 h) (Estados 4 y 5)
+' Tipo de Diagrama UML: Diagrama de Actividades con Calles de Responsabilidad / Particiones (OMG UML 2.5.1 — Activity Diagram with Swimlanes | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-03 — Diagrama UML de Actividades del Proceso de Negocio Actual (AS-IS): Preparación, Despacho, Transporte B2B y Logística Inversa
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-03_Actividades_AS_IS.puml
+' ============================================================================
+skinparam shadowing false
+
+title DIAG-03.2 — Diagrama UML de Actividades AS-IS (Parte 2): Transporte Ordinario, Entrega B2B y Pérdida de Visibilidad (~2 h) (Estados 4 y 5)\n[Derivado de DIAG-03 | Tipo UML: Actividades con Particiones (Swimlanes) | Apartados 3.3 y 3.5.1]
+
+|ACT-07: Socio Logístico / Proveedor de Transporte|
+start
+:Iniciar y ejecutar traslado nacional multimodal\n(terrestre, bimodal o aéreo; sin flota propia ni GPS continuo ASM-05)\n**Estado 4: Pedido en ruta** [TO 19:23-19:53];
+
+if (¿Ocurre incidencia durante el transporte: retraso crítico, daño o pérdida? [TO 20:03-20:30]) then (No: Entrega ordinaria en destino B2B)
+  :Entregar físicamente el despacho en distribuidora\no sede empresarial B2B [AC, DEC-04];
+  |ACT-09: Destinatario Empresarial B2B / Canal Comercial (SIS-03, SIS-04)|
+  :Recibir físicamente el despacho en destino empresarial\n[Caso de Persona Autorizada ACT-10 pendiente de validar en B2B: ASM-01];
+  fork
+    |ACT-07: Socio Logístico / Proveedor de Transporte|
+    :Reportar cambio de estado (En ruta / Entregado)\nhacia sistemas de transporte/seguimiento [Mecanismo técnico pendiente: ASM-07];
+    |ACT-06: Área de Distribución (SIS-06 NSDG / SIS-07 ENSDY / SIS-08 DRIVING)|
+    #FFEBEE:Actualización diferida en sistema de seguimiento\n(**PÉRDIDA DE VISIBILIDAD: en promedio / hasta ~2 horas de desfase**)\n**Estado 5: Pedido entregado** visible tardíamente\n[TO 23:41-24:18, s2 0:49; causa técnica raíz pendiente ASM-02, ASM-03, ASM-08];
+  fork again
+    |ACT-09: Destinatario Empresarial B2B / Canal Comercial (SIS-03, SIS-04)|
+    :Consultar seguimiento por Número de Pedido y código de cliente\n(estatus, etapa, promesa 24 h Lima / hasta 7 días provincias ASM-01)\no presentar consulta/reclamo ante Servicio al Cliente [TO 21:57-24:36];
+    |ACT-08: Área de Servicio al Cliente (CELLFORCE SIS-09)|
+    #FFEBEE:Atender consulta, reclamo o trámite en CELLFORCE (SIS-09, ASM-06)\nafectado por **MARGEN DE DESCONOCIMIENTO (~2 HORAS)**\n(estado aún no actualizado o sin dato de receptor ASM-01) [TO 24:09-25:01, 28:35];
+  end fork
+  stop
+else (Sí: Incidencia en transporte [Ver DIAG-03.3])
+  stop
+endif
+@enduml
+

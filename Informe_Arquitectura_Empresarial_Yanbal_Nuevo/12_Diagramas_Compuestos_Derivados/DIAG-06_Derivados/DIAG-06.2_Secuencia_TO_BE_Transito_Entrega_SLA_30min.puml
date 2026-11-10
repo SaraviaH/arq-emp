@@ -1,0 +1,52 @@
+@startuml DIAG-06_2_Secuencia_TO_BE_Transito_Entrega_SLA_30min
+' ============================================================================
+' ID Diagrama Derivado: DIAG-06.2
+' Nombre: Secuencia TO-BE (Parte 2): Tránsito Multimodal, Entrega Empresarial B2B y Consulta en Ventana Delta T <= 30 min (PROC-04 y PROC-05 — Flujo Ordinario, Estados 4 y 5)
+' Tipo de Diagrama UML: Diagrama de Secuencia (OMG UML 2.5.1 — Sequence Diagram | Categoría: Interacción)
+' Diagrama General del que Procede: DIAG-06 — Diagrama UML de Secuencia del Flujo Objetivo Propuesto (TO-BE): Captura, Correlación, Propagación (Delta T <= 30 min) y Notificación de Retorno mediante Capacidad Propuesta MTD
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-06_Secuencia_TO_BE.puml
+' ============================================================================
+skinparam shadowing false
+autonumber 20
+
+title DIAG-06.2 — Diagrama UML de Secuencia TO-BE (Parte 2 - PROPUESTA): Tránsito, Entrega B2B y Consulta en Ventana <= 30 min (Estados 4 y 5)\n[Derivado de DIAG-06 | Tipo UML: Secuencia | Apartados 3.4 y 3.6.2 | Mensajes 20 al 37]
+
+participant "SIS-05: Bus de\nIntegración [ASM-08]" as SIS05 #E3F2FD
+participant "Capacidad Propuesta MTD\n(DEC-02: MTD-R01 a MTD-R06)" as MTD #E8F5E9
+actor "ACT-07: Socio\nLogístico" as ACT07 #FFF8E1
+
+box "Sistemas de Transporte y Trackeo [Sujetos a validación ASM-02 / ASM-07]" #FFF3E0
+  participant "SIS-08: DRIVING\n[ASM-07]" as SIS08 #FFF8E1
+  participant "SIS-07: ENSDY\n[ASM-02]" as SIS07 #FFF8E1
+end box
+
+participant "SIS-09: CELLFORCE\n[ASM-06]" as SIS09 #E3F2FD
+actor "ACT-08: Servicio\nal Cliente" as ACT08 #FFF8E1
+actor "ACT-09: Destinatario\nEmpresarial B2B [AC]" as ACT09 #FFF8E1
+actor "ACT-10: Persona Autorizada\n[Pendiente ASM-01]" as ACT10 #FCE4EC
+
+== Transporte Multimodal, Entrega B2B (Delta T <= 30 min), Consulta y Logística Inversa (PROC-04 y PROC-05) ==
+alt Flujo Ordinario Propuesto: Tránsito y Entrega Empresarial B2B en Ventana <= 30 min
+  ACT07 --> SIS08 : [Propuesto MTD-R01 / ASM-07] Reporte discreto Estado 4: Pedido en ruta con T0 (store-and-forward si aplica ASM-16; validado por ACT-11)
+  SIS08 --> SIS05 : [Propuesto] Publicación de evento de tránsito hacia el Bus de Integración [ASM-02, ASM-07, ASM-08]
+  SIS05 --> MTD : [Propuesto] Ingesta de Estado 4 en capacidad MTD
+  MTD --> SIS05 : [Propuesto MTD-R02/R04/R05] Estado 4 homologado y sellado con T1 (Delta T <= 30 min)
+  SIS05 --> SIS07 : [Propuesto MTD-R05] Propagación oportuna de Pedido en ruta para monitoreo de ACT-06
+  SIS05 --> SIS09 : [Propuesto MTD-R05] Propagación oportuna de Pedido en ruta hacia CELLFORCE
+  ACT07 -> ACT09 : [Confirmado AC] Entrega física del despacho en distribuidora o sede empresarial B2B
+  opt Condicionado exclusivamente a validación previa de alcance B2B (ASM-01 / REQ-FUN-003)
+    ACT07 -> ACT10 : [Condicionado ASM-01 - Pendiente de validación] Recepción delegada y captura de identificación de Persona Autorizada
+  end
+  ACT07 --> SIS08 : [Propuesto MTD-R01] Reporte discreto Estado 5: Pedido entregado con T0 (incluye ACT-10 solo si se valida ASM-01)
+  SIS08 --> SIS05 : [Propuesto] Publicación de evento de entrega hacia el Bus de Integración
+  SIS05 --> MTD : [Propuesto] Ingesta de Estado 5 en capacidad MTD
+  MTD --> SIS05 : [Propuesto MTD-R02/R04/R05] Verificación secuencial y cálculo Delta T = T1 - T0 <= 30 min
+  SIS05 --> SIS07 : [Propuesto MTD-R05] Disponibilidad en <= 30 min en seguimiento (ACT-06 y consulta B2B ASM-02/08)
+  SIS05 --> SIS09 : [Propuesto MTD-R05] Disponibilidad en <= 30 min en CELLFORCE (ACT-08)
+  ACT09 -> ACT08 : [Confirmado TO 21:57, 24:18] Consulta por Número de Pedido y código cliente (estatus, etapa, promesa 24h/7d)
+  ACT08 -> SIS09 : [Confirmado TO 28:35] Consulta en CELLFORCE
+  SIS09 --> ACT08 : [Propuesto] Estado actualizado en <= 30 min sin margen de desconocimiento
+  ACT08 --> ACT09 : [Propuesto] Respuesta consistente y oportuna al destinatario empresarial
+end
+@enduml
+

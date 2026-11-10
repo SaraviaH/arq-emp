@@ -1,0 +1,44 @@
+@startuml DIAG-04_2_Actividades_TO_BE_Transporte_Entrega_SLA_30min
+' ============================================================================
+' ID Diagrama Derivado: DIAG-04.2
+' Nombre: Actividades TO-BE (Parte 2): Transporte Multimodal, Entrega B2B y Propagación en Delta T <= 30 min (Estados 4 y 5)
+' Tipo de Diagrama UML: Diagrama de Actividades con Calles de Responsabilidad / Particiones (OMG UML 2.5.1 — Activity Diagram with Swimlanes | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-04 — Diagrama UML de Actividades del Proceso de Negocio Objetivo Propuesto (TO-BE): Despacho B2B con Capacidad Propuesta MTD (Delta T <= 30 min)
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-04_Actividades_TO_BE.puml
+' ============================================================================
+skinparam shadowing false
+
+title DIAG-04.2 — Diagrama UML de Actividades TO-BE (Parte 2 - PROPUESTA): Transporte, Entrega B2B y Propagación <= 30 min (Estados 4 y 5)\n[Derivado de DIAG-04 | Tipo UML: Actividades con Particiones (Swimlanes) | Apartados 3.4 y 3.5.2 | DEC-02]
+
+|ACT-07: Socio Logístico / Proveedor de Transporte|
+start
+:[Confirmado] Ejecutar transporte multimodal (terrestre, bimodal o aéreo; sin GPS propio REQ-RES-004);
+:[Propuesto MTD-R01] Reportar evento discreto **Estado 4: Pedido en ruta** con T0\n[Interfaz sujeta a ASM-07 y ACT-11; store-and-forward propuesto si aplica ASM-16];
+
+|Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+#E8F5E9:[Propuesto MTD-R02 / MTD-R04 / MTD-R05] Homologar Estado 4, sellar T1 (Delta T <= 30 min)\ny propagar vía SIS-05 hacia seguimiento (ACT-06), CELLFORCE (SIS-09, ACT-08) y consulta B2B;
+
+|ACT-07: Socio Logístico / Proveedor de Transporte|
+if (¿Entrega física exitosa en destino empresarial B2B? [AC]) then (Sí: Entrega ordinaria)
+  if (¿Aplica y ocurre recepción por Persona Autorizada ACT-10?\n[Condicionado estrictamente a validar ASM-01]) then (No: Recibe titular empresarial ACT-09)
+    :[Confirmado + T0 Propuesto MTD-R01] Entregar despacho en ACT-09\ny emitir **Estado 5: Pedido entregado** con marca T0;
+  else (Sí: Solo si ACT-06 valida ASM-01)
+    #FCE4EC:[Propuesto Condicionado REQ-FUN-003 / ASM-01] Capturar identificación\nde Persona Autorizada (ACT-10) junto con **Estado 5: Pedido entregado** y T0;
+  endif
+  |Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+  #E8F5E9:[Propuesto MTD-R02 / MTD-R04 / MTD-R05] Homologar Estado 5, verificar secuencia,\ncalcular Delta T = T1 - T0 <= 30 min y propagar vía Bus de Integración (SIS-05);
+  |ACT-06 (Distribución) / ACT-08 (CELLFORCE SIS-09) / ACT-09 (Destinatario B2B)|
+  :[Propuesto] Consultar por Número de Pedido y código cliente (estatus, etapa, promesa 24h/7d)\ny atender reclamos en CELLFORCE (SIS-09, ASM-06) con datos actualizados en <= 30 min;
+  stop
+else (No: Incidencia en transporte [Ver DIAG-04.3])
+  stop
+endif
+
+legend bottom
+  |= Color / Etiqueta |= Naturaleza Epistémica |
+  | [Confirmado] | Operación o integración actual respaldada en [TO] / [AC] que se preserva |
+  | <#E8F5E9> [Propuesto MTD-R01..R06] | Mejora propuesta pendiente de validación y selección técnica en Fases C-E (DEC-02) |
+  | <#FCE4EC> [Condicionado ASM-01] | Escenario incluido solo si se valida su aplicabilidad en destinos empresariales B2B |
+endlegend
+@enduml
+

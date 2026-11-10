@@ -1,0 +1,44 @@
+@startuml DIAG-04_1_Actividades_TO_BE_Preparacion_Despacho_MTD
+' ============================================================================
+' ID Diagrama Derivado: DIAG-04.1
+' Nombre: Actividades TO-BE (Parte 1): Preparación Trazable en CD Lurín y Salida de Despacho con Homologación MTD (Estados 1 al 3)
+' Tipo de Diagrama UML: Diagrama de Actividades con Calles de Responsabilidad / Particiones (OMG UML 2.5.1 — Activity Diagram with Swimlanes | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-04 — Diagrama UML de Actividades del Proceso de Negocio Objetivo Propuesto (TO-BE): Despacho B2B con Capacidad Propuesta MTD (Delta T <= 30 min)
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-04_Actividades_TO_BE.puml
+' ============================================================================
+skinparam shadowing false
+
+title DIAG-04.1 — Diagrama UML de Actividades TO-BE (Parte 1 - PROPUESTA): Preparación en CD y Despacho con MTD (Estados 1 a 3)\n[Derivado de DIAG-04 | Tipo UML: Actividades con Particiones (Swimlanes) | Apartados 3.4 y 3.5.2 | DEC-02 | REQ-RES-002]
+
+|ACT-03: Área de Almacén de PT (SAP R3 SIS-01 exclusivo)|
+start
+fork
+  :Precondición PROC-01 [Confirmado]: Capturar Código UA (SIS-10), registrar\nen vivo en SAP R3 (SIS-01, exclusivo ACT-03, REQ-RES-002), sincronizar\nstock liberado con SPY (SIS-02) y abastecer cajas master selladas sin saldos (REQ-RES-003);
+fork again
+  |ACT-09: Destinatario Empresarial B2B / Canal Comercial (SIS-03, SIS-04)|
+  :[Confirmado] Generar orden en Maya (SIS-03) -> ZapCommerce (SIS-04, ASM-08)\n**Estado 1: Pedido facturado** y descenso vía Bus de Integración (SIS-05) hacia SPY (SIS-02);
+end fork
+
+|ACT-04: CD - Línea de Picking y Packing (SPY SIS-02)|
+:[Confirmado] Asignar 1 de 8 tipos de caja por peso/volumetría,\nabrir cajas master mono SKU y ejecutar picking/packing unitario por Número de Pedido;
+:[Propuesto MTD-R01] Emitir desde SPY vía SIS-05 (sin doble digitación REQ-RNF-004)\nevento **Estado 2: Elaboración o en preparación** con marca T0 [emisor sujeto a ASM-15];
+
+|Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+#E8F5E9:[Propuesto MTD-R02 / MTD-R03 / MTD-R04] Preservar trazabilidad lógica\nCódigo UA - líneas picking - Número de Pedido (cardinalidad pendiente ASM-08/11),\nhomologar Estado 2 y sellar disponibilidad T1;
+
+|ACT-05: Zona de Despacho|
+:[Confirmado] Zonificar pedido hacia los 24 departamentos\ny entregar físicamente la carga consolidada a ACT-07;
+:[Propuesto MTD-R01] Emitir evento **Estado 3: Pedido despachado** con T0\ny atributos completos (caja 1..8, geografía, ACT-07, modalidad REQ-FUN-004) [ASM-02, ASM-07, ASM-11, ASM-15];
+
+|Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+#E8F5E9:[Propuesto MTD-R02 / MTD-R04 / MTD-R05] Validar secuencia (regla propuesta sujeta a ACT-06 REQ-FUN-001),\nsellar T1 (Delta T = T1 - T0 <= 30 min) y propagar Estado 3 vía SIS-05;
+stop
+
+legend bottom
+  |= Color / Etiqueta |= Naturaleza Epistémica |
+  | [Confirmado] | Operación o integración actual respaldada en [TO] / [AC] que se preserva |
+  | <#E8F5E9> [Propuesto MTD-R01..R06] | Mejora propuesta pendiente de validación y selección técnica en Fases C-E (DEC-02) |
+  | <#FCE4EC> [Condicionado ASM-01] | Escenario incluido solo si se valida su aplicabilidad en destinos empresariales B2B |
+endlegend
+@enduml
+

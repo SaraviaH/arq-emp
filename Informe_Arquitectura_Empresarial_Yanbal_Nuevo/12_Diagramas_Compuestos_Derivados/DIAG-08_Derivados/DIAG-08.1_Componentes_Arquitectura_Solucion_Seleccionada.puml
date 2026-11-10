@@ -1,0 +1,115 @@
+@startuml DIAG-08_1_Componentes_Arquitectura_Solucion_Seleccionada
+' ============================================================================
+' ID Diagrama Derivado: DIAG-08.1
+' Nombre: Arquitectura de Componentes e Integración de la Solución Seleccionada (EDA/SOA Híbrida sobre Bus SIS-05)
+' Tipo de Diagrama UML: Diagrama de Componentes estructurado en Paquetes (OMG UML 2.5.1 — Component Diagram | Categoría: Estructural)
+' Diagrama General del que Procede: DIAG-08 — Diagrama de Arquitectura de Solución Seleccionada y Mapa de Paquetes de Trabajo (Fase E)
+' Archivo Original de Origen: 06_Fase_E_Oportunidades_y_Soluciones/diagramas/DIAG-08_Arquitectura_Solucion_y_Paquetes_Trabajo.puml
+' ============================================================================
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam packageStyle rectangle
+
+skinparam rectangle {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    FontColor #1D2A44
+}
+
+skinparam component {
+    BackgroundColor #EDF2F4
+    BorderColor #457B9D
+    FontColor #1D2A44
+}
+
+skinparam database {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #174EA6
+}
+
+title DIAG-08.1 — Diagrama UML de Componentes: Arquitectura de Solución Seleccionada (EDA/SOA Híbrida sobre Bus SIS-05)\n[Derivado de DIAG-08 | Tipo UML: Componentes en Paquetes | Fase E — Apartado 6.5]
+
+' ============================================================================
+' CAPA 1: FUENTES Y EMISORES OPERATIVOS DE EVENTOS (PREPARACIÓN Y DESPACHO)
+' ============================================================================
+package "Fuentes Operativas de Eventos (Planta y Almacén Lurín)" as Pkg_Fuentes {
+    component [SIS-02: SPY (BWMS In-House)\nPreparación y Cajas 1 a 8] as Comp_SPY
+    component [Estación Zona de Despacho\nACT-05: Salida a 24 Departamentos] as Comp_Despacho
+    component [SIS-01: ERP SAP R3 (Productivo)\nExclusivo Almacén Lurín ACT-03] as Comp_SAP
+    
+    note bottom of Comp_SAP
+        **Restricción REQ-RES-002:**
+        Operado exclusivamente por ACT-03.
+        Sin interfaces de escritura directa del MTD.
+    end note
+}
+
+' ============================================================================
+' CAPA 2: TRANSPORTE EXTERNO Y RESILIENCIA EN RUTA
+' ============================================================================
+package "Infraestructura Externa - Socios Logísticos (ACT-07)" as Pkg_Transporte {
+    component [App Móvil Transportistas\nCaptura Local Marca T0] as Comp_AppMovil
+    database "Buffer Cifrado Offline\nStore-and-Forward (ASM-16)" as DB_Offline
+    component [Plataformas TMS Socios\nSIS-08: DRIVING / SIS-06: NSDG] as Comp_TMS
+    
+    Comp_AppMovil .right.> DB_Offline : Persistencia offline ante pérdida de señal
+    Comp_AppMovil --> Comp_TMS : Transmisión en ráfaga al recuperar 4G/5G
+}
+
+' ============================================================================
+' CAPA 3: PERÍMETRO Y MICROSERVICIOS MTD (PKG-01 y PKG-02)
+' ============================================================================
+package "Plataforma de Integración y Servicios MTD (Nube Corporativa)" as Pkg_MTD {
+    
+    component [API Gateway Corporativo\nTLS 1.3 | mTLS | OAuth 2.0 | WAF] as Comp_APIGW
+    
+    package "Suite de Microservicios MTD (PKG-02)" {
+        component [CMP-ING-01: Ingesta e Idempotencia\nFirma SHA-256 | Filtro Duplicados] as Comp_ING
+        component [CMP-VAL-03: Validador Semántico\nSecuencia de 5 Estados Canónicos] as Comp_VAL
+        component [CMP-COR-02: Correlación Lógica\nCódigo UA <-> Picking <-> Pedido] as Comp_COR
+        component [CMP-AUD-04: Auditoría y Telemetría\nSello T1 | Delta T = T1 - T0 <= 30 min] as Comp_AUD
+        component [CMP-PUB-05: Despachador de Publicación\nDifusión Asíncrona de Estados] as Comp_PUB
+        component [CMP-NOT-06: Gestión de Incidencias\nCanal de Notificación Logística Inversa] as Comp_NOT
+    }
+    
+    database "DB-EVENTSTORE Canónico (ENT-07)\nHot Data <90d | Cold Archive 5 años" as DB_EventStore
+}
+
+' ============================================================================
+' CAPA 4: MIDDLEWARE Y SISTEMAS CONSUMIDORES (PKG-03)
+' ============================================================================
+package "Middleware Corporativo y Canales de Consulta (Consumidores)" as Pkg_Consumidores {
+    queue "SIS-05: Bus de Integración Corporativo\nTópicos Pub/Sub de Despacho B2B" as Queue_Bus
+    
+    component [SIS-07: ENSDY\nSistema de Trackeo Nacional] as Comp_ENSDY
+    component [SIS-09: CELLFORCE (CRM)\nAtención al Cliente ACT-08\nEstado en <= 30 min (REQ-NEG-003)] as Comp_CRM
+    component [Consola de Almacén Lurín\nAviso de Retornos (ACT-03)] as Comp_AvisoAlmacen
+}
+
+' ============================================================================
+' RELACIONES DE INTEGRACIÓN DE LA SOLUCIÓN
+' ============================================================================
+Comp_TMS --> Comp_APIGW : HTTPS / REST (TLS 1.3)\n[Eventos Estado 4 y 5 en ruta]
+Comp_SPY --> Comp_APIGW : VPN IPsec (TLS 1.3)\n[Evento Estado 2 Preparado con T0]
+Comp_Despacho --> Comp_APIGW : HTTPS LAN\n[Evento Estado 3 Despachado con T0]
+
+Comp_APIGW --> Comp_ING : Enrutamiento Seguro
+Comp_ING --> Comp_AUD : Estampado T1 y cálculo Delta T
+Comp_ING --> Comp_VAL : Evento normalizado
+Comp_VAL <--> Comp_COR : Consulta caché correlación
+Comp_VAL --> DB_EventStore : Persistencia inmutable
+Comp_VAL --> Comp_PUB : Evento canónico confirmado
+Comp_PUB --> Queue_Bus : Publicación desacoplada (Pub/Sub)
+
+Comp_VAL ..> Comp_NOT : Alerta de incidencia o entrega fallida
+Comp_NOT --> Queue_Bus : Mensaje asíncrono de retorno
+Queue_Bus --> Comp_AvisoAlmacen : Notificación a ACT-03 (Sin tocar SAP)
+Comp_AvisoAlmacen ..> Comp_SAP : Regularización física manual por ACT-03
+
+Queue_Bus --> Comp_ENSDY : Suscriptor de Tópico
+Queue_Bus --> Comp_CRM : Suscriptor vía Adaptador ADP-CRM
+
+@enduml
+

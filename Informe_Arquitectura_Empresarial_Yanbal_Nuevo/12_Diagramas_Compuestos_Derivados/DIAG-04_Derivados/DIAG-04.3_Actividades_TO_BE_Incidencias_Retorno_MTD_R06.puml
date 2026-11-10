@@ -1,0 +1,49 @@
+@startuml DIAG-04_3_Actividades_TO_BE_Incidencias_Retorno_MTD_R06
+' ============================================================================
+' ID Diagrama Derivado: DIAG-04.3
+' Nombre: Actividades TO-BE (Parte 3): Gestión de Incidencias en Ruta y Notificación Operativa Previa de Logística Inversa (MTD-R06)
+' Tipo de Diagrama UML: Diagrama de Actividades con Calles de Responsabilidad / Particiones (OMG UML 2.5.1 — Activity Diagram with Swimlanes | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-04 — Diagrama UML de Actividades del Proceso de Negocio Objetivo Propuesto (TO-BE): Despacho B2B con Capacidad Propuesta MTD (Delta T <= 30 min)
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-04_Actividades_TO_BE.puml
+' ============================================================================
+skinparam shadowing false
+
+title DIAG-04.3 — Diagrama UML de Actividades TO-BE (Parte 3 - PROPUESTA): Incidencias en Ruta y Notificación de Retorno (MTD-R06)\n[Derivado de DIAG-04 | Tipo UML: Actividades con Particiones (Swimlanes) | Apartados 3.4 y 3.5.2 | Sin escritura MTD -> SAP R3 REQ-RES-002]
+
+|ACT-07: Socio Logístico / Proveedor de Transporte|
+start
+if (¿Entrega física exitosa en destino empresarial B2B? [AC]) then (No: Incidencia en transporte [TO 20:18-21:35])
+  if (¿El envío llegó al punto de destino empresarial? [Confirmado TO 20:18-20:30]) then (Sí)
+    |ACT-06 (Distribución) / ACT-08 (CELLFORCE SIS-09) / ACT-09 (Destinatario B2B)|
+    :[Confirmado] Corroborar incidencia con destinatario afectado ACT-09 [ASM-15];
+  else (No: En tránsito)
+    |ACT-07: Socio Logístico / Proveedor de Transporte|
+    :[Confirmado] Identificar incidencia en ruta bajo supervisión de ACT-06;
+  endif
+  |ACT-07: Socio Logístico / Proveedor de Transporte|
+  :[Confirmado + T0 Propuesto] Registrar causal e inicio de logística inversa con marca T0 [ASM-02, ASM-07];
+  fork
+    |Capacidad Propuesta MTD (DEC-02) vía Bus de Integración (SIS-05, ASM-08)|
+    #E8F5E9:[Propuesto MTD-R06] Capturar y correlacionar evento de incidencia/retorno (T0/T1, <= 30 min),\nactualizar visibilidad vía SIS-05 para ACT-06 y ACT-08 (CELLFORCE SIS-09)\ny emitir vía SIS-05 **SOLO NOTIFICACIÓN OPERATIVA PREVIA** a ACT-03\n(**SIN escritura directa en SAP R3 SIS-01 — REQ-RES-002**);
+  fork again
+    |ACT-06 (Distribución) / ACT-08 (CELLFORCE SIS-09) / ACT-09 (Destinatario B2B)|
+    :[Confirmado — Fuera del MTD] Activar por canales vigentes\nreposición del pedido para no afectar a ACT-09 [TO 20:30-20:45];
+  fork again
+    |ACT-07: Socio Logístico / Proveedor de Transporte|
+    :[Confirmado] Retornar físicamente el pedido afectado al Almacén de Lurín [TO 20:48-20:55];
+    |ACT-03: Área de Almacén de PT (SAP R3 SIS-01 exclusivo)|
+    :[Confirmado — Fuera del MTD] Recibir notificación previa (MTD-R06) y pedido físico;\nevaluar por calidad y seguridad patrimonial operando SAP R3 (SIS-01) en exclusividad\n(reingreso a pedidos si procede o activación de seguro/siniestro si no procede) [TO 20:55-21:25];
+  end fork
+  stop
+else (Sí: Entrega ordinaria [Ver DIAG-04.2])
+  stop
+endif
+
+legend bottom
+  |= Color / Etiqueta |= Naturaleza Epistémica |
+  | [Confirmado] | Operación o integración actual respaldada en [TO] / [AC] que se preserva |
+  | <#E8F5E9> [Propuesto MTD-R01..R06] | Mejora propuesta pendiente de validación y selección técnica en Fases C-E (DEC-02) |
+  | <#FCE4EC> [Condicionado ASM-01] | Escenario incluido solo si se valida su aplicabilidad en destinos empresariales B2B |
+endlegend
+@enduml
+

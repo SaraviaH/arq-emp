@@ -1,0 +1,47 @@
+@startuml DIAG-03_3_Actividades_AS_IS_Incidencias_Logistica_Inversa
+' ============================================================================
+' ID Diagrama Derivado: DIAG-03.3
+' Nombre: Actividades AS-IS (Parte 3): Incidencias en Transporte, Reposición y Logística Inversa hacia Almacén Lurín
+' Tipo de Diagrama UML: Diagrama de Actividades con Calles de Responsabilidad / Particiones (OMG UML 2.5.1 — Activity Diagram with Swimlanes | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-03 — Diagrama UML de Actividades del Proceso de Negocio Actual (AS-IS): Preparación, Despacho, Transporte B2B y Logística Inversa
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-03_Actividades_AS_IS.puml
+' ============================================================================
+skinparam shadowing false
+
+title DIAG-03.3 — Diagrama UML de Actividades AS-IS (Parte 3): Incidencias en Transporte, Reposición y Logística Inversa\n[Derivado de DIAG-03 | Tipo UML: Actividades con Particiones (Swimlanes) | Apartados 3.3 y 3.5.1]
+
+|ACT-07: Socio Logístico / Proveedor de Transporte|
+start
+:Iniciar y ejecutar traslado nacional multimodal\n(terrestre, bimodal o aéreo; sin flota propia ni GPS continuo ASM-05)\n**Estado 4: Pedido en ruta** [TO 19:23-19:53];
+
+if (¿Ocurre incidencia durante el transporte: retraso crítico, daño o pérdida? [TO 20:03-20:30]) then (Sí: Incidencia en transporte [TO 20:18-21:35])
+  if (¿El envío llegó hasta el punto de destino empresarial? [TO 20:18-20:30]) then (Sí: Llegó al punto de destino)
+    |ACT-06: Área de Distribución (SIS-06 NSDG / SIS-07 ENSDY / SIS-08 DRIVING)|
+    :Corroborar incidencia con el destinatario afectado ACT-09\n[Rol interno ejecutor ACT-06 vs ACT-08 pendiente: ASM-15] [TO 20:18-20:25];
+  else (No: Ocurrió en tránsito antes de llegar a destino)
+    |ACT-07: Socio Logístico / Proveedor de Transporte|
+    :Identificar incidencia o siniestro en ruta bajo supervisión de ACT-06 [TO 20:25-20:30];
+  endif
+  |ACT-07: Socio Logístico / Proveedor de Transporte|
+  :Realizar registro para iniciar el proceso de logística inversa\n[Sistema exacto pendiente de confirmar: ASM-02, ASM-07] [TO 20:25-20:30];
+  fork
+    |ACT-06: Área de Distribución (SIS-06 NSDG / SIS-07 ENSDY / SIS-08 DRIVING)|
+    :Activar por canales operativos vigentes la reposición /\nnueva preparación del pedido para no perjudicar al destinatario [TO 20:30-20:45, 21:25-21:35];
+  fork again
+    |ACT-07: Socio Logístico / Proveedor de Transporte|
+    :Retornar físicamente el pedido afectado al Almacén de Lurín [TO 20:48-20:55];
+    |ACT-03: Área de Almacén de PT (SAP R3 SIS-01 exclusivo)|
+    :Recibir pedido retornado y evaluar en base a calidad\ny seguridad patrimonial (operación exclusiva de SAP R3 SIS-01) [TO 8:50, 20:55-21:10];
+    if (¿Producto evaluado resulta procedente? [TO 21:05-21:25]) then (Sí: Procedente)
+      :Reincorporar productos a la línea de atención de pedidos [TO 21:05-21:15];
+    else (No: No procedente / Siniestro)
+      |ACT-06: Área de Distribución (SIS-06 NSDG / SIS-07 ENSDY / SIS-08 DRIVING)|
+      :Activar cobertura de seguro o garantía por siniestro\ncon el socio logístico [TO 20:38-20:48, 21:15-21:25];
+    endif
+  end fork
+  stop
+else (No: Entrega ordinaria en destino B2B [Ver DIAG-03.2])
+  stop
+endif
+@enduml
+

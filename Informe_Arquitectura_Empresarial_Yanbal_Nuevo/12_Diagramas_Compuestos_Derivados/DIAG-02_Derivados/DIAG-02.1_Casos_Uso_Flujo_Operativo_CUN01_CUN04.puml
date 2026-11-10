@@ -1,0 +1,61 @@
+@startuml DIAG-02_1_Casos_Uso_Flujo_Operativo_CUN01_CUN04
+' ============================================================================
+' ID Diagrama Derivado: DIAG-02.1
+' Nombre: Casos de Uso del Negocio B2B (Parte 1): Preparación, Despacho, Transporte Multimodal y Entrega en Destino (CUN-01 a CUN-04)
+' Tipo de Diagrama UML: Diagrama de Casos de Uso (OMG UML 2.5.1 — Use Case Diagram | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-02 — Diagrama UML de Casos de Uso del Negocio: Preparación, Despacho y Trazabilidad B2B (CUN-01 a CUN-06)
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-02_Casos_Uso_Negocio.puml
+' ============================================================================
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title DIAG-02.1 — Diagrama UML de Casos de Uso del Negocio (Parte 1): Preparación, Despacho, Transporte y Entrega B2B (CUN-01 a CUN-04)\n[Derivado de DIAG-02 | Tipo UML: Casos de Uso | Apartado 3.3.4 | Alcance estricto B2B: DEC-04 / REQ-RES-001]
+
+' Actores internos (Yanbal Perú — Lurín / Lima)
+actor "ACT-03: Área de Almacén de PT\n[SAP R3 SIS-01 exclusivo: REQ-RES-002]" as ACT03 #FFF8E1
+actor "ACT-04: CD - Línea de\nPicking y Packing" as ACT04 #FFF8E1
+actor "ACT-05: Zona de\nDespacho" as ACT05 #FFF8E1
+actor "ACT-06: Área de\nDistribución" as ACT06 #FFF8E1
+
+' Frontera del proceso de negocio B2B
+rectangle "Frontera del Negocio B2B: Preparación, Despacho y Trazabilidad Nacional — Yanbal Perú (Lima -> 24 Departamentos | Excluye reparto B2C)" {
+  usecase "CUN-01: Preparar y empacar pedido B2B\nen Centro de Distribución\n(PROC-02 | Estado 1 -> Estado 2)" as CUN01 #E3F2FD
+  usecase "CUN-02: Zonificar y despachar pedido\nhacia socio logístico nacional\n(PROC-03 | Estado 2 -> Estado 3)" as CUN02 #E3F2FD
+  usecase "CUN-03: Ejecutar transporte multimodal y\nactualizar eventos de tránsito B2B\n(PROC-04 | Estado 3 -> Estado 4)" as CUN03 #E3F2FD
+  usecase "CUN-04: Entregar y confirmar recepción del\ndespacho en destino empresarial\n(PROC-04 | Estado 4 -> Estado 5)" as CUN04 #E3F2FD
+}
+
+' Actores externos y receptores en destino
+actor "ACT-07: Socio Logístico /\nProveedor de Transporte" as ACT07 #FFF8E1
+actor "ACT-09: Destinatario Empresarial\n(Distribuidora / Sede B2B - AC, ASM-01)" as ACT09 #FFF8E1
+actor "ACT-10: Persona Autorizada en Destino\n[Pendiente de validación B2B: ASM-01]" as ACT10 #FCE4EC
+
+' Asociaciones UML Actor -- Caso de Uso (sin <<include>> ni <<extend>> hacia actores)
+ACT03 -- CUN01 : Abastece cajas master selladas\n(PROC-01, REQ-RES-003)
+ACT04 -- CUN01
+ACT05 -- CUN02
+ACT06 -- CUN02
+ACT06 -- CUN03
+ACT06 -- CUN04
+
+CUN02 -- ACT07
+CUN03 -- ACT07
+CUN04 -- ACT07
+CUN04 -- ACT09
+CUN04 -- ACT10
+
+note bottom of ACT10
+  Participación NO confirmada en alcance B2B (ASM-01 / REQ-FUN-003):
+  En [TO 24:40-25:01] se mencionó respecto del "cliente final".
+  Solo interviene en CUN-04 si ACT-06 valida que en distribuidoras
+  o sedes empresariales B2B existe recepción delegada.
+end note
+
+legend bottom
+  |= Color |= Clasificación Epistémica |
+  | <#FFF8E1> / <#E3F2FD> | Elementos confirmados en fuentes primarias ([TO] / [AC]) |
+  | <#FCE4EC> | Actor condicionado pendiente de validación externa en el alcance B2B (ASM-01) |
+endlegend
+@enduml
+

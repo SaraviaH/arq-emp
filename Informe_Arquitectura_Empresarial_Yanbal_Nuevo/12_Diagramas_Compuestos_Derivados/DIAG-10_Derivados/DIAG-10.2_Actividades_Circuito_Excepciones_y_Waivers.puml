@@ -1,0 +1,71 @@
+@startuml DIAG-10_2_Actividades_Circuito_Excepciones_y_Waivers
+' ============================================================================
+' ID Diagrama Derivado: DIAG-10.2
+' Nombre: Gobernanza de Implementación (Parte 2): Circuito de Gestión de Excepciones, Solicitudes de Dispensa (Architecture Waivers) y Liquidación Previa a Quality Gates
+' Tipo de Diagrama UML: Diagrama de Actividades / Proceso de Dispensas (OMG UML 2.5.1 — Activity Diagram | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-10 — Marco de Gobernanza de la Implementación, Contratos y Control de Conformidad
+' Archivo Original de Origen: 08_Fase_G_Gobierno_de_Implementacion/diagramas/DIAG-10_Gobernanza_Implementacion_y_Conformidad.puml
+' ============================================================================
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam roundCorner 8
+skinparam shadowing false
+skinparam ArrowColor #2C3E50
+skinparam ArrowThickness 1.5
+
+skinparam rectangle {
+    BackgroundColor #F8F9FA
+    BorderColor #BDC3C7
+    FontColor #2C3E50
+}
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #7F8C8D
+    FontColor #2C3E50
+    FontStyle bold
+}
+
+header
+<b>PROYECTO:</b> Plan de Mejora Arquitectónica de Trazabilidad B2B — Yanbal Perú (Unique S.A.)
+<b>FASE G:</b> Gobernanza de la Implementación (TOGAF ADM) — Derivado de DIAG-10
+endheader
+
+title <b>DIAG-10.2 — DIAGRAMA UML DE ACTIVIDADES (PARTE 2): CIRCUITO DE GESTIÓN DE EXCEPCIONES Y DISPENSAS (ARCHITECTURE WAIVERS)</b>
+
+package "1. ÓRGANOS DE GOBERNANZA ARQUITECTÓNICA Y CONTROL" as SEC_GOB #EBF5FB {
+    rectangle "**Architecture Board (Consejo de Arquitectura)**\n--\n• ACT-13: Gerencia de TI (Sponsor / Presidencia)\n• ACT-12: Arquitecto Líder (Dirección Técnica)\n• ACT-11: Oficial de Seguridad de la Información (CISO)\n• ACT-06: Jefatura de Operaciones Logísticas Lurín\n• ACT-03: Jefatura de Almacén Lurín (Custodio SAP)" as BOARD #D4E6F1
+}
+
+package "2. CONTRATOS DE ARQUITECTURA (ARCHITECTURE CONTRACTS - AC)" as SEC_CONTRATOS #FEF9E7 {
+    rectangle "**Contratos Vinculantes AC-PKG-01 a AC-PKG-05**\n[Ver detalle completo en DIAG-10.1]" as AC_REF #FCF3CF
+}
+
+package "4. CIRCUITO DE GESTIÓN DE EXCEPCIONES Y DISPENSAS (ARCHITECTURE WAIVERS)" as SEC_WAIVERS #FADBD8 {
+    rectangle "**Detección de Desviación o Solicitud de Dispensa**\n--\n• Identificación en revisiones de código o pruebas de integración\n• Clasificación del Impacto: Menor | Mayor | Crítica\n• <i>Restricción Absoluta:</i> Desviaciones sobre SAP o B2B son RECHAZADAS" as WAIVER_REQ #F5B7B1
+
+    rectangle "**Evaluación y Dictamen del Architecture Board**\n--\n• Análisis de Riesgo Técnico, Deuda Arquitectónica y Costo\n• Aprobación condicionada: Plazo máximo de remediación <= 6 semanas\n• Registro formal en el Libro de Excepciones de Arquitectura" as WAIVER_EVAL #F5B7B1
+
+    rectangle "**Auditoría de Remediación y Cierre de Dispensa**\n--\n• Verificación técnica previa al siguiente Quality Gate\n• Liquidación de deuda técnica antes del pase a producción TO-BE" as WAIVER_CLOSE #F5B7B1
+}
+
+package "3. PUERTAS DE CALIDAD ARQUITECTÓNICA (COMPLIANCE QUALITY GATES)" as SEC_GATES #EAFAF1 {
+    rectangle "**Quality Gates 1 (S12), 2 (S18) y 3 (S24)**\n[Ver detalle completo en DIAG-10.1]" as GATES_REF #D5F5E3
+}
+
+' Relaciones del circuito de Waivers
+SEC_CONTRATOS .right.> WAIVER_REQ : "Desviación identificada"
+WAIVER_REQ -down-> WAIVER_EVAL : "Presenta Solicitud"
+BOARD -right-> WAIVER_EVAL : "Dictamina (Aprueba/Rechaza)"
+WAIVER_EVAL -down-> WAIVER_CLOSE : "Condiciona remediación"
+WAIVER_CLOSE -left-> SEC_GATES : "Certifica cierre previo al Gate"
+
+footer
+TOGAF ADM Fase G — Gobernanza de la Implementación — Yanbal Perú / Unique S.A.
+Diagrama derivado: DIAG-10.2 (Procede de DIAG-10 | Tipo UML: Actividades / Flujo de Dispensas)
+endfooter
+
+@enduml
+

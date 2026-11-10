@@ -1,0 +1,92 @@
+@startuml DIAG-10_1_Paquetes_Gobernanza_Contratos_y_Quality_Gates
+' ============================================================================
+' ID Diagrama Derivado: DIAG-10.1
+' Nombre: Gobernanza de Implementación (Parte 1): Órganos de Control, Contratos de Arquitectura (AC-PKG-01..05) y Certificación por Quality Gates (GATE 1..3)
+' Tipo de Diagrama UML: Diagrama de Paquetes y Actividades de Gobernanza (OMG UML 2.5.1 — Package / Activity Diagram | Categoría: Estructural / Comportamiento)
+' Diagrama General del que Procede: DIAG-10 — Marco de Gobernanza de la Implementación, Contratos y Control de Conformidad
+' Archivo Original de Origen: 08_Fase_G_Gobierno_de_Implementacion/diagramas/DIAG-10_Gobernanza_Implementacion_y_Conformidad.puml
+' ============================================================================
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam roundCorner 8
+skinparam shadowing false
+skinparam ArrowColor #2C3E50
+skinparam ArrowThickness 1.5
+
+skinparam rectangle {
+    BackgroundColor #F8F9FA
+    BorderColor #BDC3C7
+    FontColor #2C3E50
+}
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #7F8C8D
+    FontColor #2C3E50
+    FontStyle bold
+}
+
+header
+<b>PROYECTO:</b> Plan de Mejora Arquitectónica de Trazabilidad B2B — Yanbal Perú (Unique S.A.)
+<b>FASE G:</b> Gobernanza de la Implementación (TOGAF ADM) — Derivado de DIAG-10
+endheader
+
+title <b>DIAG-10.1 — DIAGRAMA UML DE PAQUETES Y FLUJO DE GOBERNANZA (PARTE 1): ÓRGANOS, CONTRATOS AC-PKG-01..05 Y QUALITY GATES 1..3</b>
+
+package "1. ÓRGANOS DE GOBERNANZA ARQUITECTÓNICA Y CONTROL" as SEC_GOB #EBF5FB {
+    rectangle "**Architecture Board (Consejo de Arquitectura)**\n--\n• ACT-13: Gerencia de TI (Sponsor / Presidencia)\n• ACT-12: Arquitecto Líder (Dirección Técnica)\n• ACT-11: Oficial de Seguridad de la Información (CISO)\n• ACT-06: Jefatura de Operaciones Logísticas Lurín\n• ACT-03: Jefatura de Almacén Lurín (Custodio SAP)" as BOARD #D4E6F1
+    
+    rectangle "**Oficina de Gestión y Aseguramiento (PMO & QA)**\n--\n• ACT-15: Gestor de Proyecto / Scrum Master\n• ACT-14: Líder de QA y Pruebas Arquitectónicas\n• Comités Técnicos de Seguimiento Semanal" as PMO_QA #E8F8F5
+}
+
+package "2. CONTRATOS DE ARQUITECTURA (ARCHITECTURE CONTRACTS - AC)" as SEC_CONTRATOS #FEF9E7 {
+    rectangle "**AC-PKG-01: Gobernanza de Datos y Contratos de Integración**\n<i>Responsable:</i> Equipo de Datos & Integración\n<i>Alcance:</i> Esquemas JSON Schema, CloudEvents v1.0, Diccionario Canónico" as AC_P1 #FCF3CF
+    
+    rectangle "**AC-PKG-02: Plataforma Core MTD y Microservicios de Eventos**\n<i>Responsable:</i> Fábrica de Software / Equipo Core\n<i>Alcance:</i> CMP-ING-01, CMP-COR-02, CMP-VAL-03, CMP-AUD-04 (T1), CMP-PUB-05, CMP-NOT-06" as AC_P2 #FCF3CF
+
+    rectangle "**AC-PKG-03: Adaptadores de Integración de Sistemas Internos**\n<i>Responsable:</i> Equipo SAP & Integraciones Internas\n<i>Alcance:</i> ADP-SAP (Solo Lectura/Staging), ADP-SPY, ADP-CRM" as AC_P3 #FCF3CF
+
+    rectangle "**AC-PKG-04: Onboarding y Pasarela de Operadores Logísticos**\n<i>Responsable:</i> Equipo B2B & Socios de Transporte (ACT-07 / ACT-16)\n<i>Alcance:</i> ADP-LOG, Portal Web de Contingencia, API Gateway B2B" as AC_P4 #FCF3CF
+
+    rectangle "**AC-PKG-05: Monitoreo Operacional, Telemetría y Dashboards**\n<i>Responsable:</i> Equipo de Operaciones TI & SRE\n<i>Alcance:</i> OpenTelemetry, Prometheus/Grafana, Monitoreo de SLA (<= 30 min)" as AC_P5 #FCF3CF
+}
+
+package "3. PUERTAS DE CALIDAD ARQUITECTÓNICA (COMPLIANCE QUALITY GATES)" as SEC_GATES #EAFAF1 {
+    rectangle "**GATE 1: Certificación AT-1 (Semana S12)**\n--\n<i>Entrada:</i> Finalización de PKG-01, PKG-02 y PKG-03\n<i>Criterios de Conformidad:</i>\n• Verificación de aislamiento estricto de SAP R3 (cero escrituras)\n• Validación de esquemas y sello temporal T1 en CMP-AUD-04\n• Pruebas de integración interna con datos históricos (<= 15 min)\n• Certificación de seguridad estática (SAST) y cifrado TLS 1.3\n<i>Salida:</i> Autorización para inicio de despliegue B2B" as GATE1 #D5F5E3
+
+    rectangle "**GATE 2: Certificación AT-2 (Semana S18)**\n--\n<i>Entrada:</i> Despliegue de PKG-04 y Onboarding de Piloto ACT-07\n<i>Criterios de Conformidad:</i>\n• 100% consistencia de secuencia de estados de despacho (KPI-03)\n• Interoperabilidad validada en rutas piloto (Lima - Trujillo/Arequipa)\n• Mecanismo Store-and-Forward operativo ante pérdida de red\n• SLA de reporte verificado: umbral piloto >= 95% (diseño analítico >= 98%)\n<i>Salida:</i> Autorización para Rollout Nacional en 24 departamentos" as GATE2 #D5F5E3
+
+    rectangle "**GATE 3: Certificación TO-BE (Semana S24)**\n--\n<i>Entrada:</i> Culminación de PKG-05 y Rollout Nacional completado\n<i>Criterios de Conformidad:</i>\n• Cobertura del 100% de operadores y rutas nacionales B2B\n• Monitoreo de telemetría activa en tiempo real y alertas de SLA\n• Cero impacto o degradación en rendimiento de SAP R3\n• Cumplimiento integral de los 24 Requerimientos (REQ-01..24)\n<i>Salida:</i> Firma de Aceptación Operativa y Handover a Operaciones" as GATE3 #D5F5E3
+}
+
+package "5. CICLO DE VIDA POST-IMPLEMENTACIÓN Y TRASPASO A FASE H" as SEC_POST #E8DAEF {
+    rectangle "**Post-Implementation Review (PIR)**\n(Semanas +4 y +12 tras Go-Live)\n--\n• Evaluación de KPIs de Negocio (KPI-01..08) y Objetivos (OBJ-01..08)\n• Medición de reducción de quejas y efectividad de entrega de pedidos\n• Registro de Lecciones Aprendidas y Actualización del Repositorio EA" as PIR #D2B4DE
+
+    rectangle "**Traspaso a Gobernanza del Cambio Continuo (Fase H)**\n--\n• Monitoreo continuo de SLAs y contratos de integración\n• Gestión de Solicitudes de Cambio (RFC Tipo 1, 2 y 3)\n• Mantenimiento evolutivo de los adaptadores B2B" as FASE_H #D2B4DE
+}
+
+' Relaciones y flujo de control
+BOARD -down-> PMO_QA : "Delega seguimiento y auditoría"
+BOARD -down-> SEC_CONTRATOS : "Emite y firma Contratos de Arquitectura"
+
+AC_P1 -down-> GATE1 : "Evidencias técnicas"
+AC_P2 -down-> GATE1 : "Microservicios verificados"
+AC_P3 -down-> GATE1 : "Adaptadores validados"
+
+GATE1 -down-> AC_P4 : "Habilita onboarding externo"
+AC_P4 -down-> GATE2 : "Evidencias piloto B2B"
+GATE2 -down-> AC_P5 : "Habilita telemetría nacional"
+AC_P5 -down-> GATE3 : "Evidencias TO-BE"
+
+GATE3 -down-> PIR : "Transición formal a operaciones"
+PIR -right-> FASE_H : "Insumos para Fase H (Change Management)"
+
+footer
+TOGAF ADM Fase G — Gobernanza de la Implementación — Yanbal Perú / Unique S.A.
+Diagrama derivado: DIAG-10.1 (Procede de DIAG-10 | Tipo UML: Paquetes / Actividades)
+endfooter
+
+@enduml
+

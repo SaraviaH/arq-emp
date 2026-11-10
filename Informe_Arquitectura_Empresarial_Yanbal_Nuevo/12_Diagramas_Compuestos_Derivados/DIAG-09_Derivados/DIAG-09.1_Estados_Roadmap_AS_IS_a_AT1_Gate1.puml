@@ -1,0 +1,44 @@
+@startuml DIAG-09_1_Estados_Roadmap_AS_IS_a_AT1_Gate1
+' ============================================================================
+' ID Diagrama Derivado: DIAG-09.1
+' Nombre: Roadmap Estratégico (Parte 1): De Línea Base (AS-IS) a Arquitectura de Transición 1 (AT-1) y Gate 1 (Semanas S1 a S12)
+' Tipo de Diagrama UML: Diagrama de Máquina de Estados / Roadmap Temporalizado (OMG UML 2.5.1 — State Machine Diagram | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-09 — Diagrama del Roadmap Estratégico de Implementación y Arquitecturas de Transición
+' Archivo Original de Origen: 07_Fase_F_Planificacion_de_Migracion/diagramas/DIAG-09_Roadmap_Estrategico_Implementacion.puml
+' ============================================================================
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam packageStyle rectangle
+
+skinparam rectangle {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    FontColor #1D2A44
+}
+
+title DIAG-09.1 — Diagrama UML de Máquina de Estados / Roadmap (Parte 1): De Línea Base AS-IS a AT-1 y Gate 1 (S1 a S12)\n[Derivado de DIAG-09 | Tipo UML: Máquina de Estados | Fase F — Apartados 7.1 y 7.3]
+
+' ============================================================================
+' ESTADO 0: LÍNEA BASE ACTUAL (AS-IS)
+' ============================================================================
+rectangle "**ESTADO INICIAL: LÍNEA BASE ACTUAL (AS-IS)**\n* Desfase de actualización de estados de hasta ~2 horas en seguimiento.\n* Reportes por lotes (batch) heterogéneos y dispersos desde transportistas.\n* Sin marcas temporales duales (T0/T1) ni medición objetiva de latencia.\n* Consultas en CELLFORCE (SIS-09) desfasadas ante reclamos de clientes.\n* Notificaciones manuales informales ante incidencias y logística inversa." as State_ASIS #FCE4EC
+
+' ============================================================================
+' FASE DE TRANSICIÓN 1: NÚCLEO INTERNO Y GOBERNANZA (AT-1)
+' ============================================================================
+rectangle "**ARQUITECTURA DE TRANSICIÓN 1 (AT-1): NÚCLEO MTD Y GOBERNANZA INTERNA**\n[Horizonte Referencial: Semanas Relativas S1 a S12]\n--\n**Paquetes Involucrados:**\n* **PKG-01:** Contratos JSON canónicos (INT-DAT-01..08) y API Gateway en DMZ corporativa.\n* **PKG-02:** Microservicios MTD (CMP-ING-01, COR-02, VAL-03, AUD-04, PUB-05) y DB-EVENTSTORE.\n* **PKG-03 (Fase A):** Adaptador emisor ADP-SPY (Estado 2 con marca T0) y conector solo lectura ADP-SAP.\n--\n**Capacidades Habilitadas:**\n* Ingesta, normalización y correlación lógica (Código UA - Picking - Número Pedido) en bus SIS-05.\n* Aislamiento estricto de base de datos de SAP R3 verificado por Almacén Lurín (REQ-RES-002).\n* Repositorio de eventos inmutable operativo con soporte de firmas de idempotencia SHA-256." as State_AT1 #E3F2FD
+
+' ============================================================================
+' PUNTO DE CONTROL 1: GATING AT-1 -> AT-2
+' ============================================================================
+rectangle "**PUNTO DE CONTROL 1 (GATE 1: Hito M1 — Cierre S12)**\n* Certificación técnica de API Gateway y Contratos Canónicos por TI (ACT-12).\n* Verificación de CERO escrituras sobre SAP R3 por Almacén Lurín (ACT-03).\n* Pruebas de integración interna exitosas entre SPY, Bus SIS-05 y MTD." as Gate_1 #FFF9C4
+
+' ============================================================================
+' SECUENCIA Y TRANSICIONES (PARTE 1)
+' ============================================================================
+State_ASIS -down-> State_AT1 : Inicio de Migración (S1)\nEjecución PKG-01, PKG-02 y PKG-03 (Lurín)
+State_AT1 -down-> Gate_1 : Evaluación Formal de Salida
+
+@enduml
+

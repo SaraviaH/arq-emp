@@ -1,0 +1,68 @@
+@startuml DIAG-11_1_Actividades_Monitoreo_Continuo_y_Evaluacion_RFC
+' ============================================================================
+' ID Diagrama Derivado: DIAG-11.1
+' Nombre: Gestión del Cambio (Parte 1): Monitoreo Continuo por Sensores de Arquitectura y Evaluación Multidimensional de Solicitudes de Cambio (RFC)
+' Tipo de Diagrama UML: Diagrama de Actividades / Flujo de Proceso (OMG UML 2.5.1 — Activity Diagram | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-11 — Marco de Gestión Continua del Cambio de Arquitectura y Ciclo Evolutivo ADM
+' Archivo Original de Origen: 09_Fase_H_Gestion_del_Cambio/diagramas/DIAG-11_Gestion_del_Cambio_y_Ciclo_Evolutivo_ADM.puml
+' ============================================================================
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 11
+skinparam roundCorner 8
+skinparam shadowing false
+skinparam ArrowColor #2C3E50
+skinparam ArrowThickness 1.5
+
+skinparam rectangle {
+    BackgroundColor #F8F9FA
+    BorderColor #BDC3C7
+    FontColor #2C3E50
+}
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #7F8C8D
+    FontColor #2C3E50
+    FontStyle bold
+}
+
+header
+<b>PROYECTO:</b> Plan de Mejora Arquitectónica de Trazabilidad B2B — Yanbal Perú (Unique S.A.)
+<b>FASE H:</b> Gestión del Cambio de Arquitectura (TOGAF ADM) — Derivado de DIAG-11
+endheader
+
+title <b>DIAG-11.1 — DIAGRAMA UML DE ACTIVIDADES (PARTE 1): MONITOREO CONTINUO DE SENSORES Y CIRCUITO DE SOLICITUDES DE CAMBIO (RFC)</b>
+
+package "1. MONITOREO CONTINUO Y SENSORES DE ARQUITECTURA" as SEC_MONITOREO #EBF5FB {
+    rectangle "**Telemetría de SLAs y Latencia**\n--\n• CMP-AUD-04: Cálculo en vivo de ΔT = T1 - T0\n• Alertas tempranas si latencia > 25 min\n• Prometheus / Grafana Dashboard" as MON_SLA #D4E6F1
+    
+    rectangle "**Auditoría Transaccional y Seguridad**\n--\n• ACT-03 / ACT-11: Cero escrituras en SAP R3\n• Inspección de permisos de ADP-SAP en DB\n• Monitoreo de tráfico perimetral TLS 1.3 / mTLS" as MON_SEC #D4E6F1
+
+    rectangle "**Calidad de Eventos y Call Center**\n--\n• CMP-VAL-03: Integridad de secuencia causal\n• CMP-ING-01: Tasa de eventos duplicados (< 1%)\n• SIS-09 (CELLFORCE): Tickets por desconocimiento" as MON_BIZ #D4E6F1
+
+    rectangle "**Evolución del Ecosistema de Transporte**\n--\n• Nuevos operadores logísticos asociados (ACT-07)\n• Cambios en plataformas de terceros (SIS-06/08)\n• Solicitudes operativas de Distribución (ACT-06)" as MON_EXT #D4E6F1
+}
+
+package "2. CIRCUITO DE SOLICITUDES DE CAMBIO (RFC - REQUEST FOR ARCHITECTURE CHANGE)" as SEC_RFC #FEF9E7 {
+    rectangle "**Recepción y Registro Formal de RFC**\n--\n• Identificador único: RFC-ARCH-XXXX\n• Registro de origen, justificación y alcance preliminar\n• Custodia por la PMO / Secretaría Técnica (ACT-12 / ACT-15)" as RFC_REG #FCF3CF
+
+    rectangle "**Evaluación de Impacto Arquitectónico Multidimensional**\n--\n• Negocio: Flujos B2B en Lurín, lead times y actores (ACT-01..10)\n• Datos y Apps: Esquemas CloudEvents, microservicios MTD y adaptadores\n• Tecnología y Seguridad: Cómputo, redes, cifrado y blindaje SAP R3\n• Gobernanza: Contratos de Arquitectura (AC-PKG-XX) y SLAs (<= 30 min)" as RFC_EVAL #FCF3CF
+}
+
+' Flujos y conexiones (Parte 1)
+MON_SLA -down-> RFC_REG : "Degradación de métricas"
+MON_SEC -down-> RFC_REG : "Auditoría de seguridad"
+MON_BIZ -down-> RFC_REG : "Anomalías operativas"
+MON_EXT -down-> RFC_REG : "Solicitud de nuevo socio"
+
+RFC_REG -down-> RFC_EVAL : "Pasa a dictamen de impacto"
+
+footer
+TOGAF ADM Fase H — Gestión del Cambio de Arquitectura — Yanbal Perú / Unique S.A.
+Diagrama derivado: DIAG-11.1 (Procede de DIAG-11 | Tipo UML: Actividades)
+endfooter
+
+@enduml
+

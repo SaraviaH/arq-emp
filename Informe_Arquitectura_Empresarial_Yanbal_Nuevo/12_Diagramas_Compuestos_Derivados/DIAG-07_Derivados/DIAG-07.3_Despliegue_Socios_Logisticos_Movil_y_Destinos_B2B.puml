@@ -1,0 +1,79 @@
+@startuml DIAG-07_3_Despliegue_Socios_Logisticos_Movil_y_Destinos_B2B
+' ============================================================================
+' ID Diagrama Derivado: DIAG-07.3
+' Nombre: Despliegue Tecnológico TO-BE (Parte 3): Infraestructura de Socios Logísticos (Node_Logistics), Dispositivos Móviles en Ruta y Destinatarios B2B (Node_Destinos)
+' Tipo de Diagrama UML: Diagrama de Despliegue (OMG UML 2.5.1 — Deployment Diagram | Categoría: Estructural)
+' Diagrama General del que Procede: DIAG-07 — Diagrama UML de Despliegue de la Arquitectura Tecnológica Objetivo (TO-BE)
+' Archivo Original de Origen: 05_Fase_D_Arquitectura_Tecnologica/diagramas/DIAG-07_Despliegue_Arquitectura_Tecnologica_TO_BE.puml
+' ============================================================================
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam node {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    FontColor #1D2A44
+    FontStyle bold
+}
+skinparam artifact {
+    BackgroundColor #EDF2F4
+    BorderColor #8D99AE
+    FontColor #2B2D42
+    FontSize 11
+}
+skinparam database {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #174EA6
+    FontStyle bold
+}
+
+title DIAG-07.3 — Diagrama UML de Despliegue TO-BE (Parte 3): Socios Logísticos Externos, Móviles Store-and-Forward y Destinos B2B\n[Derivado de DIAG-07 | Tipo UML: Despliegue | Fase D — Apartado 5.6 | REQ-RES-004: Sin GPS continuo | ASM-16: Store-and-Forward]
+
+' ============================================================================
+' NODO 3: SOCIOS LOGÍSTICOS EXTERNOS (TRANSPORTE MULTIMODAL TERCERIZADO)
+' ============================================================================
+node "<<external: third-party logistics>>\nInfraestructura de Socios Logísticos de Transporte (ACT-07)\n[Transporte Terrestre, Bimodal y Aéreo a 24 Departamentos (REQ-RES-004)]" as Node_Logistics {
+    
+    node "<<server: partner>>\nSistemas Centrales de Socios Logísticos" as Srv_Partner {
+        artifact "<<system: partner>>\nSIS-08: DRIVING (TMS Externo)\n[Despacho y Monitoreo de Viajes (ASM-07)]" as Art_DRIVING
+        artifact "<<system: partner>>\nSIS-06: NSDG (Sistema Transporte)\n[Desarrollo por Contratista (ASM-02)]" as Art_NSDG
+        artifact "<<adapter: proposed>>\nADP-LOG: Agente Cliente HTTPS\n[Publicación Webhook hacia API Gateway Yanbal]" as Art_ADPLOG
+    }
+    
+    node "<<device: mobile>>\nDispositivos Móviles en Ruta\n[Conductores y Transportistas en Tránsito Nacional]" as Dev_CarrierMobile {
+        artifact "<<mobile-app: partner>>\nAplicativo Móvil de Transporte\n[Captura Evento y Marca T0 Local]" as Art_MobileApp
+        database "<<local-storage>>\nBuffer Local Cifrado\n[Store-and-Forward Offline (ASM-16)]" as DB_LocalBuffer
+    }
+}
+
+' ============================================================================
+' NODO 4: DESTINATARIOS EMPRESARIALES B2B
+' ============================================================================
+node "<<client: endpoint>>\nDestinatarios Empresariales B2B (ACT-09)\n[Distribuidoras y Sedes Empresariales en 24 Departamentos]" as Node_Destinos {
+    artifact "<<browser / app>>\nPortal Comercial / Consulta Web\n[Visibilidad de Estado y Lead Time en <= 30 min]" as Art_ClientPortal
+}
+
+' ============================================================================
+' NODOS DE INTERFAZ EN PERÍMETRO DMZ Y NUBE CORPORATIVA (PUENTES CON DIAG-07.2)
+' ============================================================================
+node "<<cloud: hybrid / enterprise>>\nNube Corporativa Yanbal - Plataforma de Integración y MTD" as Node_Cloud {
+    node "<<dmz: security>>\nPerímetro Seguro de Ingesta y API Gateway" as Node_DMZ {
+        artifact "<<gateway: proposed>>\nAPI Gateway Corporativo\n[Terminación TLS 1.3 | WAF | Rate Limiting]\n[Autenticación mTLS / OAuth 2.0 Token Check]" as Art_APIGW
+    }
+    node "<<server: enterprise-apps>>\nServidores de Aplicaciones Corporativas Yanbal" as Node_CorpApps {
+        artifact "<<system: SoR>>\nSIS-07: ENSDY\n[Sistema de Trackeo y Seguimiento (ASM-02)]" as Art_ENSDY
+    }
+}
+
+' Comunicaciones con Socios Logísticos Externos
+Dev_CarrierMobile --> Srv_Partner : Red Celular 4G/5G (HTTPS)\n[Reporte de eventos en ruta y entrega]
+Dev_CarrierMobile ..> DB_LocalBuffer : Almacenamiento Local Offline\n[Buffer Store-and-Forward ante pérdida de señal (ASM-16)]
+Srv_Partner --> Art_APIGW : Internet Seguro / HTTPS (TLS 1.3)\n[Autenticación mTLS / OAuth 2.0 (REQ-RNF-003)]\n[Ingesta eventos Estado 4 y 5 en <= 30 min]
+
+' Consulta de Destinatarios B2B
+Art_ClientPortal --> Art_APIGW : HTTPS (TLS 1.3 / Navegador Seguro)\n[Consulta por Número de Pedido / Lead Time (REQ-FUN-002)]
+Art_APIGW --> Art_ENSDY : Proxy Reverso Seguro\n[Respuesta de estatus consolidado]
+
+@enduml
+

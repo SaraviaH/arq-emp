@@ -1,0 +1,74 @@
+@startuml DIAG-07_1_Despliegue_OnPremise_Lurin_e_Interconexion
+' ============================================================================
+' ID Diagrama Derivado: DIAG-07.1
+' Nombre: Despliegue Tecnológico TO-BE (Parte 1): Entorno On-Premise Lurín (Node_Lurin) e Integración con Nube Corporativa
+' Tipo de Diagrama UML: Diagrama de Despliegue (OMG UML 2.5.1 — Deployment Diagram | Categoría: Estructural)
+' Diagrama General del que Procede: DIAG-07 — Diagrama UML de Despliegue de la Arquitectura Tecnológica Objetivo (TO-BE)
+' Archivo Original de Origen: 05_Fase_D_Arquitectura_Tecnologica/diagramas/DIAG-07_Despliegue_Arquitectura_Tecnologica_TO_BE.puml
+' ============================================================================
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam node {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    FontColor #1D2A44
+    FontStyle bold
+}
+skinparam artifact {
+    BackgroundColor #EDF2F4
+    BorderColor #8D99AE
+    FontColor #2B2D42
+    FontSize 11
+}
+
+title DIAG-07.1 — Diagrama UML de Despliegue TO-BE (Parte 1): Instalaciones On-Premise Lurín e Interconexión Segura con Nube Corporativa\n[Derivado de DIAG-07 | Tipo UML: Despliegue | Fase D — Apartado 5.6 | REQ-RES-002: Sin escritura MTD -> SAP R3]
+
+' ============================================================================
+' NODO 1: ON-PREMISE LURÍN (INSTALACIONES INDUSTRIALES Y ALMACÉN)
+' ============================================================================
+node "<<datacenter: On-Premise>>\nInstalaciones Industriales y Almacén Lurín\n[ACT-03: Almacén | ACT-04: Picking CD | ACT-05: Despacho]" as Node_Lurin {
+    
+    node "<<server: On-Premise>>\nServidor ERP Corporativo Lurín\n[Entorno Productivo Crítico]" as Srv_SAP {
+        artifact "<<system: SoR>>\nSIS-01: SAP R3\n[Inventario, Facturación y Stock PT]\nOperado exclusivamente por ACT-03 (REQ-RES-002)" as Art_SAP
+        artifact "<<adapter>>\nADP-SAP: Conector RFC SAP\n[Consulta solo lectura metadatos]\n(Sin escritura directa REQ-RES-002)" as Art_ADPSAP
+    }
+    
+    node "<<server: On-Premise>>\nServidor BWMS Lurín (Centro de Distribución)" as Srv_SPY {
+        artifact "<<system: SoR>>\nSIS-02: SPY (BWMS In-House)\n[Líneas de Picking, Pesos/Volúmenes y Cajas 1 a 8]" as Art_SPY
+        artifact "<<adapter: proposed>>\nADP-SPY: Agente Emisor de Eventos\n[Captura Estado 2 y marca local T0]" as Art_ADPSPY
+    }
+    
+    node "<<device: industrial>>\nTerminales Móviles de Almacén" as Dev_RF {
+        artifact "<<client>>\nSIS-10: Terminales RF\n[Lectura Código UA en Pallets y Cajas Master]" as Art_RF
+    }
+    
+    node "<<workstation>>\nEstación de Control de Despacho" as WS_Despacho {
+        artifact "<<client>>\nTerminal Zona de Despacho\n[ACT-05: Zonificación hacia 24 Dptos]" as Art_DespachoWS
+    }
+}
+
+' ============================================================================
+' NODOS DE INTERFAZ EN NUBE CORPORATIVA (PUENTES CON DIAG-07.2)
+' ============================================================================
+node "<<cloud: hybrid / enterprise>>\nNube Corporativa Yanbal - Plataforma de Integración y MTD\n[TI y Arquitectura: ACT-12 | Seguridad: ACT-11]" as Node_Cloud {
+    node "<<cluster: integration>>\nMiddleware Corporativo de Mensajería" as Node_Middleware {
+        artifact "<<middleware: SoR>>\nSIS-05: Bus de Integración Corporativo\n[Tópicos Pub/Sub de Eventos de Despacho B2B]\n[Colas dedicadas y Dead Letter Queue (DLQ)]" as Art_Bus
+    }
+    node "<<cluster: compute>>\nClúster de Microservicios / Componentes MTD\n[Capacidad Lógica de Integración Propuesta (DEC-02)]" as Node_MTD {
+        artifact "<<mediator: proposed>>\nCMP-COR-02: Correlación Lógica\n[Enlace Código UA - Picking - Número Pedido]" as Art_COR02
+    }
+}
+
+' Comunicaciones dentro de Lurín
+Art_RF --> Art_SAP : WiFi Industrial WPA3 / Telnet Emulation\n[Registro Código UA en vivo]
+Art_DespachoWS --> Art_SPY : LAN Corporativa (TCP/IP)\n[Consulta de Pedidos y Zonificación]
+Art_SAP ..> Art_SPY : LAN Gigabit Lurín\n[Sincronización Stock PT Liberado]
+
+' Enlace Lurín <-> Nube Corporativa
+Srv_SPY --> Art_Bus : Enlace Seguro VPN IPsec (TLS 1.3)\n[Descenso órdenes Maya->SPY / Evento Estado 2 T0]
+Art_ADPSAP ..> Art_COR02 : VPN IPsec / RFC Solo Lectura\n[Consulta metadatos UA / Sin escritura REQ-RES-002]
+Art_Bus ..> Node_Lurin : Notificación Asíncrona a ACT-03\n[Aviso de retorno físico | ACT-03 registra en SAP]
+
+@enduml
+

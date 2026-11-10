@@ -1,0 +1,49 @@
+@startuml DIAG-06_3_Secuencia_TO_BE_Incidencias_Retorno_MTD_R06
+' ============================================================================
+' ID Diagrama Derivado: DIAG-06.3
+' Nombre: Secuencia TO-BE (Parte 3): Flujo de Excepción en Ruta y Notificación Operativa Previa de Logística Inversa (MTD-R06)
+' Tipo de Diagrama UML: Diagrama de Secuencia (OMG UML 2.5.1 — Sequence Diagram | Categoría: Interacción)
+' Diagrama General del que Procede: DIAG-06 — Diagrama UML de Secuencia del Flujo Objetivo Propuesto (TO-BE): Captura, Correlación, Propagación (Delta T <= 30 min) y Notificación de Retorno mediante Capacidad Propuesta MTD
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-06_Secuencia_TO_BE.puml
+' ============================================================================
+skinparam shadowing false
+autonumber 38
+
+title DIAG-06.3 — Diagrama UML de Secuencia TO-BE (Parte 3 - PROPUESTA): Incidencia en Ruta y Notificación Acotada de Retorno (MTD-R06)\n[Derivado de DIAG-06 | Tipo UML: Secuencia | Apartados 3.4 y 3.6.2 | Mensajes 38 al 47 | Sin escritura MTD -> SAP R3 REQ-RES-002]
+
+actor "ACT-03: Área de\nAlmacén PT" as ACT03 #FFF8E1
+participant "SIS-01: SAP R3\n[Exclusivo ACT-03]" as SIS01 #E3F2FD
+participant "SIS-05: Bus de\nIntegración [ASM-08]" as SIS05 #E3F2FD
+participant "Capacidad Propuesta MTD\n(DEC-02: MTD-R01 a MTD-R06)" as MTD #E8F5E9
+actor "ACT-06: Área de\nDistribución" as ACT06 #FFF8E1
+actor "ACT-07: Socio\nLogístico" as ACT07 #FFF8E1
+
+box "Sistemas de Transporte y Trackeo [Sujetos a validación ASM-02 / ASM-07]" #FFF3E0
+  participant "SIS-08: DRIVING\n[ASM-07]" as SIS08 #FFF8E1
+  participant "SIS-07: ENSDY\n[ASM-02]" as SIS07 #FFF8E1
+end box
+
+participant "SIS-09: CELLFORCE\n[ASM-06]" as SIS09 #E3F2FD
+actor "ACT-09: Destinatario\nEmpresarial B2B [AC]" as ACT09 #FFF8E1
+
+== Transporte Multimodal, Entrega B2B (Delta T <= 30 min), Consulta y Logística Inversa (PROC-04 y PROC-05) ==
+group Flujo de Excepción Propuesto: Incidencia en Ruta y Notificación Acotada de Logística Inversa (MTD-R06)
+  opt Si el envío llegó hasta el punto de destino empresarial [Confirmado TO 20:18-20:25]
+    ACT06 -> ACT09 : [Confirmado] Corroboración de incidencia con el destinatario afectado [ASM-15]
+  end
+  ACT07 --> SIS08 : [Confirmado + T0 Propuesto] Registro de causal e inicio de proceso de logística inversa con marca T0 [ASM-02, ASM-07]
+  SIS08 --> SIS05 : [Propuesto] Publicación de evento de incidencia/retorno hacia el Bus de Integración
+  SIS05 --> MTD : [Propuesto MTD-R06] Captura y correlación del evento de incidencia y retorno
+  MTD --> SIS05 : [Propuesto MTD-R06] Evento correlacionado (T1, <= 30 min) y orden de notificación operativa a ACT-03
+  SIS05 --> SIS07 : [Propuesto MTD-R06] Visibilidad inmediata de incidencia/retorno para ACT-06
+  SIS05 --> SIS09 : [Propuesto MTD-R06] Visibilidad inmediata en CELLFORCE para atención de ACT-08
+  SIS05 --> ACT03 : [Propuesto MTD-R06] SOLO NOTIFICACIÓN OPERATIVA PREVIA de retorno entrante (canal sujeto a ASM-08; SIN escritura directa en SIS-01 SAP R3 — REQ-RES-002)
+  note over ACT06
+    [Confirmado — Fuera del MTD] Activación paralela por canales vigentes
+    de reposición del pedido para no perjudicar a ACT-09 [TO 20:30-20:45]
+  end note
+  ACT07 -> ACT03 : [Confirmado TO 20:48-20:55] Retorno físico del pedido afectado al Almacén de Lurín
+  ACT03 -> SIS01 : [Confirmado — Fuera del MTD] Evaluación propia por calidad y seguridad patrimonial operando SAP R3 en exclusividad (reingreso si procede o seguro/siniestro si no procede) [TO 8:50, 20:55-21:25]
+end
+@enduml
+

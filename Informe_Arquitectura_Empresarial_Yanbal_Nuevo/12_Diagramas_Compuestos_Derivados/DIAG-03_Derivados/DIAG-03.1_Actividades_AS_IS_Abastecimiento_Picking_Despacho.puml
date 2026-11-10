@@ -1,0 +1,40 @@
+@startuml DIAG-03_1_Actividades_AS_IS_Abastecimiento_Picking_Despacho
+' ============================================================================
+' ID Diagrama Derivado: DIAG-03.1
+' Nombre: Actividades AS-IS (Parte 1): Abastecimiento Primario, Facturación B2B, Picking/Packing y Salida de Despacho (Estados 1 al 3)
+' Tipo de Diagrama UML: Diagrama de Actividades con Calles de Responsabilidad / Particiones (OMG UML 2.5.1 — Activity Diagram with Swimlanes | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-03 — Diagrama UML de Actividades del Proceso de Negocio Actual (AS-IS): Preparación, Despacho, Transporte B2B y Logística Inversa
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-03_Actividades_AS_IS.puml
+' ============================================================================
+skinparam shadowing false
+
+title DIAG-03.1 — Diagrama UML de Actividades AS-IS (Parte 1): Abastecimiento, Facturación B2B, Picking/Packing y Despacho (Estados 1 a 3)\n[Derivado de DIAG-03 | Tipo UML: Actividades con Particiones (Swimlanes) | Apartados 3.3 y 3.5.1]
+
+|ACT-02: Área de Envasado (Frontera de Contexto)|
+start
+fork
+  :Conformar cajas master mono SKU selladas\nidentificadas con etiqueta Código UA [TO 3:10-3:20, 7:11];
+  |ACT-03: Área de Almacén de PT (SAP R3 SIS-01 exclusivo)|
+  :Capturar Código UA con Terminales RF (SIS-10) y registrar ingreso\nen línea y en vivo en SAP R3 (SIS-01, exclusivo ACT-03, REQ-RES-002);\nControlar 3 estados (libre disposición, control de calidad, bloqueado)\ny sincronizar stock liberado con SPY (SIS-02) [TO 7:28-10:55];
+  note right
+    El desfase interno de hasta 6 h en el registro
+    de merma operativa al cierre de jornada [TO 12:38-14:14]
+    es conciliación interna de inventario (ASM-04).
+  end note
+  :Trasladar cajas master mono SKU selladas\nsin saldos hacia el Centro de Distribución (REQ-RES-003) [TO 3:40-3:52];
+fork again
+  |ACT-09: Destinatario Empresarial B2B / Canal Comercial (SIS-03, SIS-04)|
+  :Generar y facturar orden comercial en Maya (SIS-03)\nintegrada con ZapCommerce (SIS-04, ASM-08)\n**Estado 1: Pedido facturado** [TO 14:43-15:06, 18:41];
+  :Descender orden con Número de Pedido a través del\nBus de Integración (SIS-05) hacia SPY (SIS-02) [TO 15:06, 16:58];
+end fork
+
+|ACT-04: CD - Línea de Picking y Packing (SPY SIS-02)|
+:Consolidar peso y volumetría teórica de los artículos\npara asignar 1 de los 8 tipos de caja [TO 15:30-16:17; sistema exacto ASM-08/11];
+:Abrir cajas master mono SKU en el CD, ejecutar picking unitario\nguiado por SPY (SIS-02) y empacar amarrado al Número de Pedido\n(con destinatario, dirección completa y socio logístico)\n**Estado 2: Elaboración o en preparación** [TO 4:01, 16:30-18:57; emisor ASM-15];
+
+|ACT-05: Zona de Despacho|
+:Recibir pedido cerrado y realizar zonificación geográfica\nhacia los 24 departamentos del Perú [TO 17:26-19:23];
+:Consolidar salida y entregar físicamente la carga al socio logístico\n(integración declarada con NSDG SIS-06 sujeto ambiguo ASM-11; DRIVING SIS-08 ASM-07)\n**Estado 3: Pedido despachado** [TO 18:57-19:44; emisor ASM-15];
+stop
+@enduml
+

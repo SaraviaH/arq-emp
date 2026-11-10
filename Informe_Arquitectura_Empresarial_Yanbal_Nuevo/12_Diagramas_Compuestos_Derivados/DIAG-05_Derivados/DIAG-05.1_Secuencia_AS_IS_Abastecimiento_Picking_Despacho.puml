@@ -1,0 +1,53 @@
+@startuml DIAG-05_1_Secuencia_AS_IS_Abastecimiento_Picking_Despacho
+' ============================================================================
+' ID Diagrama Derivado: DIAG-05.1
+' Nombre: Secuencia AS-IS (Parte 1): Abastecimiento Primario (PROC-01), Preparación en CD (PROC-02) y Salida de Despacho (PROC-03)
+' Tipo de Diagrama UML: Diagrama de Secuencia (OMG UML 2.5.1 — Sequence Diagram | Categoría: Interacción)
+' Diagrama General del que Procede: DIAG-05 — Diagrama UML de Secuencia del Flujo Actual (AS-IS): Despacho, Actualización Diferida de Estados (~2 h) y Consulta
+' Archivo Original de Origen: 03_Fase_B_Arquitectura_de_Negocio/diagramas/DIAG-05_Secuencia_AS_IS.puml
+' ============================================================================
+skinparam shadowing false
+autonumber 1
+
+title DIAG-05.1 — Diagrama UML de Secuencia AS-IS (Parte 1): Abastecimiento Primario (PROC-01), Picking/Packing (PROC-02) y Salida de Despacho (PROC-03)\n[Derivado de DIAG-05 | Tipo UML: Secuencia | Apartados 3.3 y 3.6.1 | Mensajes 1 al 11]
+
+actor "ACT-03: Área de\nAlmacén PT" as ACT03 #FFF8E1
+participant "SIS-01: SAP R3\n[Exclusivo ACT-03]" as SIS01 #E3F2FD
+participant "SIS-03: Maya" as SIS03 #E3F2FD
+participant "SIS-04: ZapCommerce\n[ASM-08]" as SIS04 #E3F2FD
+participant "SIS-05: Bus de\nIntegración [ASM-08]" as SIS05 #E3F2FD
+participant "SIS-02: SPY\n(BWMS)" as SIS02 #E3F2FD
+actor "ACT-04: CD Picking\ny Packing" as ACT04 #FFF8E1
+actor "ACT-05: Zona de\nDespacho" as ACT05 #FFF8E1
+actor "ACT-07: Socio\nLogístico" as ACT07 #FFF8E1
+
+box "Sistemas de Transporte y Trackeo [Separados bajo ASM-02 / ASM-07]" #FFF3E0
+  participant "SIS-06: NSDG\n[ASM-02, ASM-11]" as SIS06 #FFF8E1
+end box
+
+actor "ACT-09: Destinatario\nEmpresarial B2B [AC]" as ACT09 #FFF8E1
+
+== Precondición Operativa: Abastecimiento Primario (PROC-01) ==
+ACT03 -> SIS01 : Ingreso en línea y en vivo de cajas mono SKU leyendo Código UA (vía Terminales RF SIS-10) [Confirmado TO 7:28-8:55, REQ-RES-002]
+SIS01 -> SIS02 : Sincronización de stock liberado (libre disposición) [Confirmado TO 8:50-9:12; protocolo pendiente ASM-08]
+ACT03 -> ACT04 : Traslado físico de cajas master mono SKU selladas sin saldos [Confirmado TO 3:40-3:52, REQ-RES-003]
+
+== Generación del Pedido, Picking y Packing en CD (PROC-02) ==
+ACT09 -> SIS03 : Generación de pedido comercial en alcance B2B [Confirmado TO 14:43; alcance B2B AC / ASM-01]
+SIS03 -> SIS04 : Integración comercial de la orden (Estado 1: Pedido facturado) [Confirmado TO 14:43-15:06, 18:41; ASM-08]
+SIS04 -> SIS05 : Publicación de la orden con Número de Pedido hacia el bus [Confirmado TO 15:06, 16:58]
+SIS05 -> SIS02 : Descenso de orden a SPY y cálculo volumétrico de 1 de 8 cajas [Confirmado TO 15:06-16:17; ASM-08, ASM-11]
+SIS02 -> ACT04 : Asignación de tareas unitarias en línea de picking por Número de Pedido [Confirmado TO 17:03-17:20]
+ACT04 -> SIS02 : Apertura de cajas master y empaque (Estado 2: Elaboración o en preparación) [Confirmado TO 4:01, 18:49; emisor ASM-15]
+
+== Zonificación Nacional hacia 24 Departamentos y Salida de Despacho (PROC-03) ==
+note over SIS01, SIS06
+  Integración declarada con SIS-06: NSDG [TO 8:50-9:37]:
+  El sujeto gramatical entre SIS-01 (SAP R3) y SIS-02 (SPY) es ambiguo (ASM-11)
+  y la mediación vía SIS-05 está sujeta a validación (ASM-08).
+  No se traza conexión directa no confirmada.
+end note
+ACT04 -> ACT05 : Entrega de pedido cerrado con Número de Pedido, dirección completa y socio logístico [Confirmado TO 17:26-18:26]
+ACT05 -> ACT07 : Zonificación hacia 24 departamentos y entrega física de carga (Estado 3: Pedido despachado) [Confirmado TO 18:57-19:44; registro en SIS-06/08 pendiente ASM-02, ASM-07, ASM-15]
+@enduml
+

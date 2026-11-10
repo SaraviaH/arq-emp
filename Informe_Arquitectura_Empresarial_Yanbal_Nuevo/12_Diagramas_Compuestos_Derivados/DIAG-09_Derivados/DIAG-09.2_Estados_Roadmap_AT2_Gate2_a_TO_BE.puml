@@ -1,0 +1,50 @@
+@startuml DIAG-09_2_Estados_Roadmap_AT2_Gate2_a_TO_BE
+' ============================================================================
+' ID Diagrama Derivado: DIAG-09.2
+' Nombre: Roadmap Estratégico (Parte 2): De Gate 1 a Arquitectura de Transición 2 (AT-2), Gate 2 y Arquitectura Objetivo (TO-BE) (Semanas S11 a S24)
+' Tipo de Diagrama UML: Diagrama de Máquina de Estados / Roadmap Temporalizado (OMG UML 2.5.1 — State Machine Diagram | Categoría: Comportamiento)
+' Diagrama General del que Procede: DIAG-09 — Diagrama del Roadmap Estratégico de Implementación y Arquitecturas de Transición
+' Archivo Original de Origen: 07_Fase_F_Planificacion_de_Migracion/diagramas/DIAG-09_Roadmap_Estrategico_Implementacion.puml
+' ============================================================================
+
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam packageStyle rectangle
+
+skinparam rectangle {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    FontColor #1D2A44
+}
+
+title DIAG-09.2 — Diagrama UML de Máquina de Estados / Roadmap (Parte 2): De Gate 1 a AT-2, Gate 2 y Arquitectura TO-BE (S11 a S24)\n[Derivado de DIAG-09 | Tipo UML: Máquina de Estados | Fase F — Apartados 7.1 y 7.3]
+
+' ============================================================================
+' PUNTO DE CONTROL 1: GATING AT-1 -> AT-2 (CONECTOR DE ENTRADA DESDE DIAG-09.1)
+' ============================================================================
+rectangle "**PUNTO DE CONTROL 1 (GATE 1: Hito M1 — Cierre S12)**\n* Certificación técnica de API Gateway y Contratos Canónicos por TI (ACT-12).\n* Verificación de CERO escrituras sobre SAP R3 por Almacén Lurín (ACT-03).\n* Pruebas de integración interna exitosas entre SPY, Bus SIS-05 y MTD." as Gate_1 #FFF9C4
+
+' ============================================================================
+' FASE DE TRANSICIÓN 2: INTEGRACIÓN EXTERNA Y PILOTO (AT-2)
+' ============================================================================
+rectangle "**ARQUITECTURA DE TRANSICIÓN 2 (AT-2): INTEGRACIÓN DE TRANSPORTE Y PILOTO**\n[Horizonte Referencial: Semanas Relativas S11 a S18]\n--\n**Paquetes Involucrados:**\n* **PKG-04:** Adaptador ADP-LOG para TMS externos (DRIVING/NSDG) y módulo Store-and-Forward.\n* **PKG-03 (Fase B):** Conector ADP-CRM hacia CELLFORCE (SIS-09) y suscripción de ENSDY (SIS-07).\n--\n**Capacidades Habilitadas:**\n* Ingesta de eventos de ruta y entrega (Estados 4 y 5) desde socios logísticos (ACT-07) con T0.\n* Tolerancia a zonas de sombra celular en rutas interprovinciales mediante buffer local offline (ASM-16).\n* Disponibilidad de estatus de despacho en CELLFORCE con latencia reducida en grupo piloto." as State_AT2 #E8F5E9
+
+' ============================================================================
+' PUNTO DE CONTROL 2: GATING AT-2 -> TARGET
+' ============================================================================
+rectangle "**PUNTO DE CONTROL 2 (GATE 2: Hito M2 — Cierre S18)**\n* Validación de sincronización en ráfagas Store-and-Forward sin pérdida de eventos.\n* Auditoría de seguridad informática sobre interfaces externas de transportistas (ACT-11).\n* Verificación empírica de latencia Delta T <= 30 min en rutas piloto de Lima y principales provincias." as Gate_2 #FFF9C4
+
+' ============================================================================
+' ESTADO FINAL: ARQUITECTURA OBJETIVO (TO-BE)
+' ============================================================================
+rectangle "**ARQUITECTURA OBJETIVO FINAL (TO-BE): COBERTURA NACIONAL Y GOBIERNO TOTAL**\n[Horizonte Referencial: Semanas Relativas S17 a S24 / Despliegue Pleno]\n--\n**Paquetes Involucrados:**\n* **PKG-05:** Gestión formal de incidencias (CMP-NOT-06), canal hacia Almacén y telemetría de SLAs.\n--\n**Capacidades Consolidadas:**\n* Cobertura operativa plena en los 24 departamentos del Perú bajo esquema B2B (REQ-RES-001).\n* Cumplimiento auditado de la ventana de actualización de estados de hasta 30 minutos (REQ-RNF-001).\n* Circuito formal de logística inversa con aviso anticipado a ACT-03 (sin tocar SAP R3).\n* Tableros telemáticos de control de SLA para Distribución (ACT-06) y pase formal de Seguridad (ACT-11)." as State_TOBE #E8F8F5
+
+' ============================================================================
+' SECUENCIA Y TRANSICIONES (PARTE 2)
+' ============================================================================
+Gate_1 -down-> State_AT2 : Aprobación de Pase (S12)\nEjecución PKG-04 y cierre PKG-03 (CRM)
+State_AT2 -down-> Gate_2 : Evaluación Formal de Piloto
+Gate_2 -down-> State_TOBE : Despliegue Nacional (S18..S24)\nEjecución PKG-05 y Estabilización
+
+@enduml
+
