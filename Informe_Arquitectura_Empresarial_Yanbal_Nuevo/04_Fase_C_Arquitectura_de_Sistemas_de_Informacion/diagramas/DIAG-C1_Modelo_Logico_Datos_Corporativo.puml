@@ -1,0 +1,171 @@
+@startuml DIAG-C1_Modelo_Logico_Datos_Corporativo
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam roundCorner 6
+skinparam shadowing false
+hide circle
+skinparam linetype ortho
+
+title DIAG-C1 — Modelo Lógico de Datos Corporativo de Distribución y Trazabilidad B2B (ENT-01 a ENT-10)
+
+package "Dominio Comercial y Pedidos (SoR: Maya SIS-03 / ZapCommerce SIS-04)" #E3F2FD {
+  entity "ENT-01: Pedido_Comercial" as ENT01 {
+    * **Numero_Pedido** : Varchar(20) <<PK>> [NOT NULL]
+    --
+    * Codigo_Cliente : Varchar(15) <<Index>> [NOT NULL]
+    * Fecha_Emision : DateTime UTC [NOT NULL]
+    * Tipo_Documento_Factura : Varchar(20) [NOT NULL]
+    * Direccion_Destino_Normalizada : Varchar(250) [NOT NULL]
+    * Ubigeo_Destino : Varchar(10) [NOT NULL]
+    * Departamento_Destino : Varchar(50) <<Index>> [NOT NULL]
+    * Provincia_Destino : Varchar(50) [NOT NULL]
+    * Distrito_Destino : Varchar(50) [NOT NULL]
+    * Tipo_Ciudad : Enum(Capital, Provincia) [NOT NULL]
+    * Modalidad_Transporte : Enum(Terrestre, Bimodal, Aerea) [NOT NULL]
+    * Fecha_Promesa_Entrega : DateTime UTC [NOT NULL]
+    * Estado_Actual : Enum(5 Estados Canonicos) <<Index>> [NOT NULL]
+  }
+
+  entity "ENT-02: Linea_Detalle_Pedido" as ENT02 {
+    * **ID_Linea** : Varchar(25) <<PK>> [NOT NULL]
+    --
+    * **Numero_Pedido** : Varchar(20) <<FK>> [NOT NULL]
+    * Codigo_SKU : Varchar(20) <<Index>> [NOT NULL]
+    * Descripcion_Producto : Varchar(150) [NOT NULL]
+    * Cantidad_Solicitada : Integer [NOT NULL]
+    * Peso_Unitario_Teorico : Decimal(6,3) [NOT NULL]
+    * Volumen_Unitario_Teorico : Decimal(8,2) [NOT NULL]
+    * Importe_Linea : Decimal(10,2) [NOT NULL]
+  }
+}
+
+package "Dominio Almacén PT y Picking CD (SoR: SAP R3 SIS-01 / SPY SIS-02)" #E8F5E9 {
+  entity "ENT-03: Unidad_Almacenamiento_UA" as ENT03 {
+    * **Codigo_UA** : Varchar(30) <<PK, UNIQUE>> [NOT NULL]
+    --
+    * Codigo_SKU : Varchar(20) <<Index>> [NOT NULL]
+    * Numero_Lote : Varchar(20) <<Index>> [NOT NULL]
+    * Fecha_Envasado : Date [NOT NULL]
+    * Fecha_Vencimiento : Date [NOT NULL]
+    * Cantidad_Unidades_Master : Integer [NOT NULL]
+    * Estado_Stock : Enum(Disposicion, Calidad, Bloqueado) [NOT NULL]
+    * Ubicacion_Almacen : Varchar(30) [NOT NULL]
+  }
+
+  entity "ENT-04: Linea_Picking_Trazable\n(Entidad Asociativa M:N — REQ-ARQ-002)" as ENT04 {
+    * **ID_Tarea_Picking** : UUID v4 <<PK>> [NOT NULL]
+    --
+    * **Numero_Pedido** : Varchar(20) <<FK>> [NOT NULL]
+    * ID_Linea_Pedido : Varchar(25) [NOT NULL]
+    * Codigo_SKU : Varchar(20) [NOT NULL]
+    * **Codigo_UA_Origen** : Varchar(30) <<FK>> [NOT NULL]
+    * Numero_Lote_Consumido : Varchar(20) [NOT NULL]
+    * Cantidad_Surtida : Integer (>= 1) [NOT NULL]
+    * Timestamp_Picking : DateTime UTC [NOT NULL]
+    * ID_Estacion_Picking : Varchar(15) [NOT NULL]
+  }
+
+  entity "ENT-05: Bulto_Despacho_Caja" as ENT05 {
+    * **Codigo_Bulto_Tracking** : Varchar(35) <<PK, UNIQUE>> [NOT NULL]
+    --
+    * **Numero_Pedido** : Varchar(20) <<FK>> [NOT NULL]
+    * **Numero_Manifiesto_Hoja_Ruta** : Varchar(25) <<FK>> [NULL]
+    * Secuencia_Bulto : Integer [NOT NULL]
+    * Formato_Caja : Integer <<Check(1..8)>> [NOT NULL]
+    * Peso_Teorico_Kg : Decimal(6,3) [NOT NULL]
+    * Peso_Bascula_Kg : Decimal(6,3) (> 0) [NOT NULL]
+    * Volumen_Cm3 : Decimal(10,2) [NOT NULL]
+    * Timestamp_Empaque : DateTime UTC [NOT NULL]
+  }
+}
+
+package "Dominio Transporte, Trazabilidad Canónica y Excepciones (SoR: NSDG SIS-06 / DRIVING SIS-08 / MTD SIS-05)" #FFF3E0 {
+  entity "ENT-06: Hoja_Ruta_Despacho" as ENT06 {
+    * **Numero_Manifiesto_Hoja_Ruta** : Varchar(25) <<PK>> [NOT NULL]
+    --
+    * Codigo_Socio_Logistico : Varchar(20) <<Index>> [NOT NULL]
+    * Modalidad_Transporte : Enum(Terrestre, Bimodal, Aerea) [NOT NULL]
+    * Ruta_Troncal : Varchar(50) [NOT NULL]
+    * Placa_Vehiculo_Tercero : Varchar(15) [NOT NULL]
+    * Conductor_Identificacion : Varchar(20) [NOT NULL]
+    * Fecha_Hora_Salida_CD : DateTime UTC [NOT NULL]
+    * Total_Bultos : Integer [NOT NULL]
+    * Total_Pedidos : Integer [NOT NULL]
+    * Estado_Ruta : Varchar(20) [NOT NULL]
+  }
+
+  entity "ENT-07: Evento_Trazabilidad_Canonica\n(Append-Only Log & Auditoria SLA — REQ-ARQ-003)" as ENT07 {
+    * **ID_Evento_UUID** : UUID v4 <<PK>> [NOT NULL]
+    --
+    * **Numero_Pedido** : Varchar(20) <<FK>> [NOT NULL]
+    * **Codigo_Bulto_Tracking** : Varchar(35) <<FK>> [NULL en FACTURADO]
+    * Estado_Ciclo_Normalizado : Enum(5 Estados + Excepcion) [NOT NULL]
+    * Codigo_Emisor_Sistema : Enum(SIS-01..10, ACT-07) [NOT NULL]
+    * Identificador_Fuente_Externa : Varchar(50) [NOT NULL]
+    * Timestamp_T0_Evento_Local : DateTime ISO8601 UTC [NOT NULL]
+    * Timestamp_T1_Ingesta_MTD : DateTime ISO8601 UTC [NOT NULL]
+    * Latencia_Calculada_DeltaT : Integer (T1 - T0 seg) [NOT NULL]
+    * Codigo_Socio_Logistico : Varchar(20) [NULL]
+    * Ubicacion_Geografica_Texto : Varchar(150) [NULL]
+    * Georreferencia_GPS_LatLong : Varchar(50) [NULL]
+    * Datos_Contexto_Payload : JSON [NULL]
+    * Firma_Idempotencia_Hash : Char(64) SHA-256 <<UNIQUE>> [NOT NULL]
+  }
+
+  entity "ENT-08: Incidencia_Transporte" as ENT08 {
+    * **ID_Incidencia** : Varchar(25) <<PK>> [NOT NULL]
+    --
+    * **ID_Evento_UUID** : UUID v4 <<FK, UNIQUE>> [NOT NULL]
+    * Numero_Pedido : Varchar(20) [NOT NULL]
+    * Codigo_Bulto_Tracking : Varchar(35) [NOT NULL]
+    * Tipo_Incidencia : Enum(Retraso, Dano, Siniestro, No_Recepcion) [NOT NULL]
+    * Descripcion_Motivo : Varchar(250) [NOT NULL]
+    * Timestamp_Incidencia_T0 : DateTime UTC [NOT NULL]
+    * Codigo_Socio_Logistico : Varchar(20) [NOT NULL]
+    * Estado_Resolucion : Varchar(30) [NOT NULL]
+    * Accion_Derivada : Enum(Reintento, Retorno_Inverso) [NOT NULL]
+  }
+
+  entity "ENT-09: Registro_Retorno_Logistica_Inversa" as ENT09 {
+    * **ID_Retorno_Inverso** : Varchar(25) <<PK>> [NOT NULL]
+    --
+    * **ID_Incidencia_Origen** : Varchar(25) <<FK, UNIQUE>> [NOT NULL]
+    * Numero_Pedido : Varchar(20) [NOT NULL]
+    * Guia_Remision_Retorno : Varchar(30) [NOT NULL]
+    * Codigo_Socio_Custodio : Varchar(20) [NOT NULL]
+    * Fecha_Hora_Llegada_Lurin : DateTime UTC [NULL]
+    * Estado_Fisico_Cajas : Varchar(100) [NULL]
+    * Dictamen_Calidad_Almacen : Enum(Reincorporacion, Merma, Destruccion) [NULL]
+    * Numero_Documento_Ajuste_SAP : Varchar(25) [NULL]
+    * Usuario_Almacen_SAP : Varchar(20) [NULL]
+  }
+
+  entity "ENT-10: Receptor_Autorizado_Destino\n(Condicional bajo ASM-01)" as ENT10 {
+    * **ID_Receptor_Autorizado** : Varchar(25) <<PK>> [NOT NULL]
+    --
+    * **ID_Evento_UUID** : UUID v4 <<FK, UNIQUE>> [NULL]
+    * Numero_Pedido : Varchar(20) [NOT NULL]
+    * Tipo_Documento_Identidad : Enum(DNI, CE) [NULL]
+    * Numero_Documento_Identidad : Varchar(15) [NULL]
+    * Nombres_Apellidos : Varchar(150) [NULL]
+    * Parentesco_o_Relacion_Comercial : Varchar(50) [NULL]
+    * Firma_Digital_Blob : Blob [NULL]
+    * Timestamp_Recepcion : DateTime UTC [NULL]
+  }
+}
+
+ENT01 ||--|{ ENT02 : "REL-01 (1:N)\nNumero_Pedido"
+ENT01 ||--|{ ENT04 : "REL-02 (1:N)\nNumero_Pedido"
+ENT03 ||--|{ ENT04 : "REL-03 (1:N)\nCodigo_UA_Origen"
+ENT01 ||--|{ ENT05 : "REL-04 (1:N)\nNumero_Pedido"
+ENT06 |o--|{ ENT05 : "REL-05 (1:N)\nNumero_Manifiesto_Hoja_Ruta"
+ENT01 ||--|{ ENT07 : "REL-06 (1:N)\nNumero_Pedido"
+ENT05 ||--|{ ENT07 : "REL-07 (1:N)\nCodigo_Bulto_Tracking"
+ENT07 |o--o| ENT08 : "REL-08 (0..1:1)\nID_Evento_UUID"
+ENT08 |o--o| ENT09 : "REL-09 (0..1:1)\nID_Incidencia_Origen"
+ENT07 |o--o| ENT10 : "REL-10 (0..1:0..1 ASM-01)\nID_Evento_UUID"
+
+@enduml
+

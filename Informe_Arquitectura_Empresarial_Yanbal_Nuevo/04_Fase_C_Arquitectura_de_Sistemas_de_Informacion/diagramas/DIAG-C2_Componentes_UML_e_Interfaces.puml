@@ -1,0 +1,111 @@
+@startuml DIAG-C2_Componentes_UML_e_Interfaces
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam roundCorner 6
+skinparam shadowing false
+skinparam componentStyle uml2
+
+title DIAG-C2 — Diagrama de Componentes UML e Interfaces del Mecanismo de Trazabilidad del Despacho (MTD)
+
+package "Sistemas Emisores y Operativos (Internos y Terceros)" #E3F2FD {
+  component "SIS-01: SAP R3\n(ERP Almacén Lurín ACT-03)" as SIS01
+  component "SIS-02: SPY\n(BWMS Picking CD ACT-04)" as SIS02
+  component "SIS-04: ZapCommerce\n(Transaccional Comercial)" as SIS04
+  component "SIS-06: NSDG\n(Despacho Transporte ACT-05)" as SIS06
+  component "SIS-08: DRIVING / ACT-07\n(Socios Logísticos Externos)" as SIS08
+}
+
+package "Capa de Adaptadores Anti-Corruption Layer (ACL)" #FFF8E1 {
+  component "ADP-SAP\nAdaptador SAP R3\n<<adapter>>" as ADPSAP
+  component "ADP-SPY\nAdaptador SPY\n<<adapter>>" as ADPSPY
+  component "ADP-NSDG\nAdaptador NSDG\n<<adapter>>" as ADPNSDG
+  component "ADP-LOG\nAdaptador Logística Externa\n<<gateway>>" as ADPLOG
+  component "ADP-CRM\nAdaptador CRM CELLFORCE\n<<adapter>>" as ADPCRM
+}
+
+package "Mecanismo de Trazabilidad del Despacho (MTD — Suite Modular Desacoplada)" #E8F5E9 {
+  interface "IEventIngestPort" as I_ING
+  component "CMP-ING-01\nIngesta y Normalización\nde Eventos (SHA-256)\n<<service>>" as CMP01
+
+  interface "IAuditStampPort" as I_AUD
+  component "CMP-AUD-04\nAuditoría Temporal T0/T1\ny Monitoreo SLA (<=30m)\n<<telemetry>>" as CMP04
+
+  interface "IValidateStateTransition" as I_VAL
+  component "CMP-VAL-03\nValidación Semántica y\nSecuencia 5 Estados\n<<rule-engine>>" as CMP03
+
+  interface "ITraceabilityQueryPort" as I_COR
+  component "CMP-COR-02\nCorrelación Lógica\nUA <-> Picking <-> Pedido\n<<mediator>>" as CMP02
+
+  interface "IDispatchEventPort" as I_PUB
+  component "CMP-PUB-05\nPublicación y Sincronización\nDesacoplada\n<<dispatcher>>" as CMP05
+
+  interface "IRouteIncidentPort" as I_INC
+  component "CMP-NOT-06\nGestión de Incidencias y\nNotificación Retorno Almacén\n<<event-handler>>" as CMP06
+
+  database "Repositorio Eventos\nCanónicos (ENT-07..10)\n(Hot <90d / Cold 5y)" as DB_EVT
+}
+
+package "Middleware e Interoperabilidad Corporativa" #FFF3E0 {
+  interface "IBusPublishPort" as I_BUS
+  interface "IWarehouseNoticePort" as I_WH
+  component "SIS-05: Bus de Integración Corporativo\n(Tópicos Pub/Sub y Colas Asíncronas)" as SIS05
+}
+
+package "Sistemas Consumidores y Actores de Consulta / Recepción" #F3E5F5 {
+  component "SIS-03: Maya\n(Portal Consultoras ACT-09)" as SIS03
+  component "SIS-07: ENSDY\n(Trackeo Distribución ACT-06)" as SIS07
+  component "SIS-09: CELLFORCE\n(CRM Servicio Cliente ACT-08)" as SIS09
+  component "ACT-03: Almacén PT Lurín\n(Bandeja Notificación Retorno\nsin escritura directa en SAP R3)" as ACT03
+}
+
+' Conexiones Emisores -> Adaptadores
+SIS01 --> ADPSAP : "ISAPRFCClientPort\n(Solo Lectura Stock/UA)"
+SIS02 --> ADPSPY : "ISPYEventConsumerPort\n(INT-DAT-02)"
+SIS06 --> ADPNSDG : "INSDGMessageTranslatorPort\n(INT-DAT-03)"
+SIS08 --> ADPLOG : "ICarrierWebhookPort /\nStore-and-Forward (INT-DAT-04..06)"
+SIS04 --> SIS05 : "INT-DAT-01 (Pedido Facturado)"
+
+' Adaptadores -> Ingesta y Correlación
+ADPLOG --> I_ING : "DTO Evento Crudo (T0, GPS)"
+ADPSPY --> I_ING : "Evento Preparado / Formato Caja"
+ADPNSDG --> I_ING : "Evento Salida CD / Hoja Ruta"
+I_ING - CMP01
+
+ADPSAP <-- CMP02 : "ISAPMetadataPort"
+ADPSPY <-- CMP02 : "ISPYReadPort"
+
+' Flujo Interno MTD
+CMP01 --> I_AUD : "Síncrono (Estampa T1 y DeltaT)"
+I_AUD - CMP04
+
+CMP01 --> I_VAL : "Cola Interna (Evento Normalizado)"
+I_VAL - CMP03
+
+CMP03 --> I_COR : "Consulta UA <-> Pedido"
+I_COR - CMP02
+
+CMP03 --> DB_EVT : "IPersistencePort (Append-Only)"
+
+CMP03 --> I_PUB : "DTO Evento Canónico Validado (ENT-07)"
+I_PUB - CMP05
+
+CMP03 --> I_INC : "DTO Incidencia Ruta (ENT-08)"
+I_INC - CMP06
+
+' Salida MTD -> Bus -> Consumidores
+CMP05 --> I_BUS : "Publicación Tópico Estados"
+I_BUS - SIS05
+
+CMP06 --> I_WH : "INT-DAT-07 (Aviso Retorno Inverso)"
+I_WH - SIS05
+
+SIS05 --> ADPCRM : "ICRMNotificationPort"
+ADPCRM --> SIS09 : "Actualización Vista 360 Reclamos"
+SIS05 --> SIS07 : "Sincronización Trackeo (INT-DAT-08)"
+SIS05 --> SIS03 : "Visibilidad B2B (<500ms)"
+SIS05 ..> ACT03 : "Notificación Retorno (REQ-RES-002:\nCero escritura directa en SAP R3)"
+
+@enduml
+

@@ -1,0 +1,59 @@
+@startuml DIAG-C2.2_Componentes_Publicacion_Excepciones_Bus_Consumidores
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 6
+skinparam shadowing false
+skinparam componentStyle uml2
+
+title DIAG-C2.2 — Componentes UML (Parte 2): Publicación Pub/Sub, Gestión de Retornos, Bus Corporativo y Consumidores
+footer Derivado de DIAG-C2 (Sección 4.2.3 - Fase C)
+
+package "Núcleo de Salida y Excepciones del MTD" #E8F5E9 {
+  component "CMP-VAL-03: Validación Semántica\n(Emisor de Eventos Validados e Incidencias)\n<<rule-engine>>" as CMP03
+
+  interface "IDispatchEventPort" as I_PUB
+  component "CMP-PUB-05: Publicación y\nSincronización Desacoplada\n<<dispatcher>>" as CMP05
+
+  interface "IRouteIncidentPort" as I_INC
+  component "CMP-NOT-06: Gestión de Incidencias\ny Notificación de Retorno\n<<event-handler>>" as CMP06
+}
+
+package "Middleware Corporativo y Adaptador CRM" #FFF3E0 {
+  interface "IBusPublishPort" as I_BUS
+  interface "IWarehouseNoticePort" as I_WH
+  component "SIS-05: Bus de Integración Corporativo\n(Canales Pub/Sub y Cola Exclusiva Almacén)" as SIS05
+  component "ADP-CRM: Adaptador CRM CELLFORCE\n<<adapter>>" as ADPCRM
+}
+
+package "Sistemas Comerciales, Consumidores y Almacén Lurín" #F3E5F5 {
+  component "SIS-04: ZapCommerce\n(Emisor Pedido Facturado INT-DAT-01)" as SIS04
+  component "SIS-03: Maya\n(Portal Consultoras B2B ACT-09)" as SIS03
+  component "SIS-07: ENSDY\n(Sistema Trackeo ACT-06)" as SIS07
+  component "SIS-09: CELLFORCE\n(CRM Servicio al Cliente ACT-08)" as SIS09
+  component "ACT-03: Área Almacén PT Lurín\n(Recibe aviso asíncrono y opera soberanamente\nSAP R3 — REQ-RES-002)" as ACT03
+}
+
+SIS04 --> SIS05 : "INT-DAT-01 (Pedido Facturado)"
+
+CMP03 --> I_PUB : "DTO Evento Canónico Validado (ENT-07)"
+I_PUB - CMP05
+
+CMP03 --> I_INC : "DTO Incidencia de Ruta (ENT-08)"
+I_INC - CMP06
+
+CMP05 --> I_BUS : "Publicación Tópico Estados Consolidados"
+I_BUS - SIS05
+
+CMP06 --> I_WH : "INT-DAT-07 (Notificación Retorno Inverso)"
+I_WH - SIS05
+
+SIS05 --> ADPCRM : "ICRMNotificationPort"
+ADPCRM --> SIS09 : "Actualización Reclamos y Consultas (<30m)"
+SIS05 --> SIS07 : "Sincronización Trackeo (INT-DAT-08)"
+SIS05 --> SIS03 : "Consulta Estado y Promesa Entrega (<500ms)"
+SIS05 ..> ACT03 : "Cola Notificación Retorno\n(Sin escritura directa MTD -> SAP R3)"
+
+@enduml
+

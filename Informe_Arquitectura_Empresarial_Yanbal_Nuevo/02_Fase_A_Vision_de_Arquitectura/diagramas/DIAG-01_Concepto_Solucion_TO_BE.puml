@@ -1,0 +1,68 @@
+@startuml DIAG-01_Concepto_Solucion_TO_BE
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 8
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+title DIAG-01 — Diagrama Conceptual de la Visión de la Solución Propuesta (Capacidad MTD - Fase A)
+
+package "1. GENERACIÓN, ALMACÉN Y PREPARACIÓN (CD Lurín)" as S1 #E1F5FE {
+  rectangle "A1: Frente Comercial (Agrupación conceptual)\nMaya (SIS-03) -> ZapCommerce (SIS-04, ASM-08)" as A1 #FFFFFF
+  rectangle "A3: Almacén PT - ERP\nSAP R3 (SIS-01 - Exclusivo ACT-03)" as A3 #FFFFFF
+  rectangle "A2: Gestor de Picking in-house\nSPY (SIS-02)" as A2 #FFFFFF
+  rectangle "A4: Zona de Despacho (ACT-05)\nZonificación a 24 Departamentos" as A4 #FFFFFF
+}
+
+package "2. CAPACIDAD ARQUITECTÓNICA PROPUESTA (MTD - DEC-02)" as S2 #E8F5E9 {
+  rectangle "B2: Socios Logísticos (ACT-07) y Sistemas Transporte/Trackeo\nNSDG (SIS-06) / ENSDY (SIS-07) / DRIVING (SIS-08)\n(Separados y sujetos a ASM-02, ASM-07, ASM-11)" as B2 #E1F5FE
+  rectangle "B1: Mecanismo de Trazabilidad del Despacho (MTD)\n(Capacidad propuesta, no app independiente aprobada)" as B1 #C8E6C9
+
+  package "Responsabilidades Canónicas Propuestas (MTD-R01 a MTD-R06)" as MTD_CORE #F1F8E9 {
+    rectangle "C1: MTD-R01 Captura Estandarizada" as C1 #FFFFFF
+    rectangle "C2: MTD-R02 Homologación 5 Estados" as C2 #FFFFFF
+    rectangle "C3: MTD-R03 Trazabilidad UA - Picking - Pedido\n(Cardinalidad pendiente ASM-08/11)" as C3 #FFFFFF
+    rectangle "C4: MTD-R04 Marcas T0/T1 y Medición (<= 30 min)" as C4 #FFFFFF
+    rectangle "C5: MTD-R05 Propagación y Disponibilidad Consulta" as C5 #FFFFFF
+    rectangle "C6: MTD-R06 Trazabilidad Retorno y Notificación" as C6 #FFFFFF
+  }
+}
+
+package "3. INTEROPERABILIDAD DESACOPLADA" as S3 #FFF3E0 {
+  rectangle "D1: Bus de Integración\n(SIS-05, ASM-08)" as D1 #FFE0B2
+}
+
+package "4. CONSULTA Y NOTIFICACIÓN A ACTORES (SIN ESCRITURA DIRECTA EN SAP R3)" as S4 #F3E5F5 {
+  rectangle "E1: Servicio al Cliente (ACT-08)\nCELLFORCE (SIS-09, ASM-06)" as E1 #FFFFFF
+  rectangle "E2: Destinatarios Empresariales B2B (ACT-09)\n(Distribuidoras y sedes en Perú)" as E2 #FFFFFF
+  rectangle "E3: Área de Distribución (ACT-06)\n(Seguimiento del Despacho)" as E3 #FFFFFF
+  rectangle "E4: Área de Almacén PT (ACT-03)\n(Recepción física y operación propia de SAP R3)" as E4 #FFFFFF
+}
+
+A1 --> A2 : "Pedidos vía Bus (SIS-05)"
+A3 --> A2 : "Sincronización stock liberado /\nCajas Master (Código UA)"
+A2 --> A4 : "Pedido preparado (1 de 8 cajas)\n(Número de Pedido)"
+
+A2 --> B1 : "Evento: En preparación (T0, ASM-15)"
+A4 --> B1 : "Evento: Pedido despachado (T0, ASM-15)"
+B2 --> B1 : "Eventos: En ruta / Entregado /\nIncidencia-Retorno (T0)"
+
+B1 -- C1
+C1 --> C2
+C2 --> C3
+C3 --> C4
+C4 --> C5
+C4 --> C6
+
+C5 --> D1 : "Eventos de Estado Correlacionados"
+C6 --> D1 : "Evento de Incidencia / Retorno"
+
+D1 --> E1 : "Disponibilidad para consulta (<= 30 min)"
+D1 --> E2 : "Visibilidad entrega B2B (ASM-01)"
+D1 --> E3 : "Consulta y monitoreo de estados"
+D1 ..> E4 : "Solo Notificación al Actor Responsable\n(Sin interfaz de escritura MTD -> SAP R3, REQ-RES-002)"
+
+@enduml
+

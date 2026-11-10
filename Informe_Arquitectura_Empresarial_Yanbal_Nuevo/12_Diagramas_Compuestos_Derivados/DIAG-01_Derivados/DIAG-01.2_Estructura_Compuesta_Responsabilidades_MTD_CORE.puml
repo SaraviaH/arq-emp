@@ -1,0 +1,41 @@
+@startuml DIAG-01.2_Estructura_Compuesta_Responsabilidades_MTD_CORE
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 8
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+title DIAG-01.2 — Descomposición Funcional Interna de Responsabilidades Canónicas del MTD (MTD-R01 a MTD-R06)
+footer Derivado de DIAG-01 (Fase A)
+
+package "2. CAPACIDAD ARQUITECTÓNICA PROPUESTA (MTD - DEC-02)" as S2 #E8F5E9 {
+  rectangle "B1: Mecanismo de Trazabilidad del Despacho (MTD)" as B1 #C8E6C9
+
+  package "Responsabilidades Canónicas Propuestas (MTD-R01 a MTD-R06)" as MTD_CORE #F1F8E9 {
+    rectangle "C1: MTD-R01 Captura Estandarizada" as C1 #FFFFFF
+    rectangle "C2: MTD-R02 Homologación 5 Estados" as C2 #FFFFFF
+    rectangle "C3: MTD-R03 Trazabilidad UA - Picking - Pedido" as C3 #FFFFFF
+    rectangle "C4: MTD-R04 Marcas T0/T1 y Medición (<= 30 min)" as C4 #FFFFFF
+    rectangle "C5: MTD-R05 Propagación y Disponibilidad Consulta" as C5 #FFFFFF
+    rectangle "C6: MTD-R06 Trazabilidad Retorno y Notificación" as C6 #FFFFFF
+  }
+}
+
+package "3. INTEROPERABILIDAD DESACOPLADA" as S3 #FFF3E0 {
+  rectangle "D1: Bus de Integración (SIS-05)" as D1 #FFE0B2
+}
+
+B1 -- C1
+C1 --> C2
+C2 --> C3
+C3 --> C4
+C4 --> C5
+C4 --> C6
+
+C5 --> D1 : "Eventos de Estado Correlacionados"
+C6 --> D1 : "Evento de Incidencia / Retorno"
+
+@enduml
+

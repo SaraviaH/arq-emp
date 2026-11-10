@@ -1,0 +1,67 @@
+@startuml DIAG-C2.1_Componentes_Ingesta_Validacion_Correlacion_Auditoria
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 6
+skinparam shadowing false
+skinparam componentStyle uml2
+
+title DIAG-C2.1 — Componentes UML (Parte 1): Emisores, Adaptadores ACL, Ingesta, Auditoría SLA y Correlación UA-Pedido
+footer Derivado de DIAG-C2 (Sección 4.2.3 - Fase C)
+
+package "Sistemas Operativos Emisores" #E3F2FD {
+  component "SIS-01: SAP R3\n(ERP Almacén Lurín ACT-03)" as SIS01
+  component "SIS-02: SPY\n(BWMS Picking CD ACT-04)" as SIS02
+  component "SIS-06: NSDG\n(Despacho Transporte ACT-05)" as SIS06
+  component "SIS-08: DRIVING / ACT-07\n(Socios Logísticos Externos)" as SIS08
+}
+
+package "Capa de Adaptadores Anti-Corruption Layer (ACL)" #FFF8E1 {
+  component "ADP-SAP: Adaptador SAP R3\n<<adapter>>" as ADPSAP
+  component "ADP-SPY: Adaptador SPY\n<<adapter>>" as ADPSPY
+  component "ADP-NSDG: Adaptador NSDG\n<<adapter>>" as ADPNSDG
+  component "ADP-LOG: Adaptador Logística Externa\n<<gateway>>" as ADPLOG
+}
+
+package "Núcleo de Ingesta, Auditoría y Reglas del MTD" #E8F5E9 {
+  interface "IEventIngestPort" as I_ING
+  component "CMP-ING-01: Ingesta y Normalización\n(Deduplicación SHA-256)\n<<service>>" as CMP01
+
+  interface "IAuditStampPort" as I_AUD
+  component "CMP-AUD-04: Auditoría Temporal y SLA\n(Cálculo DeltaT = T1 - T0 <= 30 min)\n<<telemetry>>" as CMP04
+
+  interface "IValidateStateTransition" as I_VAL
+  component "CMP-VAL-03: Validación Semántica\n(Máquina Finita 5 Estados Canónicos)\n<<rule-engine>>" as CMP03
+
+  interface "ITraceabilityQueryPort" as I_COR
+  component "CMP-COR-02: Correlación Lógica\n(Trazabilidad M:N UA <-> Picking <-> Pedido)\n<<mediator>>" as CMP02
+
+  database "Repositorio Eventos\nCanónicos (ENT-07)" as DB_EVT
+}
+
+SIS01 --> ADPSAP : "ISAPRFCClientPort (Solo Lectura)"
+SIS02 --> ADPSPY : "ISPYEventConsumerPort (INT-DAT-02)"
+SIS06 --> ADPNSDG : "INSDGMessageTranslatorPort (INT-DAT-03)"
+SIS08 --> ADPLOG : "ICarrierWebhookPort / Store-and-Forward (INT-DAT-04..06)"
+
+ADPLOG --> I_ING : "DTO Evento Crudo (T0, GPS)"
+ADPSPY --> I_ING : "Evento Preparado / Formato Caja (1..8)"
+ADPNSDG --> I_ING : "Evento Salida CD / Hoja Ruta"
+I_ING - CMP01
+
+CMP01 --> I_AUD : "Síncrono (Estampa T1)"
+I_AUD - CMP04
+
+CMP01 --> I_VAL : "Cola Interna (DTO Normalizado)"
+I_VAL - CMP03
+
+CMP03 --> I_COR : "Consulta Correlación UA <-> Pedido"
+I_COR - CMP02
+
+CMP02 --> ADPSAP : "ISAPMetadataPort"
+CMP02 --> ADPSPY : "ISPYReadPort"
+CMP03 --> DB_EVT : "IPersistencePort (Append-Only)"
+
+@enduml
+

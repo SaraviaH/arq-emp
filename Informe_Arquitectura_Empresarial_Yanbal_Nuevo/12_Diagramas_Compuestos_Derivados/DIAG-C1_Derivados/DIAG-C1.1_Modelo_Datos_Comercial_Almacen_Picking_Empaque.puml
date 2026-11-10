@@ -1,0 +1,106 @@
+@startuml DIAG-C1.1_Modelo_Datos_Comercial_Almacen_Picking_Empaque
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 6
+skinparam shadowing false
+hide circle
+skinparam linetype ortho
+
+title DIAG-C1.1 — Modelo Lógico de Datos (Parte 1): Pedidos Comerciales, UA, Picking Asociativo (M:N) y Empaque
+footer Derivado de DIAG-C1 (Sección 4.1.2 - Fase C)
+
+package "Dominio Comercial (SoR: Maya SIS-03 / ZapCommerce SIS-04)" #E3F2FD {
+  entity "ENT-01: Pedido_Comercial" as ENT01 {
+    * **Numero_Pedido** : Varchar(20) <<PK>> [NOT NULL]
+    --
+    * Codigo_Cliente : Varchar(15) <<Index>> [NOT NULL]
+    * Fecha_Emision : DateTime UTC [NOT NULL]
+    * Tipo_Documento_Factura : Varchar(20) [NOT NULL]
+    * Direccion_Destino_Normalizada : Varchar(250) [NOT NULL]
+    * Ubigeo_Destino : Varchar(10) [NOT NULL]
+    * Departamento_Destino : Varchar(50) <<Index>> [NOT NULL]
+    * Provincia_Destino : Varchar(50) [NOT NULL]
+    * Distrito_Destino : Varchar(50) [NOT NULL]
+    * Tipo_Ciudad : Enum(Capital, Provincia) [NOT NULL]
+    * Modalidad_Transporte : Enum(Terrestre, Bimodal, Aerea) [NOT NULL]
+    * Fecha_Promesa_Entrega : DateTime UTC [NOT NULL]
+    * Estado_Actual : Enum(5 Estados Canonicos) <<Index>> [NOT NULL]
+  }
+
+  entity "ENT-02: Linea_Detalle_Pedido" as ENT02 {
+    * **ID_Linea** : Varchar(25) <<PK>> [NOT NULL]
+    --
+    * **Numero_Pedido** : Varchar(20) <<FK>> [NOT NULL]
+    * Codigo_SKU : Varchar(20) <<Index>> [NOT NULL]
+    * Descripcion_Producto : Varchar(150) [NOT NULL]
+    * Cantidad_Solicitada : Integer [NOT NULL]
+    * Peso_Unitario_Teorico : Decimal(6,3) [NOT NULL]
+    * Volumen_Unitario_Teorico : Decimal(8,2) [NOT NULL]
+    * Importe_Linea : Decimal(10,2) [NOT NULL]
+  }
+}
+
+package "Dominio Almacén PT, Picking CD y Despacho (SoR: SAP R3 SIS-01 / SPY SIS-02 / NSDG SIS-06)" #E8F5E9 {
+  entity "ENT-03: Unidad_Almacenamiento_UA" as ENT03 {
+    * **Codigo_UA** : Varchar(30) <<PK, UNIQUE>> [NOT NULL]
+    --
+    * Codigo_SKU : Varchar(20) <<Index>> [NOT NULL]
+    * Numero_Lote : Varchar(20) <<Index>> [NOT NULL]
+    * Fecha_Envasado : Date [NOT NULL]
+    * Fecha_Vencimiento : Date [NOT NULL]
+    * Cantidad_Unidades_Master : Integer [NOT NULL]
+    * Estado_Stock : Enum(Disposicion, Calidad, Bloqueado) [NOT NULL]
+    * Ubicacion_Almacen : Varchar(30) [NOT NULL]
+  }
+
+  entity "ENT-04: Linea_Picking_Trazable\n(Entidad Asociativa M:N — REQ-ARQ-002)" as ENT04 {
+    * **ID_Tarea_Picking** : UUID v4 <<PK>> [NOT NULL]
+    --
+    * **Numero_Pedido** : Varchar(20) <<FK>> [NOT NULL]
+    * ID_Linea_Pedido : Varchar(25) [NOT NULL]
+    * Codigo_SKU : Varchar(20) [NOT NULL]
+    * **Codigo_UA_Origen** : Varchar(30) <<FK>> [NOT NULL]
+    * Numero_Lote_Consumido : Varchar(20) [NOT NULL]
+    * Cantidad_Surtida : Integer (>= 1) [NOT NULL]
+    * Timestamp_Picking : DateTime UTC [NOT NULL]
+    * ID_Estacion_Picking : Varchar(15) [NOT NULL]
+  }
+
+  entity "ENT-05: Bulto_Despacho_Caja" as ENT05 {
+    * **Codigo_Bulto_Tracking** : Varchar(35) <<PK, UNIQUE>> [NOT NULL]
+    --
+    * **Numero_Pedido** : Varchar(20) <<FK>> [NOT NULL]
+    * **Numero_Manifiesto_Hoja_Ruta** : Varchar(25) <<FK>> [NULL]
+    * Secuencia_Bulto : Integer [NOT NULL]
+    * Formato_Caja : Integer <<Check(1..8)>> [NOT NULL]
+    * Peso_Teorico_Kg : Decimal(6,3) [NOT NULL]
+    * Peso_Bascula_Kg : Decimal(6,3) (> 0) [NOT NULL]
+    * Volumen_Cm3 : Decimal(10,2) [NOT NULL]
+    * Timestamp_Empaque : DateTime UTC [NOT NULL]
+  }
+
+  entity "ENT-06: Hoja_Ruta_Despacho" as ENT06 {
+    * **Numero_Manifiesto_Hoja_Ruta** : Varchar(25) <<PK>> [NOT NULL]
+    --
+    * Codigo_Socio_Logistico : Varchar(20) <<Index>> [NOT NULL]
+    * Modalidad_Transporte : Enum(Terrestre, Bimodal, Aerea) [NOT NULL]
+    * Ruta_Troncal : Varchar(50) [NOT NULL]
+    * Placa_Vehiculo_Tercero : Varchar(15) [NOT NULL]
+    * Conductor_Identificacion : Varchar(20) [NOT NULL]
+    * Fecha_Hora_Salida_CD : DateTime UTC [NOT NULL]
+    * Total_Bultos : Integer [NOT NULL]
+    * Total_Pedidos : Integer [NOT NULL]
+    * Estado_Ruta : Varchar(20) [NOT NULL]
+  }
+}
+
+ENT01 ||--|{ ENT02 : "REL-01 (1:N)\nNumero_Pedido"
+ENT01 ||--|{ ENT04 : "REL-02 (1:N)\nNumero_Pedido"
+ENT03 ||--|{ ENT04 : "REL-03 (1:N)\nCodigo_UA_Origen"
+ENT01 ||--|{ ENT05 : "REL-04 (1:N)\nNumero_Pedido"
+ENT06 |o--|{ ENT05 : "REL-05 (1:N)\nNumero_Manifiesto_Hoja_Ruta"
+
+@enduml
+

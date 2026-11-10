@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.2_Estructura_Compuesta_Responsabilidades_MTD_CORE.md",
+                "file": "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.1_Estructura_Compuesta_Contexto_E2E_MTD.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DIAG-01.2_Estructura_Compuesta_Responsabilidades_MTD_CORE"
+              "title": "DIAG-01.1_Estructura_Compuesta_Contexto_E2E_MTD"
             }
           }
         ]
@@ -99,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.2_Estructura_Compuesta_Responsabilidades_MTD_CORE.md",
+                "file": "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.1_Estructura_Compuesta_Contexto_E2E_MTD.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +118,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.2_Estructura_Compuesta_Responsabilidades_MTD_CORE.md",
+                "file": "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.1_Estructura_Compuesta_Contexto_E2E_MTD.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +161,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.2_Estructura_Compuesta_Responsabilidades_MTD_CORE.md",
+                "file": "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.1_Estructura_Compuesta_Contexto_E2E_MTD.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -190,8 +190,10 @@
   },
   "active": "286a8b49da0a0ab0",
   "lastOpenFiles": [
+    "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/13_Criterios_Evaluacion_Docente_Exposicion/02_Auditoria_Integral_Informe_y_Diagramas_vs_Docente.md",
+    "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/estrutra.md",
+    "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.2_Estructura_Compuesta_Responsabilidades_MTD_CORE.md",
     "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/12_Diagramas_Compuestos_Derivados/DIAG-01_Derivados/DIAG-01.1_Estructura_Compuesta_Contexto_E2E_MTD.md",
-    "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/13_Criterios_Evaluacion_Docente_Exposicion/01_Sintesis_Observaciones_y_Preguntas_Docente_Expo.md",
-    "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/13_Criterios_Evaluacion_Docente_Exposicion/02_Auditoria_Integral_Informe_y_Diagramas_vs_Docente.md"
+    "Informe_Arquitectura_Empresarial_Yanbal_Nuevo/13_Criterios_Evaluacion_Docente_Exposicion/01_Sintesis_Observaciones_y_Preguntas_Docente_Expo.md"
   ]
 }
